@@ -3,101 +3,51 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Times New Roman', serif; /* Updated font-family */
+  font-family: 'Arial', sans-serif; /* Modern font */
 }
 
 html, body {
   margin: 0;
   padding: 0;
   height: 100%; /* Full viewport height */
-  overflow: hidden; /* Prevent scrolling on the page itself */
+  background-color: #f9f9f9; /* Light background for a fresh look */
+  color: #333; /* Dark grey text for readability */
+  overflow: hidden;
 }
-
-
-
 
 /* Main Layout Styles */
 .container {
   display: flex;
-  height: calc(100% - headerHeight - footerHeight); /* Adjust the headerHeight and footerHeight accordingly */
   justify-content: space-between;
-  padding: 20px;
   gap: 20px;
+  padding: 20px;
 }
-
-
-
-
-
-
-
-
-
 
 /* Footer Styles */
 footer {
-  background-color: #2c3e50; /* Dark background color */
+  background-color: #ff99cc; /* Soft pink background */
   color: #ffffff; /* White text color */
   text-align: center;
   padding: 20px 0;
 }
 
 footer p {
-  margin: 0;
-  padding: 0;
   font-size: 0.9em;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 600px) {
-  footer {
-    padding: 15px 0;
-  }
-
-  footer p {
-    font-size: 0.8em;
-  }
-}
-
-.container {
-  display: flex;
-  justify-content: space-between;
-  height: calc(100% - headerHeight - footerHeight); /* Adjust as needed */
-}
-
-.left-section, .middle-section, .right-section {
-  flex: 1; /* Distribute space evenly */
-  padding: 20px;
-}
-
-.left-section {
-  /* Styles for the left section */
-}
-
-.middle-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.right-section {
-  /* Styles for the right section, adjust as needed for the iframe */
-  overflow-y: auto; /* Allows scrolling inside the section if necessary */
-}
-
+/* Button Styles */
 .button {
-  background-color: #17a2b8; /* Bootstrap info color for the button */
+  background-color: #ff66b2; /* Vibrant pink for buttons */
   color: white;
-  padding: .75rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  width: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s; /* Smooth transition for hover effect */
 }
 
 .button:hover {
-  background-color: #138496;
+  background-color: #ff3399; /* Slightly darker pink on hover */
 }
 
 /* Responsive Adjustments */
@@ -107,7 +57,6 @@ footer p {
   }
 
   .left-section, .middle-section, .right-section {
-    flex: none; /* Stack them on top of each other */
     width: 100%;
     margin-bottom: 20px;
   }
