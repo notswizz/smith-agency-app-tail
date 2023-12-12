@@ -1,0 +1,53 @@
+/* Navbar Styles */
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: #000;
+    color: #fff;
+    overflow-x: auto;
+  }
+  
+  .logo-container {
+    display: flex;
+    align-items: center;
+    height: 20px;
+    padding-top: 10px;
+  }
+  
+  .header-nav {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin-left: 5rem;
+    padding: 0;
+  }
+  
+  .header-nav li {
+    margin-right: 1rem;
+  }
+  
+  .header-nav li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    transition: color 0.3s, background-color 0.3s;
+  }
+  
+  .header-nav li a:hover {
+    color: #000;
+    background-color: #fff;
+  }
+  
+  .logo-container img {
+    height: auto;
+    width: auto;
+    max-height: 70px;
+  }
+  
+ 
+  
+   
+
+  

@@ -1,0 +1,64 @@
+.modal {
+    display: block; /* Displayed when modal is active */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Dimmed background */
+  }
+  
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%; /* Adjust as needed */
+    border-radius: 5px; /* Optional: rounded corners */
+    display: flex;
+    flex-direction: row; /* Align children horizontally */
+    justify-content: space-between; /* Space out the children */
+    align-items: flex-start; /* Align children to the start of the cross axis */
+  }
+  
+  .calendar-container {
+    /* Styles for the calendar container */
+    flex: 1; /* Allows it to grow */
+    padding-right: 20px; /* Add some spacing between the calendar and the table */
+  }
+  
+  .details-container {
+    /* Styles for the details and table container */
+    flex: 2; /* Allows it to take twice as much space as the calendar */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+  }
+  
+  .table-container {
+    /* Styles for the table container */
+    margin-top: 20px; /* Add some spacing between the ID and the table */
+  }
+  
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .rdrDefinedRangesWrapper,
+  .rdrDateDisplayWrapper,
+  .rdrDateRangeWrapper {
+      display: none;
+  }
+  
