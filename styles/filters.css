@@ -1,0 +1,13 @@
+.filters-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem; /* Spacing between filter inputs */
+    margin-bottom: 1rem; /* Space above BookingData */
+  }
+  
+  /* Style individual filters within BookingFilters if needed */
+  .booking-filter {
+    /* Styles for individual filters */
+  }
+  

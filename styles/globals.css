@@ -15,6 +15,7 @@ html, body {
   animation: GalaxyAnimation 15s ease infinite;
   color: #333; /* Dark grey text for readability */
   overflow-x: hidden; /* Hide horizontal overflow */
+  overflow: hidden;
 }
 
 @keyframes GalaxyAnimation {

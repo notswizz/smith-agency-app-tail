@@ -3,6 +3,8 @@ import '@/styles/navbar.css';
 import '@/styles/form.css';
 import '@/styles/data.css';
 import '@/styles/modal.css';
+import '@/styles/filters.css'; // Adjusted path
+
 
 
 

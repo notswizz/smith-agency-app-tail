@@ -3,9 +3,12 @@ import Header from '../components/Header';
 import BookingForm from '../components/BookingForm';
 import BookingData from '../components/BookingData';
 import BookingModal from '../components/BookingModal';
+import BookingFilters from '../components/BookingFilters';
+
 
 const BookingsPage = () => {
     const [bookings, setBookings] = useState([]);
+    const [allBookings, setAllBookings] = useState([]); // To store all bookings
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState(null);
 
@@ -15,13 +18,16 @@ const BookingsPage = () => {
             if (response.ok) {
                 const data = await response.json();
                 setBookings(data);
+                setAllBookings(data); // Store all bookings
             }
         };
         fetchBookings();
     }, []);
 
     const handleBookingAdded = (newBooking) => {
-        setBookings([...bookings, newBooking]);
+        const updatedBookings = [...bookings, newBooking];
+        setBookings(updatedBookings);
+        setAllBookings(updatedBookings);
     };
 
     const handleUpdateBooking = async (updatedBooking) => {
@@ -61,11 +67,23 @@ const BookingsPage = () => {
         setModalVisible(true);
     };
 
+    const handleFilterChange = (filters) => {
+        // Filter the bookings based on the criteria
+        const filteredBookings = allBookings.filter(booking => 
+            (filters.client ? booking.client.includes(filters.client) : true) &&
+            (filters.show ? booking.show.includes(filters.show) : true)
+        );
+        setBookings(filteredBookings);
+    };
+
     return (
         <>
             <Header />
             <div className="container">
                 <BookingForm onBookingAdded={handleBookingAdded} />
+                <div className="filters-container"> {/* Add a container for the filters */}
+                    <BookingFilters onFilterChange={handleFilterChange} />
+                </div>
                 <BookingData 
                     bookings={bookings} 
                     onDeleteBooking={handleDeleteBooking} 
