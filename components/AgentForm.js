@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { loadData, saveData } from '../lib/storage';
 
 const AgentForm = ({ onAgentAdded }) => {
     const [agent, setAgent] = useState({ name: '', email: '', phone: '', location: [], instagram: '' });
 
     const handleChange = (e) => {
         if (e.target.name === 'location') {
-            // For a multi-select dropdown, we need to handle it differently
             const options = e.target.options;
             let value = [];
             for (let i = 0, l = options.length; i < l; i++) {
@@ -20,17 +18,27 @@ const AgentForm = ({ onAgentAdded }) => {
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const agents = loadData('agents');
-        const newAgent = { ...agent, id: Date.now().toString() }; // Ensure a unique ID
-        saveData('agents', [...agents, newAgent]);
-        if (onAgentAdded) {
-            onAgentAdded(newAgent);
-        }
-        setAgent({ name: '', email: '', phone: '', location: [], instagram: '' }); // Reset form fields
-    };
+        const response = await fetch('/api/addAgent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(agent),
+        });
 
+        if (response.ok) {
+            const newAgent = await response.json();
+            if (onAgentAdded) {
+                onAgentAdded(newAgent);
+            }
+            setAgent({ name: '', email: '', phone: '', location: [], instagram: '' }); // Reset form fields
+        } else {
+            console.error('Failed to add agent');
+        }
+    };
+    
     return (
         <div className="form-container">
             <form onSubmit={handleSubmit}>
