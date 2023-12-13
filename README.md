@@ -12,6 +12,7 @@ Before you begin, ensure you have the latest version of Node.js and npm installe
 To get started with the application, clone the repository to your local machine and install the dependencies:
 
 ```bash
-git clone url
-cd file
+git clone <url>
+cd <file>
 npm install
+npm run dev
