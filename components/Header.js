@@ -2,17 +2,17 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-
 const Header = () => {
   return (
     <header>
       <nav>
         <div className="logo-container">
-          {/* Insert the TSA logo here */}
-          <Image src="/tsalogo.png" alt="TSA Logo" width={100} height={50} />
+          {/* Make the TSA logo clickable and redirect to the homepage */}
+          <Link href="/" passHref>
+            <Image src="/tsalogo.png" alt="TSA Logo" width={100} height={50} style={{ cursor: 'pointer' }} />
+          </Link>
         </div>
         <ul className="header-nav">
-
           <li>
             <Link href="/agents">Agents</Link>
           </li>
