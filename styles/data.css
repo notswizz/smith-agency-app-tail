@@ -1,9 +1,9 @@
-/* Data Display Styles */
+/* Updated Data Display Styles */
 .data-container {
   max-height: 500px;
   overflow-y: auto;
   background: #F8F8F8;
-  padding: 1.5rem;
+ 
   border-radius: 10px;
   box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
   width: 90%;
@@ -12,9 +12,10 @@
 }
 
 .data-item {
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 3fr 3fr 2fr 2fr 2fr 1fr;
   align-items: center;
+  gap: 10px;
   border-bottom: 1px solid #E0E0E0;
   padding: 1.5rem;
   transition: background-color 0.3s, box-shadow 0.3s;
@@ -33,49 +34,53 @@
 .data-item h3 {
   color: #333;
   margin-bottom: 0.5rem;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 600;
 }
 
 .data-item p {
   color: #666;
-  font-size: 0.95rem;
+  font-size: 1rem;
   margin: 0.25rem 0;
   line-height: 1.6;
-  flex-grow: 1;
-}
-
-.data-item a {
-  color: #0056b3;
-  text-decoration: none;
-  padding-right: 2rem;
-  font-size: 1rem;
-  transition: color 0.2s;
-}
-
-.data-item a:hover {
-  color: #00376b;
-  text-decoration: underline;
 }
 
 .delete-button {
-  padding: 0.6rem 1.2rem;
-  background-color: #dc3545;
+  padding: 0.2rem .2rem;
+  background-color: #f6032cc4; /* Blue color for a modern look */
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 3px;
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 0.6rem;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
   transition: background-color 0.2s, box-shadow 0.3s, transform 0.1s;
 }
 
 .delete-button:hover {
-  background-color: #c82333;
+  background-color: #0069d9;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   transform: translateY(-2px);
 }
 
 .delete-button:active {
   transform: translateY(1px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .data-item {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 5px;
+  }
+
+  .data-item h3, .data-item p {
+    font-size: 0.9rem;
+  }
+
+  .delete-button {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+  }
 }

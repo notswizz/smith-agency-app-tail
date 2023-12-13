@@ -3,17 +3,60 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Arial', sans-serif; /* Modern font */
+  font-family: 'Poppins', sans-serif; /* Modern and clean font */
 }
 
 html, body {
   margin: 0;
   padding: 0;
   height: 100%; /* Full viewport height */
-  background-color: #f9f9f9; /* Light background for a fresh look */
+  background: linear-gradient(135deg, #fa079d 0%, #120458 30%, #fa079d 100%);
+  background-size: 400% 400%;
+  animation: GalaxyAnimation 15s ease infinite;
   color: #333; /* Dark grey text for readability */
-  overflow: hidden;
+  overflow-x: hidden; /* Hide horizontal overflow */
 }
+
+@keyframes GalaxyAnimation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Typography Styles for Better Readability and Modern Look */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif; /* Consistent font for headings */
+  color: #1a202c; /* Darker shade for headings */
+  margin-bottom: 0.5rem;
+}
+
+p {
+  line-height: 1.6; /* Improved line height for better readability */
+  color: #4a5568; /* Slightly lighter color for paragraphs */
+}
+
+a {
+  color: #3182ce; /* Modern blue for links */
+  text-decoration: none; /* No underline for a cleaner look */
+}
+
+a:hover {
+  text-decoration: underline; /* Underline on hover for better UX */
+}
+
+/* Responsive Typography Adjustments */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.75rem; /* Smaller font size for large headings on mobile */
+  }
+
+  h2 {
+    font-size: 1.5rem;
+  }
+
+  /* Continue adjusting font sizes for other headings and text elements */
+}
+
 
 /* Main Layout Styles */
 .container {
