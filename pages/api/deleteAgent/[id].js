@@ -1,4 +1,5 @@
 import { client, run } from '../../../lib/mongodb';
+import { ObjectId } from 'mongodb'; // Import ObjectId
 
 export default async function handler(req, res) {
     if (req.method === 'DELETE') {
@@ -7,8 +8,8 @@ export default async function handler(req, res) {
             const db = client.db('TSA');
             const { id } = req.query;
 
-            // Use the custom ID directly
-            const result = await db.collection('agents').deleteOne({ id: id });
+            // Convert id to ObjectId
+            const result = await db.collection('agents').deleteOne({ _id: new ObjectId(id) });
 
             if (result.deletedCount === 1) {
                 res.status(200).json({ message: 'Agent deleted successfully' });
