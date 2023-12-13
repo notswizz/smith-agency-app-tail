@@ -7,22 +7,20 @@ import Footer from '../components/Footer';
 const AgentsPage = () => {
     const [agents, setAgents] = useState([]);
 
-    // Fetch agents from the MongoDB database
-    useEffect(() => {
-        const fetchAgents = async () => {
-            const response = await fetch('/api/getAgents');
-            if (response.ok) {
-                const data = await response.json();
-                setAgents(data);
-            } else {
-                console.error('Failed to fetch agents');
-            }
-        };
+    const fetchAgents = async () => {
+        const response = await fetch('/api/getAgents');
+        if (response.ok) {
+            const data = await response.json();
+            setAgents(data);
+        } else {
+            console.error('Failed to fetch agents');
+        }
+    };
 
+    useEffect(() => {
         fetchAgents();
     }, []);
 
-    // Handle adding a new agent
     const handleAgentAdded = async (agent) => {
         const response = await fetch('/api/addAgent', {
             method: 'POST',
@@ -31,16 +29,17 @@ const AgentsPage = () => {
             },
             body: JSON.stringify(agent),
         });
-
+    
         if (response.ok) {
-            const newAgent = await response.json();
-            setAgents(prevAgents => [...prevAgents, newAgent]);
+            // Refresh the page if the agent was successfully added
+            window.location.reload();
         } else {
             console.error('Failed to add agent');
+            // Handle error appropriately
         }
     };
-
-    // Handle deleting an agent
+    
+    
     const handleDeleteAgent = async (agentId) => {
         const response = await fetch(`/api/deleteAgent/${agentId}`, { method: 'DELETE' });
         if (response.ok) {

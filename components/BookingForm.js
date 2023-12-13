@@ -61,11 +61,7 @@ const BookingForm = ({ onBookingAdded }) => {
             agentSelection,
         };
 
-        const updatedBookings = [...loadData('bookings'), newBooking];
-        saveData('bookings', updatedBookings);
-        onBookingAdded(newBooking);
-
-        console.log("Agent Selection Array after Submission: ", agentSelection);
+        onBookingAdded(newBooking); // Call the function passed from the parent to handle the booking addition
 
         setBooking({ show: '', client: '', startDate: '', endDate: '', agentCounts: [] }); // Reset booking
     };
@@ -127,6 +123,6 @@ const BookingForm = ({ onBookingAdded }) => {
             </form>
         </div>
     );
-                }
+};
 
 export default BookingForm;
