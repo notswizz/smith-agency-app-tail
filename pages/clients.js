@@ -2,29 +2,44 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import ClientForm from '../components/ClientForm';
 import ClientData from '../components/ClientData';
-import { loadData, saveData } from '../lib/storage';
 
 const ClientsPage = () => {
     const [clients, setClients] = useState([]);
 
     useEffect(() => {
-        // Fetch and set clients data
-        const fetchedClients = loadData('clients');
-        setClients(fetchedClients);
+        const fetchClients = async () => {
+            const response = await fetch('/api/clients/getClients'); // Make sure you have this GET API
+            if (response.ok) {
+                const data = await response.json();
+                setClients(data);
+            }
+        };
+        fetchClients();
     }, []);
 
-    const handleClientAdded = (newClient) => {
-        // Add new client and update storage
-        const updatedClients = [...clients, newClient];
-        saveData('clients', updatedClients);
-        setClients(updatedClients);
+    const handleClientAdded = async (newClient) => {
+        const response = await fetch('/api/clients/addClient', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newClient),
+        });
+
+        if (response.ok) {
+            const addedClient = await response.json();
+            setClients([...clients, addedClient]);
+        }
     };
 
-    const handleDeleteClient = (clientId) => {
-        // Delete client and update storage
-        const updatedClients = clients.filter(client => client.id !== clientId);
-        saveData('clients', updatedClients);
-        setClients(updatedClients);
+    const handleDeleteClient = async (clientId) => {
+        const response = await fetch(`/api/clients/deleteClient?id=${clientId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            setClients(clients.filter(client => client._id !== clientId));
+        }
     };
 
     return (

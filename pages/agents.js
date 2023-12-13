@@ -2,18 +2,16 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import AgentForm from '../components/AgentForm';
 import AgentData from '../components/AgentData';
-import Footer from '../components/Footer';
 
 const AgentsPage = () => {
     const [agents, setAgents] = useState([]);
 
+    // Move fetchAgents outside of useEffect
     const fetchAgents = async () => {
-        const response = await fetch('/api/getAgents');
+        const response = await fetch('/api/agents/getAgents'); // Adjust this to your GET API
         if (response.ok) {
             const data = await response.json();
             setAgents(data);
-        } else {
-            console.error('Failed to fetch agents');
         }
     };
 
@@ -21,31 +19,29 @@ const AgentsPage = () => {
         fetchAgents();
     }, []);
 
-    const handleAgentAdded = async (agent) => {
-        const response = await fetch('/api/addAgent', {
+    const handleAgentAdded = async (newAgent) => {
+        const response = await fetch('/api/agents/addAgent', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(agent),
+            body: JSON.stringify(newAgent),
         });
-    
+
         if (response.ok) {
-            // Refresh the page if the agent was successfully added
-            window.location.reload();
+            fetchAgents(); // Now fetchAgents is accessible here
         } else {
-            console.error('Failed to add agent');
-            // Handle error appropriately
+            console.error('Failed to add agent', await response.json());
         }
     };
-    
-    
+
     const handleDeleteAgent = async (agentId) => {
-        const response = await fetch(`/api/deleteAgent/${agentId}`, { method: 'DELETE' });
+        const response = await fetch(`/api/agents/deleteAgent?id=${agentId}`, {
+            method: 'DELETE',
+        });
+
         if (response.ok) {
-            setAgents(prevAgents => prevAgents.filter(agent => agent.id !== agentId));
-        } else {
-            console.error('Failed to delete agent');
+            setAgents(agents.filter(agent => agent._id !== agentId));
         }
     };
 
@@ -56,7 +52,6 @@ const AgentsPage = () => {
                 <AgentForm onAgentAdded={handleAgentAdded} />
                 <AgentData agents={agents} onDeleteAgent={handleDeleteAgent} />
             </div>
-            <Footer />
         </>
     );
 };

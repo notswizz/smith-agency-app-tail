@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { loadData, saveData } from '../lib/storage';
 
 const ClientForm = ({ onClientAdded }) => {
     const [client, setClient] = useState({
         company: '',
         website: '',
-        contact: '', // Contact name
+        contact: '',
         email: '',
-        boothLocation: '', // BLD-FL-#
+        boothLocation: '',
     });
 
     const handleChange = (e) => {
@@ -16,13 +15,8 @@ const ClientForm = ({ onClientAdded }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const clients = loadData('clients');
-        const newClient = { ...client, id: Date.now().toString() }; // Ensure a unique ID
-        saveData('clients', [...clients, newClient]);
-        if (onClientAdded) {
-            onClientAdded(newClient);
-        }
-        setClient({ company: '', website: '', contact: '', email: '', boothLocation: '', name: '', location: '' }); // Reset form fields
+        onClientAdded(client);
+        setClient({ company: '', website: '', contact: '', email: '', boothLocation: '' });
     };
 
     return (

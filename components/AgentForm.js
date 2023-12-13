@@ -20,22 +20,31 @@ const AgentForm = ({ onAgentAdded }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await fetch('/api/addAgent', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(agent),
-        });
 
-        if (response.ok) {
-            const newAgent = await response.json();
-            if (onAgentAdded) {
-                onAgentAdded(newAgent);
+        try {
+            const response = await fetch('/api/agents/addAgent', { // Ensure this matches the correct API endpoint
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(agent),
+            });
+
+            if (response.ok) {
+                const newAgent = await response.json();
+                alert('Agent added successfully!');
+                if (onAgentAdded) {
+                    onAgentAdded(newAgent);
+                }
+                setAgent({ name: '', email: '', phone: '', location: [], instagram: '' }); // Reset form fields
+            } else {
+                const errorData = await response.json();
+                console.error('Failed to add agent', errorData);
+                alert(`Failed to add agent: ${errorData.message}`);
             }
-            setAgent({ name: '', email: '', phone: '', location: [], instagram: '' }); // Reset form fields
-        } else {
-            console.error('Failed to add agent');
+        } catch (error) {
+            console.error('Error occurred:', error);
+            alert('An error occurred while adding the agent.');
         }
     };
     

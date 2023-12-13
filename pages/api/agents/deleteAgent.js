@@ -1,14 +1,13 @@
 import { client, run } from '../../../lib/mongodb';
-import { ObjectId } from 'mongodb'; // Import ObjectId
+import { ObjectId } from 'mongodb';
 
 export default async function handler(req, res) {
     if (req.method === 'DELETE') {
         try {
             await run();
-            const db = client.db('TSA');
+            const db = client.db('TSA'); // Replace with your database name
             const { id } = req.query;
 
-            // Convert id to ObjectId
             const result = await db.collection('agents').deleteOne({ _id: new ObjectId(id) });
 
             if (result.deletedCount === 1) {

@@ -1,4 +1,4 @@
-import { client, run } from '../../lib/mongodb';
+import { client, run } from '../../../lib/mongodb';
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
