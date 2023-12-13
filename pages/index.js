@@ -23,22 +23,29 @@ const HomePage = () => {
   return (
     <>
       <Header />
-      <div style={{ fontFamily: 'Arial, sans-serif', color: '#333', padding: '20px' }}>
-       
-        <div style={{ display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-          {/* Single image with rounded border */}
-          <div style={{ textAlign: 'center', border: '5px solid #ccc', borderRadius: '15px', overflow: 'hidden' }}>
-            <Image src={`/tsalogoai2.png`} alt={`Gallery Image 1`} width={300} height={300} />
-          </div>
+      <iframe 
+    style={{
+        background: "#21313C",
+        border: "none",
+        borderRadius: "2px",
+        boxShadow: "0 2px 10px 0 rgba(70, 76, 79, .2)"
+    }}
+    width="500"
+    height="350"
+    src="https://charts.mongodb.com/charts-thesmithagency-powww/embed/charts?id=6579809a-727a-427b-8549-dbf20fa1d7e4&maxDataAge=1800&theme=dark&autoRefresh=true"
+/>
+<iframe 
+    style={{
+        background: "#21313C",
+        border: "none",
+        borderRadius: "2px",
+        boxShadow: "0 2px 10px 0 rgba(70, 76, 79, .2)"
+    }}
+    width="500"
+    height="350"
+    src="https://charts.mongodb.com/charts-thesmithagency-powww/embed/charts?id=657983e4-727a-4663-8035-dbf20fac5d10&maxDataAge=3600&theme=dark&autoRefresh=true"
+/>
 
-          {/* Instagram Embed Block */}
-          <div style={{ marginTop: '20px' }}>
-            <blockquote className="instagram-media" data-instgrm-permalink="https://www.instagram.com/the_smithagency/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style={{ background: '#FFF', border: '0', borderRadius: '3px', boxShadow: '0 0 1px 0 rgba(0,0,0,0.5), 0 1px 10px 0 rgba(0,0,0,0.15)', margin: '1px auto', maxWidth: '450px', minWidth: '375px', padding: '0', width: '99.375%', width: '-webkit-calc(100% - 2px)', width: 'calc(100% - 2px)' }}>
-              {/* The rest of the provided Instagram embed code goes here */}
-            </blockquote>
-          </div>
-        </div>
-      </div>
     </>
   );
 };
