@@ -1,66 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { DateRangePicker } from 'react-date-range';
-import 'react-date-range/dist/styles.css'; // Main style file
-import 'react-date-range/dist/theme/default.css'; // Theme CSS
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
 import { loadData, saveData } from '../lib/storage';
 
-
-// Function to create a date without the timezone offset
 function createDateWithoutTimezoneOffset(dateString) {
-  const date = new Date(dateString);
-  const userTimezoneOffset = date.getTimezoneOffset() * 60000;
-  return new Date(date.getTime() + userTimezoneOffset);
+    const date = new Date(dateString);
+    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+    return new Date(date.getTime() + userTimezoneOffset);
 }
 
-// This function generates a range of dates between two dates
 const generateDateRange = (start, end) => {
-  let dates = [];
-  let currentDate = new Date(start.toISOString().split('T')[0]); // Remove the time part
-  let endDate = new Date(end.toISOString().split('T')[0]);
+    let dates = [];
+    let currentDate = new Date(start.toISOString().split('T')[0]);
+    let endDate = new Date(end.toISOString().split('T')[0]);
 
-  while (currentDate <= endDate) {
-    dates.push(new Date(currentDate));
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
+    while (currentDate <= endDate) {
+        dates.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+    }
 
-  return dates;
+    return dates;
 };
 
 const Modal = ({ booking, onClose, onUpdateBooking }) => {
     if (!booking) return null;
 
-    // Create start and end dates without timezone offset
     const startDate = createDateWithoutTimezoneOffset(booking.startDate);
     const endDate = createDateWithoutTimezoneOffset(booking.endDate);
 
-    // Initialize selectedAgents as an array
+    // Initialize selectedAgents from booking
     const [selectedAgents, setSelectedAgents] = useState(booking.agentSelection || []);
 
-    // Load agents
     const [agents, setAgents] = useState(loadData('agents') || []);
 
     useEffect(() => {
         // Populate the selectedAgents state based on booking.agentCounts
         const dateRange = generateDateRange(startDate, endDate);
         const initialSelectedAgents = dateRange.map((date, index) => {
-            return new Array(booking.agentCounts[index] || 0).fill('');
+            return booking.agentSelection[index] || new Array(booking.agentCounts[index] || 0).fill('');
         });
         setSelectedAgents(initialSelectedAgents);
     }, [booking, startDate, endDate]);
 
     const handleAgentSelection = (dayIndex, agentIndex, selectedAgentId) => {
-      const updatedSelection = [...selectedAgents];
-      updatedSelection[dayIndex][agentIndex] = selectedAgentId;
-      setSelectedAgents(updatedSelection);
+        const updatedSelection = [...selectedAgents];
+        updatedSelection[dayIndex][agentIndex] = selectedAgentId;
+        setSelectedAgents(updatedSelection);
     };
 
     const handleSubmit = () => {
-      // Update the booking with the selected agents
-      const updatedBooking = { ...booking, agentSelection: selectedAgents };
-      const updatedBookings = loadData('bookings').map(b => b.id === booking.id ? updatedBooking : b);
-      saveData('bookings', updatedBookings);
-      onUpdateBooking(updatedBooking); // Call the provided onUpdateBooking function with the updated booking
-      onClose(); // Close the modal after updating
+        const updatedBooking = { ...booking, agentSelection: selectedAgents };
+        const updatedBookings = loadData('bookings').map(b => b.id === booking.id ? updatedBooking : b);
+        saveData('bookings', updatedBookings);
+
+        // Outputting saved array to console
+        console.log("Saved agentSelection Array: ", selectedAgents);
+
+        onUpdateBooking(updatedBooking); // Update the booking in the parent component
+        onClose(); // Close the modal
     };
 
     const renderAgentDropdown = (dayIndex, agentIndex) => {
@@ -72,10 +70,7 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
                 value={selectedAgentId}
                 onChange={(e) => handleAgentSelection(dayIndex, agentIndex, e.target.value)}
             >
-                {selectedAgentId ? 
-                    <option value={selectedAgentId}>{selectedAgent?.name || 'Unknown Agent'}</option> : 
-                    <option value="">Select Agent</option>
-                }
+                <option value="">Select Agent</option>
                 {agents.map((agent) => (
                     <option key={agent.id} value={agent.id}>
                         {agent.name}
@@ -99,7 +94,7 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
                 <DateRangePicker
                     ranges={[selectionRange]}
                     moveRangeOnFirstSelection={false}
-                    rangeColors={["#3d91ff"]} // Your highlight color
+                    rangeColors={["#3d91ff"]}
                     showSelectionPreview={true}
                 />
                 <div className="table-container">

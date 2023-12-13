@@ -8,16 +8,14 @@ const BookingForm = ({ onBookingAdded }) => {
         startDate: '',
         endDate: '',
         agentCounts: [],
-        agentSelection: [], // Initialize agentSelection array
     });
 
-    // Load clients and shows data
+    // Load clients, shows, and agents data
     const [clients, setClients] = useState([]);
     const [shows, setShows] = useState([]);
     const [agents, setAgents] = useState(loadData('agents') || []); // Load agents
 
     useEffect(() => {
-        // Loading clients and shows data in useEffect to avoid server/client mismatch
         const loadedClients = loadData('clients') || [];
         const loadedShows = loadData('shows') || [];
         setClients(loadedClients);
@@ -33,13 +31,11 @@ const BookingForm = ({ onBookingAdded }) => {
         setBooking({ ...booking, [name]: value });
 
         if (name === 'endDate' || (name === 'startDate' && booking.endDate)) {
-            // Generate date range and update agentCounts and agentSelection
             const start = new Date(booking.startDate);
             const end = new Date(value);
             const dateRange = generateDateRange(start, end);
             const newAgentCounts = dateRange.map((_, index) => booking.agentCounts[index] || 0);
-            const newAgentSelection = dateRange.map(() => []);
-            setBooking(prev => ({ ...prev, agentCounts: newAgentCounts, agentSelection: newAgentSelection }));
+            setBooking(prev => ({ ...prev, agentCounts: newAgentCounts }));
         }
     };
 
@@ -51,22 +47,32 @@ const BookingForm = ({ onBookingAdded }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        const start = new Date(booking.startDate);
+        const end = new Date(booking.endDate);
+        const dateRange = generateDateRange(start, end);
+
+        // Construct agentSelection array based on agentCounts
+        const agentSelection = dateRange.map((_, index) => new Array(booking.agentCounts[index]).fill(''));
+
         const newBooking = {
             ...booking,
             id: `${booking.client}-${booking.show}`, // Generate a unique ID for the booking
             totalDays: booking.agentCounts.reduce((acc, val) => acc + val, 0),
+            agentSelection,
         };
 
         const updatedBookings = [...loadData('bookings'), newBooking];
         saveData('bookings', updatedBookings);
         onBookingAdded(newBooking);
-        setBooking({ show: '', client: '', startDate: '', endDate: '', agentCounts: [], agentSelection: [] }); // Reset booking
+
+        console.log("Agent Selection Array after Submission: ", agentSelection);
+
+        setBooking({ show: '', client: '', startDate: '', endDate: '', agentCounts: [] }); // Reset booking
     };
 
-    // This function generates a range of dates between two dates
     const generateDateRange = (start, end) => {
         let dates = [];
-        let currentDate = new Date(start.toISOString().split('T')[0]); // Remove the time part
+        let currentDate = new Date(start.toISOString().split('T')[0]);
         let endDate = new Date(end.toISOString().split('T')[0]);
 
         while (currentDate <= endDate) {
