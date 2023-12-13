@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { loadData, saveData } from '../lib/storage';
 
 const BookingForm = ({ onBookingAdded }) => {
     const [booking, setBooking] = useState({
@@ -10,16 +9,24 @@ const BookingForm = ({ onBookingAdded }) => {
         agentCounts: [],
     });
 
-    // Load clients, shows, and agents data
     const [clients, setClients] = useState([]);
     const [shows, setShows] = useState([]);
-    const [agents, setAgents] = useState(loadData('agents') || []); // Load agents
+    const [agents, setAgents] = useState([]);
 
     useEffect(() => {
-        const loadedClients = loadData('clients') || [];
-        const loadedShows = loadData('shows') || [];
-        setClients(loadedClients);
-        setShows(loadedShows);
+        // Fetch clients, shows, and agents from API
+        const fetchData = async () => {
+            const clientsResponse = await fetch('/api/clients/getClients');
+            const showsResponse = await fetch('/api/shows/getShows');
+            const agentsResponse = await fetch('/api/agents/getAgents');
+
+            if (clientsResponse.ok && showsResponse.ok && agentsResponse.ok) {
+                setClients(await clientsResponse.json());
+                setShows(await showsResponse.json());
+                setAgents(await agentsResponse.json());
+            }
+        };
+        fetchData();
     }, []);
 
     const handleChange = (e) => {
@@ -45,8 +52,9 @@ const BookingForm = ({ onBookingAdded }) => {
         setBooking({ ...booking, agentCounts: updatedAgentCounts });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+
         const start = new Date(booking.startDate);
         const end = new Date(booking.endDate);
         const dateRange = generateDateRange(start, end);
@@ -61,9 +69,21 @@ const BookingForm = ({ onBookingAdded }) => {
             agentSelection,
         };
 
-        onBookingAdded(newBooking); // Call the function passed from the parent to handle the booking addition
+        const response = await fetch('/api/bookings/addBooking', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newBooking),
+        });
 
-        setBooking({ show: '', client: '', startDate: '', endDate: '', agentCounts: [] }); // Reset booking
+        if (response.ok) {
+            const addedBooking = await response.json();
+            onBookingAdded(addedBooking);
+            setBooking({ show: '', client: '', startDate: '', endDate: '', agentCounts: [] }); // Reset form fields
+        } else {
+            console.error('Failed to add booking');
+        }
     };
 
     const generateDateRange = (start, end) => {

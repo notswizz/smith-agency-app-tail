@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import BookingForm from '../components/BookingForm';
 import BookingData from '../components/BookingData';
-import Modal from '../components/BookingModal'; // Import the Modal component
-import { loadData, saveData } from '../lib/storage';
+import BookingModal from '../components/BookingModal';
 
 const BookingsPage = () => {
     const [bookings, setBookings] = useState([]);
@@ -11,27 +10,50 @@ const BookingsPage = () => {
     const [selectedBooking, setSelectedBooking] = useState(null);
 
     useEffect(() => {
-        setBookings(loadData('bookings'));
+        const fetchBookings = async () => {
+            const response = await fetch('/api/bookings/getBookings');
+            if (response.ok) {
+                const data = await response.json();
+                setBookings(data);
+            }
+        };
+        fetchBookings();
     }, []);
 
     const handleBookingAdded = (newBooking) => {
-        const updatedBookings = [...bookings, newBooking];
-        saveData('bookings', updatedBookings);
-        setBookings(updatedBookings);
+        setBookings([...bookings, newBooking]);
     };
 
-    const handleUpdateBooking = (updatedBooking) => {
-        const updatedBookings = bookings.map(booking => 
-            booking.id === updatedBooking.id ? updatedBooking : booking
-        );
-        saveData('bookings', updatedBookings);
-        setBookings(updatedBookings);
+    const handleUpdateBooking = async (updatedBooking) => {
+        // Update booking in database
+        const response = await fetch(`/api/bookings/updateBooking/${updatedBooking._id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedBooking),
+        });
+
+        if (response.ok) {
+            // Update state
+            const updatedBookings = bookings.map(booking => 
+                booking._id === updatedBooking._id ? updatedBooking : booking
+            );
+            setBookings(updatedBookings);
+        }
     };
 
-    const handleDeleteBooking = (bookingId) => {
-        const updatedBookings = bookings.filter(booking => booking.id !== bookingId);
-        saveData('bookings', updatedBookings);
-        setBookings(updatedBookings);
+    const handleDeleteBooking = async (bookingId) => {
+        // Delete booking from database
+        const response = await fetch(`/api/bookings/deleteBooking/${bookingId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            // Update state
+            const updatedBookings = bookings.filter(booking => booking._id !== bookingId);
+            setBookings(updatedBookings);
+        }
     };
 
     const handleShowBookingDetails = (booking) => {
@@ -50,7 +72,7 @@ const BookingsPage = () => {
                     onShowBookingDetails={handleShowBookingDetails} 
                 />
                 {modalVisible && 
-                    <Modal 
+                    <BookingModal 
                         booking={selectedBooking} 
                         onClose={() => setModalVisible(false)}
                         onUpdateBooking={handleUpdateBooking} 

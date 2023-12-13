@@ -5,23 +5,29 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
         return Array.isArray(agentCounts) ? agentCounts.reduce((a, b) => a + b, 0) : 0;
     };
 
-    const handleDelete = (id, event) => {
+    const handleDelete = async (id, event) => {
         event.stopPropagation();
-        onDeleteBooking(id);
-        // Refresh the page after a brief delay
-        setTimeout(() => window.location.reload(), 500);
+        const response = await fetch(`/api/bookings/deleteBooking?id=${id}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            onDeleteBooking(id);
+        } else {
+            console.error('Failed to delete booking');
+        }
     };
 
     return (
         <div className="data-container">
             {bookings.map(booking => (
-                <div className="data-item" key={booking.id} onClick={() => onShowBookingDetails(booking)}>
+                <div className="data-item" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
                     <h3>{booking.client}</h3>
                     <p>{booking.show}</p>
                     <p>{booking.startDate}</p>
                     <p>{booking.endDate}</p>
                     <p>Total Days: {getTotalDays(booking.agentCounts)}</p>
-                    <button onClick={(e) => handleDelete(booking.id, e)} className="delete-button">Delete</button>
+                    <button onClick={(e) => handleDelete(booking._id, e)} className="delete-button">Delete</button>
                 </div>
             ))}
         </div>

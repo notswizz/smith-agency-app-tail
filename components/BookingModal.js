@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { DateRangePicker } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
-import { loadData, saveData } from '../lib/storage';
 
 function createDateWithoutTimezoneOffset(dateString) {
     const date = new Date(dateString);
@@ -26,19 +25,30 @@ const generateDateRange = (start, end) => {
 const Modal = ({ booking, onClose, onUpdateBooking }) => {
     if (!booking) return null;
 
-    const startDate = createDateWithoutTimezoneOffset(booking.startDate);
-    const endDate = createDateWithoutTimezoneOffset(booking.endDate);
+    useEffect(() => {
+        const fetchAgents = async () => {
+            const response = await fetch('/api/agents/getAgents');
+            if (response.ok) {
+                const data = await response.json();
+                setAgents(data);
+            }
+        };
+        fetchAgents();
+    }, [booking]); // Depend only on booking
+
+    const startDate = useMemo(() => createDateWithoutTimezoneOffset(booking.startDate), [booking.startDate]);
+    const endDate = useMemo(() => createDateWithoutTimezoneOffset(booking.endDate), [booking.endDate]);
+    const dateRange = useMemo(() => generateDateRange(startDate, endDate), [startDate, endDate]);
 
     const [selectedAgents, setSelectedAgents] = useState(booking.agentSelection || []);
-    const [agents, setAgents] = useState(loadData('agents') || []);
-    const dateRange = generateDateRange(startDate, endDate);
+    const [agents, setAgents] = useState([]);
 
     useEffect(() => {
         const initialSelectedAgents = dateRange.map((date, index) => {
             return booking.agentSelection[index] || new Array(booking.agentCounts[index] || 0).fill('');
         });
         setSelectedAgents(initialSelectedAgents);
-    }, [booking, startDate, endDate]);
+    }, [dateRange, booking.agentSelection, booking.agentCounts]);
 
     const handleAgentSelection = (dayIndex, agentIndex, selectedAgentId) => {
         const updatedSelection = [...selectedAgents];
@@ -46,15 +56,23 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
         setSelectedAgents(updatedSelection);
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         const updatedBooking = { ...booking, agentSelection: selectedAgents };
-        const updatedBookings = loadData('bookings').map(b => b.id === booking.id ? updatedBooking : b);
-        saveData('bookings', updatedBookings);
+        const response = await fetch(`/api/bookings/updateBooking/${booking._id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(updatedBooking),
+        });
 
-        console.log("Saved agentSelection Array: ", selectedAgents);
-
-        onUpdateBooking(updatedBooking);
-        onClose();
+        if (response.ok) {
+            console.log("Agent selection updated: ", selectedAgents);
+            onUpdateBooking(updatedBooking);
+            onClose();
+        } else {
+            console.error('Failed to update booking');
+        }
     };
 
     const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentId) => {
