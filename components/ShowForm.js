@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { loadData, saveData } from '../lib/storage';
 
 const ShowForm = ({ onShowAdded }) => {
     const [show, setShow] = useState({
@@ -19,16 +18,28 @@ const ShowForm = ({ onShowAdded }) => {
         return `${show.location.toUpperCase()}${show.season}${show.type}${year}`;
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        const shows = loadData('shows');
         const showId = generateShowId();
         const newShow = { ...show, id: showId };
-        saveData('shows', [...shows, newShow]);
-        if (onShowAdded) {
-            onShowAdded(newShow);
+
+        const response = await fetch('/api/shows/addShow', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newShow),
+        });
+
+        if (response.ok) {
+            if (onShowAdded) {
+                onShowAdded(newShow);
+            }
+        } else {
+            console.error('Failed to add show');
         }
-        setShow({ season: '', type: '', location: '', startDate: '', endDate: '' });
+
+        setShow({ season: '', type: '', location: '', startDate: '', endDate: '' }); // Reset form fields
     };
 
     return (

@@ -2,25 +2,35 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import ShowForm from '../components/ShowForm';
 import ShowData from '../components/ShowData';
-import { loadData, saveData } from '../lib/storage';
 
 const ShowsPage = () => {
     const [shows, setShows] = useState([]);
 
-    useEffect(() => {
-        setShows(loadData('shows'));
-    }, []);
-
-    const handleShowAdded = (newShow) => {
-        const updatedShows = [...shows, newShow];
-        saveData('shows', updatedShows);
-        setShows(updatedShows);
+    // Define fetchShows outside of useEffect
+    const fetchShows = async () => {
+        const response = await fetch('/api/shows/getShows');
+        if (response.ok) {
+            const data = await response.json();
+            setShows(data);
+        }
     };
 
-    const handleDeleteShow = (showId) => {
-        const updatedShows = shows.filter(show => show.id !== showId);
-        saveData('shows', updatedShows);
-        setShows(updatedShows);
+    useEffect(() => {
+        fetchShows();
+    }, []);
+
+    const handleShowAdded = async (newShow) => {
+        await fetchShows(); // This now should work
+    };
+
+    const handleDeleteShow = async (showId) => {
+        const response = await fetch(`/api/shows/deleteShow?id=${showId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            await fetchShows(); // Refresh the list after deletion
+        }
     };
 
     return (
