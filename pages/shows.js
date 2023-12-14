@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import ShowForm from '../components/ShowForm';
-import ShowData from '../components/ShowData';
+import Header from '../components/nav/Header';
+import ShowForm from '../components/show/ShowForm';
+import ShowData from '../components/show/ShowData';
 
 const ShowsPage = () => {
     const [shows, setShows] = useState([]);

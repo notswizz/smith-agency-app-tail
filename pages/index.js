@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import Image from 'next/image';
-import Header from '../components/Header';
+import Header from '../components/nav/Header';
 import Router from 'next/router';
 
 const HomePage = () => {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import BookingForm from '../components/BookingForm';
-import BookingData from '../components/BookingData';
-import BookingModal from '../components/BookingModal';
-import BookingFilters from '../components/BookingFilters';
+import Header from '../components/nav/Header';
+import BookingForm from '../components/booking/BookingForm';
+import BookingData from '../components/booking/BookingData';
+import BookingModal from '../components/booking/BookingModal';
+import BookingFilters from '../components/booking/BookingFilters';
 
 
 const BookingsPage = () => {

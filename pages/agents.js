@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import AgentForm from '../components/AgentForm';
-import AgentData from '../components/AgentData';
+import Header from '../components/nav/Header';
+import AgentForm from '../components/agent/AgentForm';
+import AgentData from '../components/agent/AgentData';
 
 const AgentsPage = () => {
     const [agents, setAgents] = useState([]);

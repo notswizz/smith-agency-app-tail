@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
-import AgentForm from '../components/AgentForm'; // Importing AgentForm component
-import AbleForm from '../components/AbleForm'; // Importing AgentForm component
+import AgentForm from '../components/agent/AgentForm'; // Importing AgentForm component
+import AbleForm from '../components/form/AbleForm'; // Importing AgentForm component
 
 const AgentFormsPage = () => {
     return (

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import ClientForm from '../components/ClientForm';
-import ClientData from '../components/ClientData';
+import Header from '../components/nav/Header';
+import ClientForm from '../components/client/ClientForm';
+import ClientData from '../components/client/ClientData';
 
 const ClientsPage = () => {
     const [clients, setClients] = useState([]);
