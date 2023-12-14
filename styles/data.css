@@ -1,12 +1,12 @@
 .data-container {
-  max-height: 450px;
+  max-height: 475px;
   overflow-y: auto;
   background: #F0F0F0; /* Lighter shade for better contrast */
   padding: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); /* Enhanced shadow for depth */
   width: 90%;
-  margin: 2rem auto;
+  margin: 0.3rem auto;
   box-sizing: border-box;
   border: 1px solid #E0E0E0; /* Subtle border for definition */
   transition: all 0.3s ease; /* Smooth transition for interactive elements */
