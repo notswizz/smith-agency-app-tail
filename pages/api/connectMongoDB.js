@@ -1,24 +1,39 @@
 import { client, run } from '../../lib/mongodb';
 
 export default async function handler(req, res) {
+  // Log the incoming request method for debugging purposes
+  console.log(`Received a ${req.method} request to the MongoDB handler`);
+
   if (req.method === 'GET') {
     console.log("Attempting to connect to MongoDB...");
 
     try {
+      // Attempt to run the MongoDB client
       await run();
       console.log("Connected to MongoDB successfully");
 
-      // Here you can add any additional database operations you wish to perform
-      // For demonstration, we're just sending a success message
+      // Perform any additional database operations here
+      // For example, querying a collection or retrieving specific data
+      // const db = client.db('yourDatabaseName');
+      // const collection = db.collection('yourCollectionName');
+      // const data = await collection.find({}).toArray();
+
+      // Respond with success message or the retrieved data
+      // res.status(200).json({ data });
       res.status(200).json({ message: 'Successfully connected to MongoDB' });
     } catch (error) {
-      console.error('MongoDB connection error:', error);
+      // Log detailed error message if the connection or any database operation fails
+      console.error('MongoDB connection or operation error:', error);
 
-      // You can add more detailed error information here if necessary
-      res.status(500).json({ message: 'Failed to connect to MongoDB', error: error.message });
+      // Respond with detailed error information
+      res.status(500).json({ 
+        message: 'Failed to connect to MongoDB or perform database operation', 
+        error: error.message 
+      });
     }
   } else {
-    console.log("Received a non-GET request");
-    res.status(405).json({ message: 'Method Not Allowed' });
+    // Log if a non-GET request is received
+    console.log(`Method Not Allowed: Received a ${req.method} request instead of a GET request`);
+    res.status(405).json({ message: 'Method Not Allowed, expected a GET request' });
   }
 }
