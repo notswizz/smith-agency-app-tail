@@ -1,5 +1,5 @@
 .data-container {
-  max-height: 490px;
+  max-height: 450px;
   overflow-y: auto;
   background: #F0F0F0; /* Lighter shade for better contrast */
   padding: 1.5rem;
