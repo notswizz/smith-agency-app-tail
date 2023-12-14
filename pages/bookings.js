@@ -81,14 +81,16 @@ const BookingsPage = () => {
             <Header />
             <div className="container">
                 <BookingForm onBookingAdded={handleBookingAdded} />
-                <div className="filters-container"> {/* Add a container for the filters */}
-                    <BookingFilters onFilterChange={handleFilterChange} />
+                <div className="filters-and-data-container"> {/* New container for filters and data */}
+                    <div className="filters-container"> {/* Filters are now beside each other */}
+                        <BookingFilters onFilterChange={handleFilterChange} />
+                    </div>
+                    <BookingData 
+                        bookings={bookings} 
+                        onDeleteBooking={handleDeleteBooking} 
+                        onShowBookingDetails={handleShowBookingDetails} 
+                    />
                 </div>
-                <BookingData 
-                    bookings={bookings} 
-                    onDeleteBooking={handleDeleteBooking} 
-                    onShowBookingDetails={handleShowBookingDetails} 
-                />
                 {modalVisible && 
                     <BookingModal 
                         booking={selectedBooking} 

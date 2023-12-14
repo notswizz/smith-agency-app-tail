@@ -34,7 +34,7 @@ const HomePage = () => {
           }}
           width="500"
           height="350"
-          src="https://charts.mongodb.com/charts-thesmithagency-powww/embed/charts?id=6579809a-727a-427b-8549-dbf20fa1d7e4&maxDataAge=1800&theme=dark&autoRefresh=true"
+          src="https://charts.mongodb.com/charts-thesmithagency-powww/embed/charts?id=657a9f6b-f76b-4325-89c5-9c51c4f919c2&maxDataAge=3600&theme=dark&autoRefresh=true"
           onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
           onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
         />
