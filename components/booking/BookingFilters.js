@@ -25,7 +25,6 @@ const BookingFilters = ({ onFilterChange }) => {
                 value={clientFilter} 
                 onChange={handleClientFilterChange} 
             />
-            <br></br>
             <input 
                 type="text" 
                 placeholder="Filter by Show" 

@@ -10,7 +10,7 @@
   /* Ensure that the filter container uses flexbox to lay out its children */
 .filters-container {
     display: flex;
-    gap: 1px; /* Adjust this value as needed for spacing between filters */
+    gap: 5px; /* Adjust this value as needed for spacing between filters */
     justify-content: center; /* Center the filters container */
     margin-bottom: 1rem; /* Space between filters and data */
   }
