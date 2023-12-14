@@ -33,12 +33,27 @@ const ShowsPage = () => {
         }
     };
 
+    const handleArchiveShow = async (showId) => {
+        // Assuming your API has an endpoint for updating the show's 'active' status
+        const response = await fetch(`/api/shows/archiveShow?id=${showId}`, {
+            method: 'PATCH', // or 'PUT', depending on your API
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ active: false })
+        });
+
+        if (response.ok) {
+            await fetchShows(); // Refresh the list after archiving
+        }
+    };
+
     return (
         <>
             <Header />
             <div className="container">
                 <ShowForm onShowAdded={handleShowAdded} />
-                <ShowData shows={shows} onDeleteShow={handleDeleteShow} />
+                <ShowData shows={shows} onDeleteShow={handleDeleteShow} onArchiveShow={handleArchiveShow} />
             </div>
         </>
     );

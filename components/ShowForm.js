@@ -6,11 +6,14 @@ const ShowForm = ({ onShowAdded }) => {
         type: '',
         location: '',
         startDate: '',
-        endDate: ''
+        endDate: '',
+        active: true // Boolean 'active' variable set to true
     });
 
     const handleChange = (e) => {
-        setShow({ ...show, [e.target.name]: e.target.value });
+        // Check if the changed field is 'active' to handle boolean values
+        const value = e.target.name === 'active' ? e.target.checked : e.target.value;
+        setShow({ ...show, [e.target.name]: value });
     };
 
     const generateShowId = () => {
@@ -39,7 +42,7 @@ const ShowForm = ({ onShowAdded }) => {
             console.error('Failed to add show');
         }
 
-        setShow({ season: '', type: '', location: '', startDate: '', endDate: '' }); // Reset form fields
+        setShow({ season: '', type: '', location: '', startDate: '', endDate: '', active: true }); // Reset form fields, including active
     };
 
     return (
@@ -81,6 +84,16 @@ const ShowForm = ({ onShowAdded }) => {
                 <div className="form-group">
                     <label htmlFor="endDate">End Date:</label>
                     <input type="date" id="endDate" name="endDate" value={show.endDate} onChange={handleChange} />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="active">Active:</label>
+                    <input 
+                        type="checkbox" 
+                        id="active" 
+                        name="active" 
+                        checked={show.active} 
+                        onChange={handleChange} 
+                    />
                 </div>
                 <button type="submit" className="button">Add Show</button>
             </form>
