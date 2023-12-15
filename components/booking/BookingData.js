@@ -1,4 +1,7 @@
 import React from 'react';
+import { DateRangePicker } from 'react-date-range';
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
 
 const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
     const getTotalDays = (agentCounts) => {
@@ -49,38 +52,46 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
             {bookings.map(booking => {
                 const { isFull, emptyCount } = getAgentSelectionStatus(booking);
                 const agentCounts = compileAgentCounts(booking.agentSelection);
-
+    
                 return (
-                    <div className="bg-white p-4 mb-4 rounded shadow cursor-pointer flex" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
-                        <div className="flex-grow">
-                            <h2 className="text-lg font-bold mb-2">{booking.client}</h2>
-                            {isFull ? (
-                                <span className="inline-block bg-gradient-to-r from-green-400 to-blue-500 text-white py-1 px-3 rounded-full text-sm font-bold mb-3">
-                                    Booked
+                    <div className="bg-white p-4 mb-4 rounded-lg shadow-lg flex flex-col cursor-pointer" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
+                        <div className="flex justify-between">
+                            <h2 className="text-xl font-bold text-gray-800">{booking.client}</h2>
+                            <p className="inline-block bg-black text-white text-sm font-semibold px-3 py-1 rounded-full">
+                                Total Days: {getTotalDays(booking.agentCounts)}
+                            </p>
+                        </div>
+                        <div className="my-2 p-2 bg-gray-100 rounded">
+                            <p className="text-md text-gray-700">{booking.show}</p>
+                            <p className="text-md text-gray-600">{booking.startDate} - {booking.endDate}</p>
+                        </div>
+                        {isFull ? (
+                            <span className="self-start bg-gradient-to-r from-green-400 to-blue-500 text-white py-1 px-3 rounded-full text-sm font-bold my-2">
+                                Booked
+                            </span>
+                        ) : (
+                            <span className="self-start bg-gradient-to-r from-yellow-400 to-red-500 text-white py-1 px-3 rounded-full text-sm font-bold my-2">
+                                {emptyCount} Empty
+                            </span>
+                        )}
+                        <div className="flex flex-wrap gap-2 mt-2">
+                            {Object.entries(agentCounts).sort((a, b) => b[1] - a[1]).map(([agent, count]) => (
+                                <span key={agent} className="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800">
+                                    {agent}: {count}
                                 </span>
-                            ) : (
-                                <span className="inline-block bg-gradient-to-r from-yellow-400 to-red-500 text-white py-1 px-3 rounded-full text-sm font-bold mb-3">
-                                    {emptyCount} Empty
-                                </span>
-                            )}
-                            <p className="mb-1">{booking.show}</p>
-                            <p className="mb-1">{booking.startDate}</p>
-                            <p className="mb-1">{booking.endDate}</p>
-                            <p className="mb-3">Total Days: {getTotalDays(booking.agentCounts)}</p>
-                            <button onClick={(e) => handleDelete(booking._id, e)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                            ))}
+                        </div>
+                        <div className="mt-4">
+                            <button onClick={(e) => handleDelete(booking._id, e)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
                                 Delete
                             </button>
-                        </div>
-                        <div className="ml-4">
-                            {Object.entries(agentCounts).map(([agent, count]) => (
-                                <p key={agent}>{agent}: {count}</p>
-                            ))}
                         </div>
                     </div>
                 );
             })}
         </div>
     );
+    
 };
 
 export default BookingData;
