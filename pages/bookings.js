@@ -92,8 +92,10 @@ return (
         <Header />
         <div className="container mx-auto p-4">
           
-            <div className="md:flex md:space-x-4">
-              
+            <div className="flex flex-col-reverse md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-4">
+              <div className="md:flex-1">
+                    <BookingForm onBookingAdded={handleBookingAdded} />
+                </div>
                 <div className="md:flex-1 mt-4 md:mt-0">
                 <div className="filters-container mb-4">
                 <BookingFilters onFilterChange={handleFilterChange} />
@@ -103,9 +105,6 @@ return (
                         onDeleteBooking={handleDeleteBooking} 
                         onShowBookingDetails={handleShowBookingDetails} 
                     />
-                </div>
-                <div className="md:flex-1">
-                    <BookingForm onBookingAdded={handleBookingAdded} />
                 </div>
             </div>
             {modalVisible && 
