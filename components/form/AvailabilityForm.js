@@ -5,19 +5,43 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
     const [selectedShow, setSelectedShow] = useState('');
     const [isAvailable, setIsAvailable] = useState('');
     const [notes, setNotes] = useState('');
+    const [submissionSuccess, setSubmissionSuccess] = useState(false);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         const submissionData = {
             agent: selectedAgent,
             show: selectedShow,
-            availability: isAvailable, // Renamed from isAvailable to availability
+            availability: isAvailable,
             notes: notes
         };
-        console.log('Submitting:', submissionData);
-        await onAvailabilityAdded(submissionData);
+
+        try {
+            const response = await fetch('/api/availability/addAvailability', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(submissionData),
+            });
+
+            if (response.ok) {
+                setSubmissionSuccess(true); // Show success notification
+                resetFormFields();
+            } else {
+                console.error('Submission was not successful. Response:', await response.json());
+            }
+        } catch (error) {
+            console.error('Error occurred during form submission:', error);
+        }
     };
-    
+
+    const resetFormFields = () => {
+        setSelectedAgent('');
+        setSelectedShow('');
+        setIsAvailable('');
+        setNotes('');
+    };
 
     return (
         <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
@@ -37,7 +61,7 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
                     ))}
                 </select>
             </div>
-    
+
             {/* Show Dropdown */}
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="show">
@@ -54,8 +78,8 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
                     ))}
                 </select>
             </div>
-    
-          {/* Yes/No Availability */}
+
+            {/* Yes/No Availability */}
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="availability">
                     Are you available?
@@ -71,7 +95,7 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
                     <option value="no">No</option>
                 </select>
             </div>
-    
+
             {/* Notes Section */}
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
@@ -85,11 +109,13 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
                     placeholder="Enter any notes here"
                 />
             </div>
-    
+
             {/* Submit Button */}
             <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Submit
             </button>
+            {/* Success Notification */}
+            {submissionSuccess && <div className="alert alert-success">Form submitted successfully!</div>}
         </form>
     );
 };
