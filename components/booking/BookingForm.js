@@ -104,10 +104,19 @@ const BookingForm = ({ onBookingAdded }) => {
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label htmlFor="show" className="block text-gray-700 text-sm font-bold mb-2">Show:</label>
-                    <select id="show" name="show" value={booking.show} onChange={handleChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        <option value="" disabled selected>Select a show</option>
-                        {shows.map(show => <option key={show.id} value={show.id}>{show.id}</option>)}
-                    </select>
+                    <select 
+    id="show" 
+    name="show" 
+    value={booking.show} 
+    onChange={handleChange} 
+    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+>
+    <option value="" disabled>Select a show</option>
+    {shows.filter(show => show.active).map(show => (
+        <option key={show.id} value={show.id}>{show.id}</option> // Adjust according to your show object structure
+    ))}
+</select>
+
                 </div>
                 <div className="mb-4">
                     <label htmlFor="client" className="block text-gray-700 text-sm font-bold mb-2">Client:</label>

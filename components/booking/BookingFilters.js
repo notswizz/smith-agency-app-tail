@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const BookingFilters = ({ onFilterChange }) => {
     const [clientFilter, setClientFilter] = useState('');
     const [showFilter, setShowFilter] = useState('');
-    // Additional filter states can be added here
+    const [shows, setShows] = useState([]); // State to store shows
+
+    useEffect(() => {
+        // Fetch shows from the backend
+        const fetchShows = async () => {
+            const response = await fetch('/api/shows/getShows'); // Adjust the API endpoint as needed
+            const data = await response.json();
+            setShows(data);
+        };
+
+        fetchShows();
+    }, []);
 
     const handleClientFilterChange = (e) => {
         setClientFilter(e.target.value);
@@ -15,8 +26,6 @@ const BookingFilters = ({ onFilterChange }) => {
         onFilterChange({ client: clientFilter, show: e.target.value });
     };
 
-    // Add more handlers for additional filters
-
     return (
         <div className="booking-filters flex justify-end space-x-4 mb-4">
             <input 
@@ -26,14 +35,17 @@ const BookingFilters = ({ onFilterChange }) => {
                 onChange={handleClientFilterChange}
                 className="border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
             />
-            <input 
-                type="text" 
-                placeholder="Filter by Show" 
-                value={showFilter} 
-                onChange={handleShowFilterChange}
-                className="border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
-            />
-            {/* Add more inputs/dropdowns for additional filters */}
+           <select 
+    value={showFilter} 
+    onChange={handleShowFilterChange}
+    className="border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+>
+    <option value="">Filter by Show</option>
+    {shows.filter(show => show.active).map((show) => (
+        <option key={show.id} value={show.id}>{show.id}</option> // Adjust according to your show object structure
+    ))}
+</select>
+
         </div>
     );
 };
