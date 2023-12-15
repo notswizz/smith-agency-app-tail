@@ -84,15 +84,16 @@ return (
                 <BookingFilters onFilterChange={handleFilterChange} />
             </div>
             <div className="md:flex md:space-x-4">
-                <div className="md:flex-1">
-                    <BookingForm onBookingAdded={handleBookingAdded} />
-                </div>
+              
                 <div className="md:flex-1 mt-4 md:mt-0">
                     <BookingData 
                         bookings={bookings} 
                         onDeleteBooking={handleDeleteBooking} 
                         onShowBookingDetails={handleShowBookingDetails} 
                     />
+                </div>
+                <div className="md:flex-1">
+                    <BookingForm onBookingAdded={handleBookingAdded} />
                 </div>
             </div>
             {modalVisible && 

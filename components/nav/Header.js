@@ -5,10 +5,10 @@ import Image from 'next/image';
 const Header = () => {
   return (
     <header className="bg-black text-white py-1 shadow-md">
-      <nav className="container mx-auto flex justify-between items-center">
+      <nav className="container mx-auto flex justify-between items-center px-4 sm:px-6 lg:px-8">
         <div className="logo-container">
           {/* TSA logo clickable and redirecting to the homepage */}
-          <Link href="/" passHref>
+          <Link href="/">
             <Image src="/tsalogo.png" alt="TSA Logo" width={50} height={25} className="cursor-pointer" />
           </Link>
         </div>
