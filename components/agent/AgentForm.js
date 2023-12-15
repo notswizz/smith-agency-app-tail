@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
 const AgentForm = ({ onAgentAdded }) => {
-    const [agent, setAgent] = useState({ name: '', email: '', phone: '', location: [], instagram: '' });
+    // Include 'notes' in the initial state
+    const [agent, setAgent] = useState({ name: '', email: '', phone: '', location: [], instagram: '', notes: '' });
 
     const handleChange = (e) => {
         if (e.target.name === 'location') {
@@ -22,7 +23,7 @@ const AgentForm = ({ onAgentAdded }) => {
         e.preventDefault();
 
         try {
-            const response = await fetch('/api/agents/addAgent', { // Ensure this matches the correct API endpoint
+            const response = await fetch('/api/agents/addAgent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,7 +37,8 @@ const AgentForm = ({ onAgentAdded }) => {
                 if (onAgentAdded) {
                     onAgentAdded(newAgent);
                 }
-                setAgent({ name: '', email: '', phone: '', location: [], instagram: '' }); // Reset form fields
+                // Reset form fields including 'notes'
+                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', notes: '' });
             } else {
                 const errorData = await response.json();
                 console.error('Failed to add agent', errorData);
@@ -47,7 +49,7 @@ const AgentForm = ({ onAgentAdded }) => {
             alert('An error occurred while adding the agent.');
         }
     };
-    
+
     return (
         <div className="max-w-md mx-auto bg-white p-6 rounded shadow max-h-96 overflow-auto">
             <form onSubmit={handleSubmit}>
@@ -75,6 +77,10 @@ const AgentForm = ({ onAgentAdded }) => {
                 <div className="mb-6">
                     <label htmlFor="instagram" className="block text-gray-700 text-sm font-bold mb-2">Instagram:</label>
                     <input type="text" id="instagram" name="instagram" value={agent.instagram} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="notes" className="block text-gray-700 text-sm font-bold mb-2">Notes:</label>
+                    <textarea id="notes" name="notes" value={agent.notes} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
                 <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Agent</button>
             </form>
