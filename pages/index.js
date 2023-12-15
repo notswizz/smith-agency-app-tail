@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import Image from 'next/image';
 import Header from '../components/nav/Header';
 import Router from 'next/router';
+import Image from 'next/image';
 
 const HomePage = () => {
   useEffect(() => {
@@ -12,49 +12,25 @@ const HomePage = () => {
           Router.push('/');
         }
       });
-
-    // Load Instagram embed script
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = "//www.instagram.com/embed.js";
-    document.body.appendChild(script);
   }, []);
 
   return (
     <>
       <Header />
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', gap: '20px', padding: '20px' }}>
-        <iframe 
-          style={{
-            background: "#21313C",
-            border: "none",
-            borderRadius: "8px",
-            boxShadow: "0 4px 12px 0 rgba(70, 76, 79, .3)",
-            transition: 'transform 0.3s ease-in-out'
-          }}
-          width="500"
-          height="350"
-          src="https://charts.mongodb.com/charts-thesmithagency-powww/embed/charts?id=657a9f6b-f76b-4325-89c5-9c51c4f919c2&maxDataAge=3600&theme=dark&autoRefresh=true"
-          onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-          onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-        />
-        <iframe 
-          style={{
-            background: "#21313C",
-            border: "none",
-            borderRadius: "8px",
-            boxShadow: "0 4px 12px 0 rgba(70, 76, 79, .3)",
-            transition: 'transform 0.3s ease-in-out'
-          }}
-          width="500"
-          height="350"
-          src="https://charts.mongodb.com/charts-thesmithagency-powww/embed/charts?id=657983e4-727a-4663-8035-dbf20fac5d10&maxDataAge=3600&theme=dark&autoRefresh=true"
-          onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
-          onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
-        />
+      <div className="flex justify-center items-center flex-wrap gap-5 p-5">
+        <div className="text-center">
+          <Image
+            src="/tsalogoai2.png" // Assuming the image is in the public directory
+            alt="The Smith Agency Logo"
+            width={300} // Adjust the size as needed
+            height={300} // Adjust the size as needed
+            className="inline-block" // Add any additional classes if required
+          />
+          <h1 className="text-3xl font-bold my-4">The Smith Agency</h1>
+        </div>
       </div>
     </>
   );
-};
+}; 
 
 export default HomePage;
