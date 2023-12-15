@@ -123,26 +123,23 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
     };
 
     return (
-        <div className="modal">
-            <div className="modal-content">
-                <span className="close" onClick={onClose}>&times;</span>
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
+            <div className="modal-content bg-white p-4 rounded-lg shadow-lg w-3/4">
+                <span className="close text-gray-700 text-2xl leading-none hover:text-gray-500 cursor-pointer" onClick={onClose}>&times;</span>
                 
-                <DateRangePicker
-                    ranges={[selectionRange]}
-                    moveRangeOnFirstSelection={false}
-                    rangeColors={["#3d91ff"]}
-                    showSelectionPreview={true}
-                />
-                <div className="table-container">
-                    <table>
-                        <tbody>
-                            {selectedAgents.map((agentsForDay, dayIndex) => 
-                                renderRowForDate(dateRange[dayIndex], agentsForDay, dayIndex)
-                            )}
-                        </tbody>
-                    </table>
-                    <button className="button" onClick={handleSubmit}>Save Selection</button>
-                </div>
+               
+    
+                <div className="table-container mt-4">
+    <table className="min-w-full border-collapse border border-gray-300">
+        <tbody>
+            {selectedAgents.map((agentsForDay, dayIndex) => 
+                renderRowForDate(dateRange[dayIndex], agentsForDay, dayIndex)
+            )}
+        </tbody>
+    </table>
+    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50" onClick={handleSubmit}>Save Selection</button>
+</div>
+
             </div>
         </div>
     );

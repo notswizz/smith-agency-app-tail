@@ -4,25 +4,25 @@ import Image from 'next/image';
 
 const Header = () => {
   return (
-    <header>
-      <nav>
+    <header className="bg-black text-white py-1 shadow-md">
+      <nav className="container mx-auto flex justify-between items-center">
         <div className="logo-container">
-          {/* Make the TSA logo clickable and redirect to the homepage */}
+          {/* TSA logo clickable and redirecting to the homepage */}
           <Link href="/" passHref>
-            <Image src="/tsalogo.png" alt="TSA Logo" width={100} height={50} style={{ cursor: 'pointer' }} />
+            <Image src="/tsalogo.png" alt="TSA Logo" width={50} height={25} className="cursor-pointer" />
           </Link>
         </div>
-        <ul className="header-nav">
-          <li>
+        <ul className="flex space-x-4">
+          <li className="hover:text-gray-400">
             <Link href="/agents">Agents</Link>
           </li>
-          <li>
+          <li className="hover:text-gray-400">
             <Link href="/clients">Clients</Link>
           </li>
-          <li>
+          <li className="hover:text-gray-400">
             <Link href="/shows">Shows</Link>
           </li>
-          <li>
+          <li className="hover:text-gray-400">
             <Link href="/bookings">Bookings</Link>
           </li>
         </ul>

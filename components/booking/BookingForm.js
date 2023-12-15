@@ -100,33 +100,33 @@ const BookingForm = ({ onBookingAdded }) => {
     };
 
     return (
-        <div className="form-container">
+        <div className="container mx-auto p-4 max-w-md bg-white rounded shadow">
             <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="show">Show:</label>
-                    <select id="show" name="show" value={booking.show} onChange={handleChange}>
+                <div className="mb-4">
+                    <label htmlFor="show" className="block text-gray-700 text-sm font-bold mb-2">Show:</label>
+                    <select id="show" name="show" value={booking.show} onChange={handleChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         <option value="" disabled selected>Select a show</option>
                         {shows.map(show => <option key={show.id} value={show.id}>{show.id}</option>)}
                     </select>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="client">Client:</label>
-                    <select id="client" name="client" value={booking.client} onChange={handleChange}>
+                <div className="mb-4">
+                    <label htmlFor="client" className="block text-gray-700 text-sm font-bold mb-2">Client:</label>
+                    <select id="client" name="client" value={booking.client} onChange={handleChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                         <option value="" disabled selected>Select a client</option>
                         {clients.map(client => <option key={client.id} value={client.company}>{client.company}</option>)}
                     </select>
                 </div>
-                <div className="form-group">
-                    <label htmlFor="startDate">Start Date:</label>
-                    <input type="date" id="startDate" name="startDate" value={booking.startDate} onChange={handleDateChange} />
+                <div className="mb-4">
+                    <label htmlFor="startDate" className="block text-gray-700 text-sm font-bold mb-2">Start Date:</label>
+                    <input type="date" id="startDate" name="startDate" value={booking.startDate} onChange={handleDateChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
-                <div className="form-group">
-                    <label htmlFor="endDate">End Date:</label>
-                    <input type="date" id="endDate" name="endDate" value={booking.endDate} onChange={handleDateChange} />
+                <div className="mb-4">
+                    <label htmlFor="endDate" className="block text-gray-700 text-sm font-bold mb-2">End Date:</label>
+                    <input type="date" id="endDate" name="endDate" value={booking.endDate} onChange={handleDateChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
                 {booking.startDate && booking.endDate && generateDateRange(new Date(booking.startDate), new Date(booking.endDate)).map((date, index) => (
-                    <div key={index} className="form-group">
-                        <label htmlFor={`agentCount-${index}`}>
+                    <div key={index} className="mb-4">
+                        <label htmlFor={`agentCount-${index}`} className="block text-gray-700 text-sm font-bold mb-2">
                             {date.toISOString().slice(0, 10)}
                         </label>
                         <input
@@ -136,10 +136,11 @@ const BookingForm = ({ onBookingAdded }) => {
                             min="0"
                             value={booking.agentCounts[index] || 0}
                             onChange={(e) => handleAgentCountChange(index, e.target.value)}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                     </div>
                 ))}
-                <button type="submit" className="button">Add Booking</button>
+                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Booking</button>
             </form>
         </div>
     );

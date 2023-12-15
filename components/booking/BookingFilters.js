@@ -18,18 +18,20 @@ const BookingFilters = ({ onFilterChange }) => {
     // Add more handlers for additional filters
 
     return (
-        <div className="booking-filters">
+        <div className="booking-filters flex justify-end space-x-4 mb-4">
             <input 
                 type="text" 
                 placeholder="Filter by Client" 
                 value={clientFilter} 
-                onChange={handleClientFilterChange} 
+                onChange={handleClientFilterChange}
+                className="border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
             />
             <input 
                 type="text" 
                 placeholder="Filter by Show" 
                 value={showFilter} 
-                onChange={handleShowFilterChange} 
+                onChange={handleShowFilterChange}
+                className="border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
             />
             {/* Add more inputs/dropdowns for additional filters */}
         </div>

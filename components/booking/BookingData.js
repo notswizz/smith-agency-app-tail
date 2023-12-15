@@ -19,20 +19,20 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
     };
 
     return (
-        <div className="data-container">
+        <div className="container mx-auto p-4 max-h-96 overflow-auto">
             {bookings.map(booking => (
-                <div className="data-item" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
-                    <h3>{booking.client}</h3>
-            
-                    <p>{booking.show}</p>
-                    <p>{booking.startDate}</p>
-                    <p>{booking.endDate}</p>
-                    <p>Total Days: {getTotalDays(booking.agentCounts)}</p>
-                    <button onClick={(e) => handleDelete(booking._id, e)} className="delete-button">Delete</button>
+                <div className="bg-white p-4 mb-4 rounded shadow cursor-pointer" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
+                    <h3 className="text-lg font-bold mb-2">{booking.client}</h3>
+                    <p className="mb-1">{booking.show}</p>
+                    <p className="mb-1">{booking.startDate}</p>
+                    <p className="mb-1">{booking.endDate}</p>
+                    <p className="mb-3">Total Days: {getTotalDays(booking.agentCounts)}</p>
+                    <button onClick={(e) => handleDelete(booking._id, e)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
                 </div>
             ))}
         </div>
     );
+    
 };
 
 export default BookingData;

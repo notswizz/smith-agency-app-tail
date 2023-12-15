@@ -51,12 +51,19 @@ const ShowsPage = () => {
     return (
         <>
             <Header />
-            <div className="container">
-                <ShowForm onShowAdded={handleShowAdded} />
-                <ShowData shows={shows} onDeleteShow={handleDeleteShow} onArchiveShow={handleArchiveShow} />
+            <div className="container mx-auto px-4">
+                <div className="flex flex-row justify-between">
+                    <div className="flex-1 mr-2">
+                        <ShowForm onShowAdded={handleShowAdded} />
+                    </div>
+                    <div className="flex-1 ml-2">
+                        <ShowData shows={shows} onDeleteShow={handleDeleteShow} onArchiveShow={handleArchiveShow} />
+                    </div>
+                </div>
             </div>
         </>
     );
+    
 };
 
 export default ShowsPage;

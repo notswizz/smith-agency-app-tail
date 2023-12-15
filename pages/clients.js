@@ -45,9 +45,15 @@ const ClientsPage = () => {
     return (
         <>
             <Header />
-            <div className="container">
-                <ClientForm onClientAdded={handleClientAdded} />
-                <ClientData clients={clients} onDeleteClient={handleDeleteClient} />
+            <div className="container mx-auto px-4">
+                <div className="flex flex-row justify-between space-x-4">
+                    <div className="flex-1">
+                        <ClientForm onClientAdded={handleClientAdded} />
+                    </div>
+                    <div className="flex-1">
+                        <ClientData clients={clients} onDeleteClient={handleDeleteClient} />
+                    </div>
+                </div>
             </div>
         </>
     );

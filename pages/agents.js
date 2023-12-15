@@ -3,6 +3,7 @@ import Header from '../components/nav/Header';
 import AgentForm from '../components/agent/AgentForm';
 import AgentData from '../components/agent/AgentData';
 
+
 const AgentsPage = () => {
     const [agents, setAgents] = useState([]);
 
@@ -48,9 +49,15 @@ const AgentsPage = () => {
     return (
         <>
             <Header />
-            <div className="container">
-                <AgentForm onAgentAdded={handleAgentAdded} />
-                <AgentData agents={agents} onDeleteAgent={handleDeleteAgent} />
+            <div className="container mx-auto px-4 glow-box">
+                <div className="flex flex-row justify-between space-x-4">
+                    <div className="flex-1 max-h-400 overflow-auto">
+                        <AgentForm onAgentAdded={handleAgentAdded} />
+                    </div>
+                    <div className="flex-1 max-h-400 overflow-auto">
+                        <AgentData agents={agents} onDeleteAgent={handleDeleteAgent} />
+                    </div>
+                </div>
             </div>
         </>
     );
