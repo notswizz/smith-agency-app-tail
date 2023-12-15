@@ -92,7 +92,7 @@ return (
         <Header />
         <div className="container mx-auto p-4">
           
-            <div className="flex flex-col-reverse md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-4">
+            <div className="flex flex-col-reverse md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-4n">
               <div className="md:flex-1">
                     <BookingForm onBookingAdded={handleBookingAdded} />
                 </div>
