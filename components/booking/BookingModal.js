@@ -50,6 +50,28 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
         setSelectedAgents(initialSelectedAgents);
     }, [dateRange, booking.agentSelection, booking.agentCounts]);
 
+    const bookingInfoHeader = () => (
+        <tr className="bg-gray-50">
+            <th colSpan="100%" className="py-2 px-4 text-left text-gray-700">
+                -- {booking.show} ---- {booking.client} ---- {startDate.toLocaleDateString()} -- {endDate.toLocaleDateString()} --
+            </th>
+        </tr>
+    );
+
+    const isAgentSelectionFull = () => {
+        return selectedAgents.every((agentsForDay, index) => 
+            agentsForDay.length === booking.agentCounts[index] &&
+            agentsForDay.every(agentId => agentId !== '')
+        );
+    };
+
+    const FullBadge = () => (
+        <div className="text-sm bg-pink-500 text-white py-1 px-3 rounded-full font-bold">
+            All Slots Filled
+        </div>
+    );
+    
+
     const handleAgentSelection = (dayIndex, agentIndex, selectedAgentId) => {
         const updatedSelection = [...selectedAgents];
         updatedSelection[dayIndex][agentIndex] = selectedAgentId;
@@ -126,26 +148,29 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
         key: 'selection',
     };
 
-    return (
+   return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
-          <div className="bg-white p-4 rounded-lg shadow-lg w-3/4">
-            <span className="close text-gray-700 text-2xl leading-none hover:text-gray-500 cursor-pointer" onClick={onClose}>&times;</span>
-            <div className="mt-4">
-              <table className="min-w-full border-collapse border border-gray-300">
-                <tbody>
-                  {selectedAgents.map((agentsForDay, dayIndex) => (
-                    <React.Fragment key={dayIndex}>
-                      {dayIndex > 0 && <tr className="border-t-2 border-blue-200"><td colSpan="100%"></td></tr>} {/* Add separation line */}
-                      {renderRowForDate(dateRange[dayIndex], agentsForDay, dayIndex)}
-                    </React.Fragment>
-                  ))}
-                </tbody>
-              </table>
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50" onClick={handleSubmit}>Save Selection</button>
+            <div className="bg-white p-4 rounded-lg shadow-lg w-3/4">
+                <span className="close text-gray-700 text-2xl leading-none hover:text-gray-500 cursor-pointer" onClick={onClose}>&times;</span>
+                <div className="mt-4">
+                    <table className="min-w-full border-collapse border border-gray-300">
+                        <thead>
+                            {bookingInfoHeader()}
+                        </thead>
+                        <tbody>
+                            {selectedAgents.map((agentsForDay, dayIndex) => (
+                                <React.Fragment key={dayIndex}>
+                                    {dayIndex > 0 && <tr className="border-t-2 border-blue-200"><td colSpan="100%"></td></tr>} {/* Add separation line */}
+                                    {renderRowForDate(dateRange[dayIndex], agentsForDay, dayIndex)}
+                                </React.Fragment>
+                            ))}
+                        </tbody>
+                    </table>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50" onClick={handleSubmit}>Save Selection</button>
+                </div>
             </div>
-          </div>
         </div>
-      );
-    };
-    
-    export default Modal;
+    );
+};
+
+export default Modal;
