@@ -73,7 +73,8 @@ const AgentsPage = () => {
         <>
             <Header />
             <div className="container mx-auto px-4">
-                <div className="flex flex-row justify-between space-x-4">
+                {/* Update the className to use flex-col for mobile and flex-row for larger screens */}
+                <div className="flex flex-col md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-4">
                     <div className="flex-1 max-h-400 overflow-auto">
                         <AgentForm onAgentAdded={handleAgentAdded} />
                     </div>
