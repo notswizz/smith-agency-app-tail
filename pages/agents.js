@@ -9,19 +9,20 @@ const AgentsPage = () => {
     const [agentAppearances, setAgentAppearances] = useState({});
 
     const fetchAgentsAndBookings = async () => {
-        // Fetch agents
         const agentsResponse = await fetch('/api/agents/getAgents');
         const agentsData = agentsResponse.ok ? await agentsResponse.json() : [];
+        setAgents(agentsData);
 
-        // Fetch bookings
         const bookingsResponse = await fetch('/api/bookings/getBookings');
         const bookingsData = bookingsResponse.ok ? await bookingsResponse.json() : [];
-
-        setAgents(agentsData);
         setBookings(bookingsData);
 
-        // Process the bookings to count agent appearances
-        const counts = countAgentAppearances(bookingsData);
+        const agentNameToIdMap = agentsData.reduce((acc, agent) => {
+            acc[agent.name] = agent._id;
+            return acc;
+        }, {});
+
+        const counts = countAgentAppearances(bookingsData, agentNameToIdMap);
         setAgentAppearances(counts);
     };
 
@@ -55,11 +56,14 @@ const AgentsPage = () => {
         }
     };
 
-    const countAgentAppearances = (bookings) => {
+    const countAgentAppearances = (bookings, agentNameToIdMap) => {
         const counts = {};
         bookings.forEach(booking => {
-            booking.agentSelection.forEach(agentId => {
-                counts[agentId] = (counts[agentId] || 0) + 1;
+            booking.agentSelection.forEach(dayAgents => {
+                dayAgents.forEach(agentName => {
+                    const agentId = agentNameToIdMap[agentName];
+                    counts[agentId] = (counts[agentId] || 0) + 1;
+                });
             });
         });
         return counts;
