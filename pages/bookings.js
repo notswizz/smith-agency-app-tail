@@ -50,17 +50,28 @@ const BookingsPage = () => {
     };
 
     const handleDeleteBooking = async (bookingId) => {
-        // Delete booking from database
-        const response = await fetch(`/api/bookings/deleteBooking/${bookingId}`, {
-            method: 'DELETE',
-        });
+  // Ask user to confirm the deletion
+  if (window.confirm('Are you sure you want to delete this booking?')) {
+    // If confirmed, proceed with the deletion
+    const response = await fetch(`/api/bookings/deleteBooking/${bookingId}`, {
+      method: 'DELETE',
+    });
 
-        if (response.ok) {
-            // Update state
-            const updatedBookings = bookings.filter(booking => booking._id !== bookingId);
-            setBookings(updatedBookings);
-        }
-    };
+    if (response.ok) {
+      // Update state after successful deletion
+      const updatedBookings = bookings.filter(booking => booking._id !== bookingId);
+      setBookings(updatedBookings);
+      alert('Booking deleted successfully.');
+    } else {
+      // Handle any errors
+      alert('Failed to delete booking.');
+    }
+  } else {
+    // If not confirmed, do nothing
+    console.log('Deletion cancelled by user.');
+  }
+};
+
 
     const handleShowBookingDetails = (booking) => {
         setSelectedBooking(booking);
@@ -80,12 +91,13 @@ return (
     <>
         <Header />
         <div className="container mx-auto p-4">
-            <div className="filters-container mb-4">
-                <BookingFilters onFilterChange={handleFilterChange} />
-            </div>
+          
             <div className="md:flex md:space-x-4">
               
                 <div className="md:flex-1 mt-4 md:mt-0">
+                <div className="filters-container mb-4">
+                <BookingFilters onFilterChange={handleFilterChange} />
+            </div>
                     <BookingData 
                         bookings={bookings} 
                         onDeleteBooking={handleDeleteBooking} 
