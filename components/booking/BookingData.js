@@ -1,7 +1,4 @@
 import React from 'react';
-import { DateRangePicker } from 'react-date-range';
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
 
 const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
     const getTotalDays = (agentCounts) => {
@@ -9,25 +6,18 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
     };
 
     const getAgentSelectionStatus = (booking) => {
-        // Count the total number of actual agent selections made, ignoring empty strings or other placeholders
         const totalSelectionsMade = booking.agentSelection.reduce(
-            (total, day) => total + day.filter(agent => agent && agent !== '').length, 0);
-    
-        // Use getTotalDays to calculate the total number of agent slots
+            (total, day) => total + day.filter(agent => agent).length, 0
+        );
         const totalAgentSlots = getTotalDays(booking.agentCounts);
-    
-        // Calculate the number of empty spots
         const emptyCount = totalAgentSlots - totalSelectionsMade;
-    
-        // Determine if the booking is full
         const isFull = emptyCount === 0;
-    
         return { isFull, emptyCount };
     };
-    
+
     const compileAgentCounts = (agentSelection) => {
         return agentSelection.flat().reduce((acc, agent) => {
-            if (agent && agent !== '') {
+            if (agent) {
                 acc[agent] = (acc[agent] || 0) + 1;
             }
             return acc;
@@ -39,7 +29,6 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
         const response = await fetch(`/api/bookings/deleteBooking?id=${id}`, {
             method: 'DELETE',
         });
-
         if (response.ok) {
             onDeleteBooking(id);
         } else {
@@ -52,7 +41,6 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
             {bookings.map(booking => {
                 const { isFull, emptyCount } = getAgentSelectionStatus(booking);
                 const agentCounts = compileAgentCounts(booking.agentSelection);
-    
                 return (
                     <div className="bg-white p-4 mb-4 rounded-lg shadow-lg flex flex-col cursor-pointer" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
                         <div className="flex justify-between">
@@ -66,11 +54,11 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
                             <p className="text-md text-gray-600">{booking.startDate} - {booking.endDate}</p>
                         </div>
                         {isFull ? (
-                            <span className="self-start bg-gradient-to-r from-green-400 to-blue-500 text-white py-1 px-3 rounded-full text-sm font-bold my-2">
+                            <span className="self-start bg-green-400 to-blue-500 text-white py-1 px-3 rounded-full text-sm font-bold my-2">
                                 Booked
                             </span>
                         ) : (
-                            <span className="self-start bg-gradient-to-r from-yellow-400 to-red-500 text-white py-1 px-3 rounded-full text-sm font-bold my-2">
+                            <span className="self-start bg-yellow-400 to-red-500 text-white py-1 px-3 rounded-full text-sm font-bold my-2">
                                 {emptyCount} Empty
                             </span>
                         )}
@@ -91,7 +79,6 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
             })}
         </div>
     );
-    
 };
 
 export default BookingData;

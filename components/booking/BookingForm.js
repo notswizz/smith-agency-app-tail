@@ -7,6 +7,7 @@ const BookingForm = ({ onBookingAdded }) => {
         startDate: '',
         endDate: '',
         agentCounts: [],
+        notes: '', // Add notes to the booking state
     });
 
     const [clients, setClients] = useState([]);
@@ -80,10 +81,18 @@ const BookingForm = ({ onBookingAdded }) => {
         if (response.ok) {
             const addedBooking = await response.json();
             onBookingAdded(addedBooking);
-            setBooking({ show: '', client: '', startDate: '', endDate: '', agentCounts: [] }); // Reset form fields
+            setBooking({ 
+                show: '', 
+                client: '', 
+                startDate: '', 
+                endDate: '', 
+                agentCounts: [],
+                notes: '' // Reset notes field to empty string
+            });
         } else {
             console.error('Failed to add booking');
         }
+        
     };
 
     const generateDateRange = (start, end) => {
@@ -148,7 +157,20 @@ const BookingForm = ({ onBookingAdded }) => {
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                     </div>
+                    
                 ))}
+                {/* Notes Section */}
+                <div className="mb-4">
+                    <label htmlFor="notes" className="block text-gray-700 text-sm font-bold mb-2">Notes:</label>
+                    <textarea
+                        id="notes"
+                        name="notes"
+                        value={booking.notes}
+                        onChange={handleChange}
+                        className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        placeholder="Enter any notes here"
+                    />
+                </div>
                 <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Booking</button>
             </form>
         </div>

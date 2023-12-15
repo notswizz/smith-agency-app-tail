@@ -1,18 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { DateRangePicker } from 'react-date-range';
+import { toUTCDateString } from '../../lib/utils'; // Corrected import statement
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 
-function createDateWithoutTimezoneOffset(dateString) {
-    const date = new Date(dateString);
-    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
-    return new Date(date.getTime() + userTimezoneOffset);
-}
-
 const generateDateRange = (start, end) => {
     let dates = [];
-    let currentDate = new Date(start.toISOString().split('T')[0]);
-    let endDate = new Date(end.toISOString().split('T')[0]);
+    let currentDate = new Date(start);
+    let endDate = new Date(end);
 
     while (currentDate <= endDate) {
         dates.push(new Date(currentDate));
@@ -25,6 +19,7 @@ const generateDateRange = (start, end) => {
 const Modal = ({ booking, onClose, onUpdateBooking }) => {
     if (!booking) return null;
 
+    // Fetch agents data on component mount
     useEffect(() => {
         const fetchAgents = async () => {
             const response = await fetch('/api/agents/getAgents');
@@ -34,17 +29,18 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
             }
         };
         fetchAgents();
-    }, [booking]); // Depend only on booking
+    }, []);
 
-    const startDate = useMemo(() => createDateWithoutTimezoneOffset(booking.startDate), [booking.startDate]);
-    const endDate = useMemo(() => createDateWithoutTimezoneOffset(booking.endDate), [booking.endDate]);
+    const startDate = useMemo(() => new Date(toUTCDateString(booking.startDate)), [booking.startDate]);
+    const endDate = useMemo(() => new Date(toUTCDateString(booking.endDate)), [booking.endDate]);
     const dateRange = useMemo(() => generateDateRange(startDate, endDate), [startDate, endDate]);
 
     const [selectedAgents, setSelectedAgents] = useState(booking.agentSelection || []);
     const [agents, setAgents] = useState([]);
 
     useEffect(() => {
-        const initialSelectedAgents = dateRange.map((date, index) => {
+        // Initialize selected agents state based on booking data
+        const initialSelectedAgents = dateRange.map((_, index) => {
             return booking.agentSelection[index] || new Array(booking.agentCounts[index] || 0).fill('');
         });
         setSelectedAgents(initialSelectedAgents);
@@ -53,24 +49,10 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
     const bookingInfoHeader = () => (
         <tr className="bg-gray-50">
             <th colSpan="100%" className="py-2 px-4 text-left text-gray-700">
-                -- {booking.show} ---- {booking.client} ---- {startDate.toLocaleDateString()} -- {endDate.toLocaleDateString()} --
+                -- {booking.show} ---- {booking.client} ---- {startDate.toISOString().split('T')[0]} -- {endDate.toISOString().split('T')[0]} --
             </th>
         </tr>
     );
-
-    const isAgentSelectionFull = () => {
-        return selectedAgents.every((agentsForDay, index) => 
-            agentsForDay.length === booking.agentCounts[index] &&
-            agentsForDay.every(agentId => agentId !== '')
-        );
-    };
-
-    const FullBadge = () => (
-        <div className="text-sm bg-pink-500 text-white py-1 px-3 rounded-full font-bold">
-            All Slots Filled
-        </div>
-    );
-    
 
     const handleAgentSelection = (dayIndex, agentIndex, selectedAgentId) => {
         const updatedSelection = [...selectedAgents];
@@ -98,8 +80,6 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
     };
 
     const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentId) => {
-        const selectedAgent = agents.find(agent => agent.id === selectedAgentId);
-
         return (
             <select
                 value={selectedAgentId || ''}
@@ -124,13 +104,11 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
                 <tr key={`day-${dayIndex}-row-${i / MAX_AGENTS_PER_ROW}`}>
                     {i === 0 && (
                         <td rowSpan={Math.ceil(agentsForDay.length / MAX_AGENTS_PER_ROW)}>
-                            <div className="date-label">{date.toLocaleDateString()}</div>
+                            <div className="date-label">{date.toISOString().split('T')[0]}</div>
                         </td>
                     )}
                     {agentsInRow.map((agentId, agentIndex) => (
-                        <td key={`agent-${agentIndex}`} 
-                            // Apply bg-green-100 if an agent is selected, otherwise bg-red-100
-                            className={agentId ? 'bg-green-100' : 'bg-red-100'}>
+                        <td key={`agent-${agentIndex}`} className={agentId ? 'bg-green-100' : 'bg-red-100'}>
                             {renderAgentDropdown(dayIndex, i + agentIndex, agentId)}
                         </td>
                     ))}
@@ -139,16 +117,8 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
         }
         return rows;
     };
-    
-    
 
-    const selectionRange = {
-        startDate: startDate,
-        endDate: endDate,
-        key: 'selection',
-    };
-
-   return (
+    return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
             <div className="bg-white p-4 rounded-lg shadow-lg w-3/4">
                 <span className="close text-gray-700 text-2xl leading-none hover:text-gray-500 cursor-pointer" onClick={onClose}>&times;</span>
@@ -160,7 +130,7 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
                         <tbody>
                             {selectedAgents.map((agentsForDay, dayIndex) => (
                                 <React.Fragment key={dayIndex}>
-                                    {dayIndex > 0 && <tr className="border-t-2 border-blue-200"><td colSpan="100%"></td></tr>} {/* Add separation line */}
+                                    {dayIndex > 0 && <tr className="border-t-2 border-blue-200"><td colSpan="100%"></td></tr>}
                                     {renderRowForDate(dateRange[dayIndex], agentsForDay, dayIndex)}
                                 </React.Fragment>
                             ))}
