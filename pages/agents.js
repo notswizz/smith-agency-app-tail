@@ -3,21 +3,30 @@ import Header from '../components/nav/Header';
 import AgentForm from '../components/agent/AgentForm';
 import AgentData from '../components/agent/AgentData';
 
-
 const AgentsPage = () => {
     const [agents, setAgents] = useState([]);
+    const [bookings, setBookings] = useState([]);
+    const [agentAppearances, setAgentAppearances] = useState({});
 
-    // Move fetchAgents outside of useEffect
-    const fetchAgents = async () => {
-        const response = await fetch('/api/agents/getAgents'); // Adjust this to your GET API
-        if (response.ok) {
-            const data = await response.json();
-            setAgents(data);
-        }
+    const fetchAgentsAndBookings = async () => {
+        // Fetch agents
+        const agentsResponse = await fetch('/api/agents/getAgents');
+        const agentsData = agentsResponse.ok ? await agentsResponse.json() : [];
+
+        // Fetch bookings
+        const bookingsResponse = await fetch('/api/bookings/getBookings');
+        const bookingsData = bookingsResponse.ok ? await bookingsResponse.json() : [];
+
+        setAgents(agentsData);
+        setBookings(bookingsData);
+
+        // Process the bookings to count agent appearances
+        const counts = countAgentAppearances(bookingsData);
+        setAgentAppearances(counts);
     };
 
     useEffect(() => {
-        fetchAgents();
+        fetchAgentsAndBookings();
     }, []);
 
     const handleAgentAdded = async (newAgent) => {
@@ -30,7 +39,7 @@ const AgentsPage = () => {
         });
 
         if (response.ok) {
-            fetchAgents(); // Now fetchAgents is accessible here
+            fetchAgentsAndBookings();
         } else {
             console.error('Failed to add agent', await response.json());
         }
@@ -46,16 +55,26 @@ const AgentsPage = () => {
         }
     };
 
+    const countAgentAppearances = (bookings) => {
+        const counts = {};
+        bookings.forEach(booking => {
+            booking.agentSelection.forEach(agentId => {
+                counts[agentId] = (counts[agentId] || 0) + 1;
+            });
+        });
+        return counts;
+    };
+
     return (
         <>
             <Header />
-            <div className="container mx-auto px-4 glow-box">
+            <div className="container mx-auto px-4">
                 <div className="flex flex-row justify-between space-x-4">
                     <div className="flex-1 max-h-400 overflow-auto">
                         <AgentForm onAgentAdded={handleAgentAdded} />
                     </div>
                     <div className="flex-1 max-h-400 overflow-auto">
-                        <AgentData agents={agents} onDeleteAgent={handleDeleteAgent} />
+                        <AgentData agents={agents} onDeleteAgent={handleDeleteAgent} agentAppearances={agentAppearances} />
                     </div>
                 </div>
             </div>
