@@ -5,8 +5,9 @@ import ShowData from '../components/show/ShowData';
 
 const ShowsPage = () => {
     const [shows, setShows] = useState([]);
+    const [bookings, setBookings] = useState([]);
 
-    // Define fetchShows outside of useEffect
+    // Fetch Shows
     const fetchShows = async () => {
         const response = await fetch('/api/shows/getShows');
         if (response.ok) {
@@ -15,12 +16,22 @@ const ShowsPage = () => {
         }
     };
 
+    // Fetch Bookings
+    const fetchBookings = async () => {
+        const response = await fetch('/api/bookings/getBookings'); // Adjust the endpoint as necessary
+        if (response.ok) {
+            const data = await response.json();
+            setBookings(data);
+        }
+    };
+
     useEffect(() => {
         fetchShows();
+        fetchBookings();
     }, []);
 
-    const handleShowAdded = async (newShow) => {
-        await fetchShows(); // This now should work
+    const handleShowAdded = async () => {
+        await fetchShows(); // Refresh the list after adding a show
     };
 
     const handleDeleteShow = async (showId) => {
@@ -34,9 +45,8 @@ const ShowsPage = () => {
     };
 
     const handleArchiveShow = async (showId) => {
-        // Assuming your API has an endpoint for updating the show's 'active' status
         const response = await fetch(`/api/shows/archiveShow?id=${showId}`, {
-            method: 'PATCH', // or 'PUT', depending on your API
+            method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -48,6 +58,23 @@ const ShowsPage = () => {
         }
     };
 
+    const handlePrintShowBookings = (showId) => {
+        // Filter bookings that have the same show ID
+        const filteredBookings = bookings.filter(booking => booking.show === showId);
+    
+        // Check if there are any bookings found and print their clients
+        if (filteredBookings.length > 0) {
+            console.log(`Clients for show ${showId}:`, filteredBookings.map(booking => booking.client));
+        } else {
+            console.log(`No bookings found for show ${showId}`);
+        }
+    };
+    
+    
+    
+    console.log("Bookings data: ", bookings);
+
+
     return (
         <>
             <Header />
@@ -57,13 +84,19 @@ const ShowsPage = () => {
                         <ShowForm onShowAdded={handleShowAdded} />
                     </div>
                     <div className="flex-1 ml-2">
-                        <ShowData shows={shows} onDeleteShow={handleDeleteShow} onArchiveShow={handleArchiveShow} />
+                    <ShowData
+    shows={shows}
+    bookings={bookings} // Ensure this is correctly passed
+    onDeleteShow={handleDeleteShow}
+    onArchiveShow={handleArchiveShow}
+    handlePrintShowBookings={handlePrintShowBookings}
+/>
+
                     </div>
                 </div>
             </div>
         </>
     );
-    
 };
 
 export default ShowsPage;
