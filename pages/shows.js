@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/nav/Header';
 import ShowForm from '../components/show/ShowForm';
 import ShowData from '../components/show/ShowData';
+import BookingData from '../components/booking/BookingData'; // Imported BookingData
 
 const ShowsPage = () => {
     const [shows, setShows] = useState([]);
@@ -69,11 +70,9 @@ const ShowsPage = () => {
             console.log(`No bookings found for show ${showId}`);
         }
     };
-    
-    
-    
-    console.log("Bookings data: ", bookings);
 
+    // Log for debugging
+    console.log("Bookings data: ", bookings);
 
     return (
         <>
@@ -84,14 +83,13 @@ const ShowsPage = () => {
                         <ShowForm onShowAdded={handleShowAdded} />
                     </div>
                     <div className="flex-1 ml-2">
-                    <ShowData
-    shows={shows}
-    bookings={bookings} // Ensure this is correctly passed
-    onDeleteShow={handleDeleteShow}
-    onArchiveShow={handleArchiveShow}
-    handlePrintShowBookings={handlePrintShowBookings}
-/>
-
+                        <ShowData
+                            shows={shows}
+                            bookings={bookings}
+                            onDeleteShow={handleDeleteShow}
+                            onArchiveShow={handleArchiveShow}
+                            handlePrintShowBookings={handlePrintShowBookings}
+                        />
                     </div>
                 </div>
             </div>

@@ -86,3 +86,18 @@
     padding-top: 20px; /* Adjust the padding as needed */
 }
 
+@media print {
+  body * {
+      visibility: hidden; /* Hide everything in the body when printing */
+  }
+
+  .print-area, .print-area * {
+      visibility: visible; /* Only print elements inside .print-area */
+  }
+
+  .print-area {
+      position: absolute;
+      left: 0;
+      top: 0;
+  }
+}

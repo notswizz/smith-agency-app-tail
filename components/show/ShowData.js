@@ -1,20 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
+import BookingData from '../booking/BookingData'; // Adjust the path as necessary
 import ReactDOM from 'react-dom';
 import MasterSheet from '../../pages/masterSheet';
 
 const ShowData = ({ shows, onDeleteShow, onArchiveShow, handlePrintShowBookings, bookings }) => {
+    const [selectedShowBookings, setSelectedShowBookings] = useState([]);
 
     const printMasterSheet = (showId) => {
         const filteredBookings = bookings.filter(booking => booking.show === showId);
-        const newWindow = window.open('', '_blank');
-        ReactDOM.render(<MasterSheet bookings={filteredBookings} />, newWindow.document.body);
-        newWindow.document.title = "Master Sheet";
-        newWindow.document.close(); // Important to trigger load event in new window
-        newWindow.focus(); // Required for IE
-        newWindow.onload = function () {
-            newWindow.print();
-            newWindow.close();
-        };
+        setSelectedShowBookings(filteredBookings);
+        window.print();
     };
 
     return (
