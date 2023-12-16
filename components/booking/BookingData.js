@@ -37,28 +37,40 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
     };
 
     return (
-        <div className="container mx-auto p-4 max-h-96 overflow-auto">
+        <div className="container mx-auto p-4 max-h-96 overflow-auto shadow border border-pink-400 rounded-lg hover:shadow-lg hover:border-pink-500 transition duration-300">
             {bookings.map(booking => {
                 const { isFull, emptyCount } = getAgentSelectionStatus(booking);
                 const agentCounts = compileAgentCounts(booking.agentSelection);
                 return (
                     <div className="bg-white p-4 mb-4 rounded-lg shadow-lg flex flex-col cursor-pointer" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
-                        <div className="flex justify-between">
-                            <h2 className="text-xl font-bold text-gray-800">{booking.client}</h2>
-                            <p className="inline-block bg-black text-white text-sm font-semibold px-3 py-1 rounded-full">
-                                Total Days: {getTotalDays(booking.agentCounts)}
-                            </p>
-                        </div>
-                        <div className="my-2 p-2 bg-gray-100 rounded">
-                            <p className="text-md text-gray-700">{booking.show}</p>
-                            <p className="text-md text-gray-600">{booking.startDate} - {booking.endDate}</p>
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800">
+                                    {booking.client}
+                                </h2>
+                                <div className="my-4 p-4 bg-gray-100 border border-gray-300 rounded-lg shadow-sm">
+                                    <p className="text-lg font-semibold text-gray-700">{booking.show}</p>
+                                    <div className="flex flex-col">
+                                        <span className="text-md text-gray-600">{booking.startDate}</span>
+                                        <span className="text-md text-gray-600">{booking.endDate}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <p className="inline-block bg-black text-white text-sm font-semibold px-3 py-1 rounded-full">
+                                    Total Days: {getTotalDays(booking.agentCounts)}
+                                </p>
+                                <div className="mt-4 p-4 bg-yellow-200 border border-yellow-400 rounded shadow-lg">
+                                    <p className="text-sm text-gray-800 font-medium whitespace-pre-line">{booking.notes}</p>
+                                </div>
+                            </div>
                         </div>
                         {isFull ? (
-                            <span className="self-start bg-green-400 to-blue-500 text-white py-1 px-3 rounded-full text-sm font-bold my-2">
+                            <span className="self-start bg-green-400 text-white py-2 px-4 rounded-md text-base font-bold my-2 shadow">
                                 Booked
                             </span>
                         ) : (
-                            <span className="self-start bg-yellow-400 to-red-500 text-white py-1 px-3 rounded-full text-sm font-bold my-2">
+                            <span className="self-start bg-yellow-400 text-white py-2 px-4 rounded-md text-base font-bold my-2 shadow">
                                 {emptyCount} Empty
                             </span>
                         )}
@@ -69,8 +81,8 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
                                 </span>
                             ))}
                         </div>
-                        <div className="mt-4">
-                            <button onClick={(e) => handleDelete(booking._id, e)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full">
+                        <div className="mt-4 flex justify-end">
+                            <button onClick={(e) => handleDelete(booking._id, e)} className="ring-2 ring-red-300 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:ring-4 focus:ring-red-300">
                                 Delete
                             </button>
                         </div>

@@ -109,7 +109,7 @@ const BookingForm = ({ onBookingAdded }) => {
     };
 
     return (
-        <div className="container mx-auto p-4 max-w-md bg-white rounded shadow">
+        <div className="container mx-auto p-4 max-w-md bg-white rounded shadow" style={{ height: '400px', overflowY: 'scroll' }}>
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label htmlFor="show" className="block text-gray-700 text-sm font-bold mb-2">Show:</label>
