@@ -1,16 +1,20 @@
 import React from 'react';
-import MasterSheet from '../../templates/masterSheet';
-
+import ReactDOM from 'react-dom';
+import MasterSheet from '../../pages/masterSheet';
 
 const ShowData = ({ shows, onDeleteShow, onArchiveShow, handlePrintShowBookings, bookings }) => {
 
     const printMasterSheet = (showId) => {
         const filteredBookings = bookings.filter(booking => booking.show === showId);
-        const masterSheetContent = <MasterSheet bookings={filteredBookings} />;
-
-        // Implement the logic to render and print masterSheetContent here
-        // This could involve rendering it to a hidden div and using window.print()
-        // or another method depending on your specific needs
+        const newWindow = window.open('', '_blank');
+        ReactDOM.render(<MasterSheet bookings={filteredBookings} />, newWindow.document.body);
+        newWindow.document.title = "Master Sheet";
+        newWindow.document.close(); // Important to trigger load event in new window
+        newWindow.focus(); // Required for IE
+        newWindow.onload = function () {
+            newWindow.print();
+            newWindow.close();
+        };
     };
 
     return (
