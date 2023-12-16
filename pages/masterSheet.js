@@ -1,9 +1,6 @@
-// File: pages/MasterSheet.js
-
 import React from 'react';
 
-
-const MasterSheet = ({ bookings }) => {
+const MasterSheet = ({ bookings = [] }) => {
     const getTotalDays = (agentCounts) => {
         return Array.isArray(agentCounts) ? agentCounts.reduce((a, b) => a + b, 0) : 0;
     };
@@ -19,7 +16,7 @@ const MasterSheet = ({ bookings }) => {
 
     return (
         <div className="print p-8">
-            {bookings.map(booking => {
+            {Array.isArray(bookings) && bookings.map(booking => {
                 const totalDays = getTotalDays(booking.agentCounts);
                 const agentCounts = compileAgentCounts(booking.agentSelection);
                 return (
