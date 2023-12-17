@@ -42,7 +42,7 @@ const AgentFilter = ({ onFilterChange, filteredAgentCount }) => {
                     <option key={location} value={location}>{location}</option>
                 ))}
             </select>
-            <div className="text-sm font-semibold">
+            <div className="text-sm text-gray-600">
                 Showing {filteredAgentCount} Agents
             </div>
         </div>

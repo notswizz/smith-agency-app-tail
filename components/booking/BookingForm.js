@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import SearchBar from '../nav/SearchBar'; // Import the AutoFillSearchBar component
 
 const BookingForm = ({ onBookingAdded }) => {
     const [booking, setBooking] = useState({
@@ -45,6 +46,11 @@ const BookingForm = ({ onBookingAdded }) => {
             const newAgentCounts = dateRange.map((_, index) => booking.agentCounts[index] || 0);
             setBooking(prev => ({ ...prev, agentCounts: newAgentCounts }));
         }
+    };
+
+     // Define the handleClientSelect function
+     const handleClientSelect = (selectedClient) => {
+        setBooking({ ...booking, client: selectedClient });
     };
 
     const handleAgentCountChange = (index, value) => {
@@ -129,10 +135,11 @@ const BookingForm = ({ onBookingAdded }) => {
                 </div>
                 <div className="mb-4">
                     <label htmlFor="client" className="block text-gray-700 text-sm font-bold mb-2">Client:</label>
-                    <select id="client" name="client" value={booking.client} onChange={handleChange} className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        <option value="" disabled selected>Select a client</option>
-                        {clients.map(client => <option key={client.id} value={client.company}>{client.company}</option>)}
-                    </select>
+                    <SearchBar 
+                        placeholder="Type to search clients..." 
+                        options={clients.map(client => client.company)} 
+                        onSelect={handleClientSelect} 
+                    />
                 </div>
                 <div className="mb-4">
                     <label htmlFor="startDate" className="block text-gray-700 text-sm font-bold mb-2">Start Date:</label>
