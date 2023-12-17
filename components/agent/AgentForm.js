@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 
 const AgentForm = ({ onAgentAdded }) => {
-    // Include 'notes' in the initial state
-    const [agent, setAgent] = useState({ name: '', email: '', phone: '', location: [], instagram: '', notes: '' });
+    const [agent, setAgent] = useState({ name: '', email: '', phone: '', location: [], instagram: '', notes: '', image: null });
 
     const handleChange = (e) => {
         if (e.target.name === 'location') {
@@ -14,6 +13,8 @@ const AgentForm = ({ onAgentAdded }) => {
                 }
             }
             setAgent({ ...agent, location: value });
+        } else if (e.target.name === 'image') {
+            setAgent({ ...agent, image: e.target.files[0] });
         } else {
             setAgent({ ...agent, [e.target.name]: e.target.value });
         }
@@ -22,23 +23,24 @@ const AgentForm = ({ onAgentAdded }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const formData = new FormData();
+        for (const key in agent) {
+            formData.append(key, agent[key]);
+        }
+
         try {
             const response = await fetch('/api/agents/addAgent', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(agent),
+                body: formData, // Send formData instead of JSON
             });
 
             if (response.ok) {
                 const newAgent = await response.json();
                 alert('Agent added successfully!');
-                if (onAgentAdded) {
-                    onAgentAdded(newAgent);
-                }
-                // Reset form fields including 'notes'
-                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', notes: '' });
+                onAgentAdded && onAgentAdded(newAgent);
+
+                // Reset form fields
+                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', notes: '', image: null });
             } else {
                 const errorData = await response.json();
                 console.error('Failed to add agent', errorData);
@@ -81,6 +83,10 @@ const AgentForm = ({ onAgentAdded }) => {
                 <div className="mb-4">
                     <label htmlFor="notes" className="block text-gray-700 text-sm font-bold mb-2">Notes:</label>
                     <textarea id="notes" name="notes" value={agent.notes} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                </div>
+                <div className="mb-4">
+                    <label htmlFor="image" className="block text-gray-700 text-sm font-bold mb-2">Image:</label>
+                    <input type="file" id="image" name="image" onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
                 <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Agent</button>
             </form>

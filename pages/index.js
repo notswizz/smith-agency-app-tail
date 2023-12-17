@@ -5,13 +5,8 @@ import Image from 'next/image';
 
 const HomePage = () => {
   useEffect(() => {
-    // Authentication check
-    fetch('/api/auth')
-      .then(response => {
-        if (response.status !== 200) {
-          Router.push('/');
-        }
-      });
+  
+  
   }, []);
 
   return (

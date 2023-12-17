@@ -50,6 +50,9 @@ const AgentData = ({ agents, onDeleteAgent }) => {
             {agents.map(agent => (
                 <div className="bg-white p-4 rounded shadow-md flex justify-between" key={agent._id}>
                     <div>
+                    {agent.imageUrl && (
+                            <img src={agent.imageUrl} alt={agent.name} className="w-20 h-20 object-cover rounded-full mb-4" />
+                        )}
                         <h3 className="text-lg font-bold">
                             <a href={`https://www.instagram.com/${agent.instagram}/`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">{agent.name}</a>
                         </h3>
