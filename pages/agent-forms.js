@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/nav/Header';
 import AvailabilityForm from '../components/form/AvailabilityForm';
 
-const AgentFormAgent = () => {
+const AgentForm = () => {
     const [agents, setAgents] = useState([]);
     const [shows, setShows] = useState([]);
     const [showAgentForm, setShowAgentForm] = useState(true); // New state to control which form is shown
@@ -103,4 +103,4 @@ const AgentFormAgent = () => {
     
 };
 
-export default AgentFormAgent;
+export default AgentForm;
