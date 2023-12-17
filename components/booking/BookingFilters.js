@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const BookingFilters = ({ onFilterChange }) => {
+const BookingFilters = ({ onFilterChange, filteredCount }) => {
     const [clientFilter, setClientFilter] = useState('');
     const [showFilter, setShowFilter] = useState('');
     const [shows, setShows] = useState([]); // State to store shows
@@ -45,6 +45,9 @@ const BookingFilters = ({ onFilterChange }) => {
                     <option key={show.id} value={show.id}>{show.id}</option> // Adjust according to your show object structure
                 ))}
             </select>
+            <div className="text-sm text-gray-600">
+                Showing {filteredCount} bookings
+            </div>
         </div>
     );
     

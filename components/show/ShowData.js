@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import BookingData from '../booking/BookingData'; // Adjust the path as necessary
 import ReactDOM from 'react-dom';
-import MasterSheet from '../../pages/masterSheet';
+
 
 const ShowData = ({ shows, onDeleteShow, onArchiveShow, handlePrintShowBookings, bookings }) => {
     const [selectedShowBookings, setSelectedShowBookings] = useState([]);

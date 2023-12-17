@@ -5,10 +5,10 @@ import BookingData from '../components/booking/BookingData';
 import BookingModal from '../components/booking/BookingModal';
 import BookingFilters from '../components/booking/BookingFilters';
 
-
 const BookingsPage = () => {
     const [bookings, setBookings] = useState([]);
-    const [allBookings, setAllBookings] = useState([]); // To store all bookings
+    const [allBookings, setAllBookings] = useState([]);
+    const [filteredCount, setFilteredCount] = useState(0); // State for the count of filtered bookings
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedBooking, setSelectedBooking] = useState(null);
     const [isFormVisible, setIsFormVisible] = useState(false);
@@ -19,7 +19,8 @@ const BookingsPage = () => {
             if (response.ok) {
                 const data = await response.json();
                 setBookings(data);
-                setAllBookings(data); // Store all bookings
+                setAllBookings(data);
+                setFilteredCount(data.length); // Initialize with total count
             }
         };
         fetchBookings();
@@ -29,50 +30,38 @@ const BookingsPage = () => {
         const updatedBookings = [...bookings, newBooking];
         setBookings(updatedBookings);
         setAllBookings(updatedBookings);
+        setFilteredCount(updatedBookings.length); // Update count
     };
 
     const handleUpdateBooking = async (updatedBooking) => {
         // Update booking in database
         const response = await fetch(`/api/bookings/updateBooking/${updatedBooking._id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedBooking),
         });
 
         if (response.ok) {
-            // Update state
             const updatedBookings = bookings.map(booking => 
                 booking._id === updatedBooking._id ? updatedBooking : booking
             );
             setBookings(updatedBookings);
+            setFilteredCount(updatedBookings.length); // Update count
         }
     };
 
     const handleDeleteBooking = async (bookingId) => {
-  // Ask user to confirm the deletion
-  if (window.confirm('Are you sure you want to delete this booking?')) {
-    // If confirmed, proceed with the deletion
-    const response = await fetch(`/api/bookings/deleteBooking/${bookingId}`, {
-      method: 'DELETE',
-    });
-
-    if (response.ok) {
-      // Update state after successful deletion
-      const updatedBookings = bookings.filter(booking => booking._id !== bookingId);
-      setBookings(updatedBookings);
-      alert('Booking deleted successfully.');
-    } else {
-      // Handle any errors
-      alert('Failed to delete booking.');
-    }
-  } else {
-    // If not confirmed, do nothing
-    console.log('Deletion cancelled by user.');
-  }
-};
-
+        if (window.confirm('Are you sure you want to delete this booking?')) {
+            const response = await fetch(`/api/bookings/deleteBooking/${bookingId}`, { method: 'DELETE' });
+            if (response.ok) {
+                const updatedBookings = bookings.filter(booking => booking._id !== bookingId);
+                setBookings(updatedBookings);
+                setFilteredCount(updatedBookings.length); // Update count
+            } else {
+                alert('Failed to delete booking.');
+            }
+        }
+    };
 
     const handleShowBookingDetails = (booking) => {
         setSelectedBooking(booking);
@@ -80,20 +69,35 @@ const BookingsPage = () => {
     };
 
     const handleFilterChange = (filters) => {
-        // Filter the bookings based on the criteria
         const filteredBookings = allBookings.filter(booking => {
-            const clientLower = booking.client.toLowerCase();
-            const showLower = booking.show.toLowerCase();
-            const filterClientLower = filters.client.toLowerCase();
-            const filterShowLower = filters.show.toLowerCase();
-    
-            return (
-                (filters.client ? clientLower.includes(filterClientLower) : true) &&
-                (filters.show ? showLower.includes(filterShowLower) : true)
-            );
+            const clientLower = booking.client?.toLowerCase() || '';
+            const showLower = booking.show?.toLowerCase() || '';
+            const filterClientLower = filters.client?.toLowerCase() || '';
+            const filterShowLower = filters.show?.toLowerCase() || '';
+
+            const matchesClientAndShow = (!filters.client || clientLower.includes(filterClientLower)) &&
+                                         (!filters.show || showLower.includes(filterShowLower));
+
+            let matchesBookingStatus = true;
+            if (filters.bookingStatus) {
+                if (filters.bookingStatus === 'booked') {
+                    matchesBookingStatus = booking.agentSelection?.every(daySelection => 
+                        daySelection.every(selection => selection !== "")
+                    );
+                } else if (filters.bookingStatus === 'open') {
+                    matchesBookingStatus = booking.agentSelection?.some(daySelection => 
+                        daySelection.some(selection => selection === "")
+                    );
+                }
+            }
+
+            return matchesClientAndShow && matchesBookingStatus;
         });
+
         setBookings(filteredBookings);
+        setFilteredCount(filteredBookings.length); // Update the count based on filtered bookings
     };
+
     
     
 
@@ -118,7 +122,10 @@ const BookingsPage = () => {
                         </button>
     
                         {!isFormVisible && (
-                            <BookingFilters onFilterChange={handleFilterChange} />
+                             <BookingFilters 
+                             onFilterChange={handleFilterChange}
+                             filteredCount={filteredCount} // Pass the count
+                         />
                         )}
                     </div>
     
