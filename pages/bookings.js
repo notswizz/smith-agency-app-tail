@@ -81,13 +81,20 @@ const BookingsPage = () => {
 
     const handleFilterChange = (filters) => {
         // Filter the bookings based on the criteria
-        const filteredBookings = allBookings.filter(booking => 
-            (filters.client ? booking.client.includes(filters.client) : true) &&
-            (filters.show ? booking.show.includes(filters.show) : true)
-        );
+        const filteredBookings = allBookings.filter(booking => {
+            const clientLower = booking.client.toLowerCase();
+            const showLower = booking.show.toLowerCase();
+            const filterClientLower = filters.client.toLowerCase();
+            const filterShowLower = filters.show.toLowerCase();
+    
+            return (
+                (filters.client ? clientLower.includes(filterClientLower) : true) &&
+                (filters.show ? showLower.includes(filterShowLower) : true)
+            );
+        });
         setBookings(filteredBookings);
     };
-
+    
     
 
     const toggleFormVisibility = () => {
