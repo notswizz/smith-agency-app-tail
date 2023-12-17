@@ -98,11 +98,11 @@ const BookingsPage = () => {
         <>
             <Header />
             <div className="container mx-auto p-4">
-                {/* Main layout with Flexbox */}
-                <div className="flex flex-row">
+                {/* Responsive layout with Flexbox */}
+                <div className="flex flex-col md:flex-row">
                     
                     {/* Container for the button and filters */}
-                    <div className="w-1/4 flex flex-col space-y-4 mb-4">
+                    <div className="md:w-1/4 flex flex-col space-y-4 mb-4 md:mb-0">
                         <button 
                             onClick={toggleFormVisibility}
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -115,8 +115,8 @@ const BookingsPage = () => {
                         )}
                     </div>
     
-                    {/* Conditional rendering of BookingForm or BookingData with added margin */}
-                    <div className={`flex-1 ${isFormVisible ? '' : 'ml-8'}`}>
+                    {/* Conditional rendering of BookingForm or BookingData with responsive margin */}
+                    <div className={`flex-1 ${isFormVisible ? '' : 'md:ml-8'}`}>
                         {isFormVisible ? (
                             <BookingForm onBookingAdded={handleBookingAdded} />
                         ) : (
@@ -139,6 +139,7 @@ const BookingsPage = () => {
             </div>
         </>
     );
+    
     
     
     
