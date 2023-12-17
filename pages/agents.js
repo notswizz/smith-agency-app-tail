@@ -5,25 +5,12 @@ import AgentData from '../components/agent/AgentData';
 
 const AgentsPage = () => {
     const [agents, setAgents] = useState([]);
-    const [bookings, setBookings] = useState([]);
-    const [agentAppearances, setAgentAppearances] = useState({});
+    const [isFormVisible, setIsFormVisible] = useState(false); // State for form visibility
 
     const fetchAgentsAndBookings = async () => {
         const agentsResponse = await fetch('/api/agents/getAgents');
         const agentsData = agentsResponse.ok ? await agentsResponse.json() : [];
         setAgents(agentsData);
-
-        const bookingsResponse = await fetch('/api/bookings/getBookings');
-        const bookingsData = bookingsResponse.ok ? await bookingsResponse.json() : [];
-        setBookings(bookingsData);
-
-        const agentNameToIdMap = agentsData.reduce((acc, agent) => {
-            acc[agent.name] = agent._id;
-            return acc;
-        }, {});
-
-        const counts = countAgentAppearances(bookingsData, agentNameToIdMap);
-        setAgentAppearances(counts);
     };
 
     useEffect(() => {
@@ -56,32 +43,30 @@ const AgentsPage = () => {
         }
     };
 
-    const countAgentAppearances = (bookings, agentNameToIdMap) => {
-        const counts = {};
-        bookings.forEach(booking => {
-            booking.agentSelection.forEach(dayAgents => {
-                dayAgents.forEach(agentName => {
-                    const agentId = agentNameToIdMap[agentName];
-                    counts[agentId] = (counts[agentId] || 0) + 1;
-                });
-            });
-        });
-        return counts;
+    const toggleFormVisibility = () => {
+        setIsFormVisible(!isFormVisible);
     };
 
     return (
         <>
             <Header />
             <div className="container mx-auto px-4">
-                {/* Update the className to use flex-col for mobile and flex-row for larger screens */}
-                <div className="flex flex-col-reverse md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-4">
-                <div className="flex-1 max-h-400 overflow-auto">
+                <button 
+                    onClick={toggleFormVisibility}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                >
+                    {isFormVisible ? 'Hide Form' : 'Add New Agent'}
+                </button>
+
+                {isFormVisible ? (
+                    <div className="flex-1 max-h-400 overflow-auto">
                         <AgentForm onAgentAdded={handleAgentAdded} />
                     </div>
+                ) : (
                     <div className="flex-1 max-h-400 overflow-auto">
-                        <AgentData agents={agents} onDeleteAgent={handleDeleteAgent} agentAppearances={agentAppearances} />
-                    </div> 
-                </div>
+                        <AgentData agents={agents} onDeleteAgent={handleDeleteAgent} />
+                    </div>
+                )}
             </div>
         </>
     );
