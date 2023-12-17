@@ -27,7 +27,7 @@ const BookingFilters = ({ onFilterChange }) => {
     };
 
     return (
-        <div className="booking-filters flex justify-end space-x-4 mb-4">
+        <div className="booking-filters flex flex-col space-y-2 mb-4">
             <input 
                 type="text" 
                 placeholder="Filter by Client" 
@@ -35,19 +35,19 @@ const BookingFilters = ({ onFilterChange }) => {
                 onChange={handleClientFilterChange}
                 className="border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
             />
-           <select 
-    value={showFilter} 
-    onChange={handleShowFilterChange}
-    className="border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
->
-    <option value="">Filter by Show</option>
-    {shows.filter(show => show.active).map((show) => (
-        <option key={show.id} value={show.id}>{show.id}</option> // Adjust according to your show object structure
-    ))}
-</select>
-
+            <select 
+                value={showFilter} 
+                onChange={handleShowFilterChange}
+                className="border border-gray-300 rounded-md shadow-sm p-2 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+            >
+                <option value="">Filter by Show</option>
+                {shows.filter(show => show.active).map((show) => (
+                    <option key={show.id} value={show.id}>{show.id}</option> // Adjust according to your show object structure
+                ))}
+            </select>
         </div>
     );
+    
 };
 
 export default BookingFilters;

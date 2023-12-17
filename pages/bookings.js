@@ -98,26 +98,37 @@ const BookingsPage = () => {
         <>
             <Header />
             <div className="container mx-auto p-4">
-                <button 
-                    onClick={toggleFormVisibility}
-                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
-                >
-                    {isFormVisible ? 'Hide Form' : 'Add New Booking'}
-                </button>
-
-                {isFormVisible ? (
-                    <BookingForm onBookingAdded={handleBookingAdded} />
-                ) : (
-                    <div>
-                        <BookingFilters onFilterChange={handleFilterChange} />
-                        <BookingData 
-                            bookings={bookings} 
-                            onDeleteBooking={handleDeleteBooking} 
-                            onShowBookingDetails={handleShowBookingDetails} 
-                        />
+                {/* Main layout with Flexbox */}
+                <div className="flex flex-row">
+                    
+                    {/* Container for the button and filters */}
+                    <div className="w-1/4 flex flex-col space-y-4 mb-4">
+                        <button 
+                            onClick={toggleFormVisibility}
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        >
+                            {isFormVisible ? 'Hide Form' : 'Add New Booking'}
+                        </button>
+    
+                        {!isFormVisible && (
+                            <BookingFilters onFilterChange={handleFilterChange} />
+                        )}
                     </div>
-                )}
-
+    
+                    {/* Conditional rendering of BookingForm or BookingData with added margin */}
+                    <div className={`flex-1 ${isFormVisible ? '' : 'ml-8'}`}>
+                        {isFormVisible ? (
+                            <BookingForm onBookingAdded={handleBookingAdded} />
+                        ) : (
+                            <BookingData 
+                                bookings={bookings} 
+                                onDeleteBooking={handleDeleteBooking} 
+                                onShowBookingDetails={handleShowBookingDetails} 
+                            />
+                        )}
+                    </div>
+                </div>
+    
                 {modalVisible && 
                     <BookingModal 
                         booking={selectedBooking} 
@@ -128,6 +139,10 @@ const BookingsPage = () => {
             </div>
         </>
     );
+    
+    
+    
+    
 };
 
 export default BookingsPage;
