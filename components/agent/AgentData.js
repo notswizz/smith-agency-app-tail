@@ -72,15 +72,15 @@ const AgentData = ({ agents, onDeleteAgent }) => {
                         </div>
                     </div>
     
-                    {/* Clients List */}
-                    <div className="clients-list ml-4">
-                        <h4 className="font-bold">Bookings:</h4>
-                        <ul>
-                            {agentClients[agent.name] && agentClients[agent.name].map(client => (
-                                <li key={client}>{client}</li>
-                            ))}
-                        </ul>
-                    </div>
+                    <div className="clients-list ml-4 hidden md:block">
+    <h4 className="font-bold">Bookings:</h4>
+    <ul>
+        {agentClients[agent.name] && agentClients[agent.name].map(client => (
+            <li key={client}>{client}</li>
+        ))}
+    </ul>
+</div>
+
                 </div>
             ))}
         </div>
