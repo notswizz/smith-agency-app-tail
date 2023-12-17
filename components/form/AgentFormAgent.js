@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 
 const AgentFormAgent = ({ onAgentAdded }) => {
-    // Include 'notes' in the initial state
-    const [agent, setAgent] = useState({ name: '', email: '', phone: '', location: [], instagram: '', notes: '' });
+    const [agent, setAgent] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        location: [],
+        instagram: '',
+        notes: '',
+        image: null // Added image to the state
+    });
 
     const handleChange = (e) => {
-        if (e.target.name === 'location') {
+        const { name, value } = e.target;
+        if (name === 'location') {
             const options = e.target.options;
             let value = [];
             for (let i = 0, l = options.length; i < l; i++) {
@@ -13,32 +21,41 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                     value.push(options[i].value);
                 }
             }
-            setAgent({ ...agent, location: value });
+            setAgent({ ...agent, [name]: value });
+        } else if (name === 'image') {
+            // Handle file input change
+            setAgent({ ...agent, image: e.target.files[0] });
         } else {
-            setAgent({ ...agent, [e.target.name]: e.target.value });
+            setAgent({ ...agent, [name]: value });
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        const formData = new FormData();
+        Object.keys(agent).forEach(key => {
+            if (key === 'location') {
+                // Append each location separately
+                agent.location.forEach(location => {
+                    formData.append('location', location);
+                });
+            } else {
+                formData.append(key, agent[key]);
+            }
+        });
+
         try {
             const response = await fetch('/api/agents/addAgent', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(agent),
+                body: formData, // Send as FormData
             });
 
             if (response.ok) {
                 const newAgent = await response.json();
                 alert('Agent added successfully!');
-                if (onAgentAdded) {
-                    onAgentAdded(newAgent);
-                }
-                // Reset form fields including 'notes'
-                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', notes: '' });
+                onAgentAdded && onAgentAdded(newAgent);
+                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', notes: '', image: null });
             } else {
                 const errorData = await response.json();
                 console.error('Failed to add agent', errorData);
@@ -50,9 +67,10 @@ const AgentFormAgent = ({ onAgentAdded }) => {
         }
     };
 
-    return (
+
+     return (
         <div className="max-w-md mx-auto bg-white p-6 rounded shadow max-h-96 overflow-auto">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} encType="multipart/form-data">
                 <div className="mb-4">
                     <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
                     <input type="text" id="name" name="name" value={agent.name} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
@@ -78,7 +96,10 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                     <label htmlFor="instagram" className="block text-gray-700 text-sm font-bold mb-2">Instagram:</label>
                     <input type="text" id="instagram" name="instagram" value={agent.instagram} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
-               
+                <div className="mb-4">
+                    <label htmlFor="image" className="block text-gray-700 text-sm font-bold mb-2">Image:</label>
+                    <input type="file" id="image" name="image" onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
+                </div>
                 <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Agent</button>
             </form>
         </div>

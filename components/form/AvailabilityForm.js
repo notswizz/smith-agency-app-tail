@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
+import { toUTCDateString } from '../../lib/utils'; // Import the utility function
 
 const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
     const [selectedAgent, setSelectedAgent] = useState('');
@@ -6,13 +7,46 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
     const [isAvailable, setIsAvailable] = useState('');
     const [notes, setNotes] = useState('');
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [selectedDays, setSelectedDays] = useState({});
+
+    const generateDateRange = (start, end) => {
+        if (!start || !end) return [];
+
+        let currentDate = new Date(toUTCDateString(start));
+        const endUTCDate = new Date(toUTCDateString(end));
+        const dates = [];
+
+        while (currentDate <= endUTCDate) {
+            dates.push(currentDate.toISOString().split('T')[0]);
+            currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+        }
+        
+        return dates;
+    };
+
+    const dateCheckboxes = useMemo(() => {
+        const dateRange = generateDateRange(startDate, endDate);
+        return dateRange.map((date) => ({
+            date,
+            checked: selectedDays[date] || false,
+        }));
+    }, [startDate, endDate, selectedDays]);
+
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        // Constructing the availability array
+        const availabilityArray = Object.entries(selectedDays)
+            .filter(([date, isChecked]) => isChecked)
+            .map(([date]) => date);
+
         const submissionData = {
             agent: selectedAgent,
             show: selectedShow,
-            availability: isAvailable,
+            availability: availabilityArray, // Use the constructed array
             notes: notes
         };
 
@@ -36,15 +70,26 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
         }
     };
 
+    const handleDateCheckboxChange = (date) => {
+        setSelectedDays(prevSelectedDays => ({
+            ...prevSelectedDays,
+            [date]: !prevSelectedDays[date],
+        }));
+    };
+
     const resetFormFields = () => {
         setSelectedAgent('');
         setSelectedShow('');
         setIsAvailable('');
         setNotes('');
+        setStartDate('');
+        setEndDate('');
+        setSelectedDays({}); // Resetting the selected days
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <div className="max-w-md mx-auto max-h-96 overflow-auto"> {/* Adjust the max-width as needed */}
+            <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             {/* Agent Dropdown */}
             <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="agent">
@@ -56,6 +101,7 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
                     onChange={(e) => setSelectedAgent(e.target.value)}
                     className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
+                    <option value="" disabled>Select an agent...</option> {/* Default option */}
                     {agents.map(agent => (
                         <option key={agent._id.$oid} value={agent._id.$oid}>{agent.name}</option>
                     ))}
@@ -73,31 +119,62 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
                     onChange={(e) => setSelectedShow(e.target.value)}
                     className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
+                    <option value="" disabled>Select a show...</option> {/* Default option */}
                     {shows.map(show => (
                         <option key={show._id.$oid} value={show._id.$oid}>{show.id}</option>
                     ))}
                 </select>
             </div>
 
-            {/* Yes/No Availability */}
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="availability">
-                    Are you available?
+           
+
+
+           
+             {/* Start Date Input */}
+             <div className="mb-4">
+                <label htmlFor="start-date" className="block text-gray-700 text-sm font-bold mb-2">
+                    Start Date:
                 </label>
-                <select
-                    id="availability"
-                    value={isAvailable}
-                    onChange={(e) => setIsAvailable(e.target.value)}
+                <input 
+                    type="date" 
+                    id="start-date" 
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
                     className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                >
-                    <option value="">Select...</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                </select>
+                />
             </div>
 
-            {/* Notes Section */}
+            {/* End Date Input */}
             <div className="mb-4">
+                <label htmlFor="end-date" className="block text-gray-700 text-sm font-bold mb-2">
+                    End Date:
+                </label>
+                <input 
+                    type="date" 
+                    id="end-date" 
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+            </div>
+    {/* Dynamically Created Checkboxes */}
+            <fieldset className="mb-4">
+                <legend className="block text-gray-700 text-sm font-bold mb-2">Select Days:</legend>
+                {dateCheckboxes.map(({ date, checked }) => (
+                    <label key={date} className="block">
+                        <input
+                            type="checkbox"
+                            checked={checked}
+                            onChange={() => handleDateCheckboxChange(date)}
+                            className="mr-2 leading-tight"
+                        />
+                        {date}
+                    </label>
+                ))}
+            </fieldset>
+
+ {/* Notes Section */}
+ <div className="mb-4">
                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
                     Notes:
                 </label>
@@ -109,7 +186,6 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
                     placeholder="Enter any notes here"
                 />
             </div>
-
             {/* Submit Button */}
             <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                 Submit
@@ -117,6 +193,7 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
             {/* Success Notification */}
             {submissionSuccess && <div className="alert alert-success">Form submitted successfully!</div>}
         </form>
+        </div>
     );
 };
 

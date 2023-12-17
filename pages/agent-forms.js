@@ -6,6 +6,7 @@ import AvailabilityForm from '../components/form/AvailabilityForm';
 const AgentForm = () => {
     const [agents, setAgents] = useState([]);
     const [shows, setShows] = useState([]);
+    const [showAgentForm, setShowAgentForm] = useState(true); // New state to control which form is shown
 
     useEffect(() => {
         fetchAgents();
@@ -71,23 +72,36 @@ const AgentForm = () => {
             console.error('Failed to add availability', await response.json());
         }
     };
+    const toggleForm = () => {
+        setShowAgentForm(!showAgentForm);
+    };
 
     return (
         <>
             <Header />
-            <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row justify-between space-y-4 md:space-y-0 md:space-x-4">
-                    <div className="flex-1 max-h-400 overflow-auto">
-                        <AgentFormAgent onAgentAdded={handleAgentAdded} />
-                    </div>
-                    <div className="flex-1 max-h-400 overflow-auto">
-                        <AvailabilityForm agents={agents} shows={shows} onAvailabilityAdded={handleAvailabilityAdded} />
-                    </div>
+            <div className="container mx-auto px-4 py-4">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center space-y-4 lg:space-y-0 lg:space-x-6">
+                    <button 
+                        onClick={toggleForm} 
+                        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                        {showAgentForm ? 'Add Availability' : 'Add Agent'}
+                    </button>
+    
+                    {showAgentForm ? (
+                        <div className="flex-1 overflow-auto">
+                            <AgentFormAgent onAgentAdded={handleAgentAdded} />
+                        </div>
+                    ) : (
+                        <div className="flex-1 overflow-auto">
+                            <AvailabilityForm agents={agents} shows={shows} onAvailabilityAdded={handleAvailabilityAdded} />
+                        </div>
+                    )}
                 </div>
-                
             </div>
         </>
     );
+    
 };
 
 export default AgentForm;

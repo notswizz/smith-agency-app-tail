@@ -1,22 +1,20 @@
-// addAvailability.js
 import { client, run } from '../../../lib/mongodb';
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
-        console.log("Request Body:", req.body); // Add this line
+        console.log("Request Body:", req.body); // Debugging
         try {
             await run();
             const db = client.db('TSA'); // Replace with your database name
             const availabilityData = req.body;
 
             // Validate the data
-            if (!availabilityData.agent || !availabilityData.show || !availabilityData.availability) {
-                return res.status(400).json({ message: 'Missing required fields' });
+            if (!availabilityData.agent || !availabilityData.show || !Array.isArray(availabilityData.availability)) {
+                return res.status(400).json({ message: 'Missing or invalid required fields' });
             }
 
-            // Here you might want to validate the agent ID, show ID, and the structure of the availability object
-            // For example, ensuring the agent ID and show ID exist in their respective collections
-            // and that the availability object has the correct format
+            // Additional validation can go here, such as checking if the agent and show exist in the database
+            // and validating the structure of each item in the availability array
 
             // Insert the new availability document
             const result = await db.collection('availability').insertOne(availabilityData);
