@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const AgentFilter = ({ onFilterChange }) => {
+const AgentFilter = ({ onFilterChange, filteredAgentCount }) => {
     const [nameFilter, setNameFilter] = useState('');
     const [locationFilter, setLocationFilter] = useState('');
     const [locations, setLocations] = useState([]); // State to store locations
@@ -42,6 +42,9 @@ const AgentFilter = ({ onFilterChange }) => {
                     <option key={location} value={location}>{location}</option>
                 ))}
             </select>
+            <div className="text-sm font-semibold">
+                Showing {filteredAgentCount} Agents
+            </div>
         </div>
     );
 };

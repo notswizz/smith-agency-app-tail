@@ -2,25 +2,26 @@ import React, { useState, useEffect } from 'react';
 import Header from '../components/nav/Header';
 import AgentForm from '../components/agent/AgentForm';
 import AgentData from '../components/agent/AgentData';
-import AgentFilter from '../components/agent/AgentFilter'; // Import the AgentFilter component
+import AgentFilter from '../components/agent/AgentFilter';
 
 const AgentsPage = () => {
     const [agents, setAgents] = useState([]);
-    const [filteredAgents, setFilteredAgents] = useState([]); // State for filtered agents
+    const [filteredAgents, setFilteredAgents] = useState([]);
+    const [filteredAgentCount, setFilteredAgentCount] = useState(0); 
     const [isFormVisible, setIsFormVisible] = useState(false);
 
     useEffect(() => {
+        const fetchAgents = async () => {
+            const response = await fetch('/api/agents/getAgents');
+            if (response.ok) {
+                const data = await response.json();
+                setAgents(data);
+                setFilteredAgents(data);
+                setFilteredAgentCount(data.length); // Initialize with the total number of agents
+            }
+        };
         fetchAgents();
     }, []);
-
-    const fetchAgents = async () => {
-        const response = await fetch('/api/agents/getAgents');
-        if (response.ok) {
-            const data = await response.json();
-            setAgents(data);
-            setFilteredAgents(data); // Initially, all agents are shown
-        }
-    };
 
     const handleAgentAdded = async (newAgent) => {
         const response = await fetch('/api/agents/addAgent', {
@@ -53,15 +54,23 @@ const AgentsPage = () => {
     };
 
     const handleFilterChange = (filters) => {
-        const { name, location } = filters;
-        const filtered = agents.filter(agent => {
-            const agentName = typeof agent.name === 'string' ? agent.name : "";
-            return (
-                (name ? agentName.toLowerCase().includes(name.toLowerCase()) : true) &&
-                (location ? agent.location.includes(location) : true)
-            );
-        });
-        setFilteredAgents(filtered); // Update the state with filtered agents
+        if (filters.name === '' && filters.location === '') {
+            // If filters are reset to default, show all agents
+            setFilteredAgents(agents);
+            setFilteredAgentCount(agents.length);
+        } else {
+            // Apply filters
+            const { name, location } = filters;
+            const filtered = agents.filter(agent => {
+                const agentName = typeof agent.name === 'string' ? agent.name.toLowerCase() : "";
+                return (
+                    (name ? agentName.includes(name.toLowerCase()) : true) &&
+                    (location ? agent.location.includes(location) : true)
+                );
+            });
+            setFilteredAgents(filtered);
+            setFilteredAgentCount(filtered.length);
+        }
     };
 
     return (
@@ -76,7 +85,10 @@ const AgentsPage = () => {
                         >
                             {isFormVisible ? 'Hide Form' : 'Add New Agent'}
                         </button>
-                        {!isFormVisible && <AgentFilter onFilterChange={handleFilterChange} />}
+                        {!isFormVisible &&  <AgentFilter 
+                        onFilterChange={handleFilterChange}
+                        filteredAgentCount={filteredAgentCount} // Pass the count to the filter component
+                    />}
                     </div>
                     <div className="flex-1">
                         {isFormVisible ? (
