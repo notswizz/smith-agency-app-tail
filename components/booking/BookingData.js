@@ -35,7 +35,6 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
             console.error('Failed to delete booking');
         }
     };
-
     return (
       <div className="container mx-auto p-4 max-h-96 overflow-auto shadow border border-gray-300 rounded-lg hover:shadow-md transition duration-300">
           {bookings.map(booking => {
@@ -43,8 +42,8 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
               const agentCounts = compileAgentCounts(booking.agentSelection);
               return (
                   <div className="bg-white p-4 mb-4 rounded-lg shadow-sm flex flex-col cursor-pointer" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
-                      <div className="flex justify-between items-start mb-4">
-                          <div className="mr-4">
+                      <div className="flex flex-col md:flex-row justify-between items-start mb-4">
+                          <div className="mb-4 md:mb-0 md:mr-4">
                               <h2 className="text-xl md:text-2xl font-bold text-gray-800">
                                   {booking.client}
                               </h2>
@@ -60,8 +59,8 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
                               <p className="text-sm font-medium text-gray-700">
                                   Total Days: {getTotalDays(booking.agentCounts)}
                               </p>
-                              {/* Sticky note style with width for notes */}
-                              <div className="mt-2 p-3 bg-yellow-100 border border-yellow-200 rounded-lg shadow-inner relative w-48"> 
+                              {/* Responsive width for sticky note */}
+                              <div className="mt-2 p-3 bg-yellow-100 border border-yellow-200 rounded-lg shadow-inner relative w-full md:w-48"> 
                                   <p className="text-sm text-gray-700">{booking.notes}</p>
                                   <div className="absolute top-1 right-1 h-4 w-4 bg-yellow-300 rounded-full"></div>
                               </div>
@@ -87,6 +86,7 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
           })}
       </div>
   );
+  
   
   
   
