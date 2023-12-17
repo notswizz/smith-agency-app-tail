@@ -5,10 +5,11 @@ import ClientData from '../components/client/ClientData';
 
 const ClientsPage = () => {
     const [clients, setClients] = useState([]);
+    const [isFormVisible, setIsFormVisible] = useState(false); // State to manage form visibility
 
     useEffect(() => {
         const fetchClients = async () => {
-            const response = await fetch('/api/clients/getClients'); // Make sure you have this GET API
+            const response = await fetch('/api/clients/getClients');
             if (response.ok) {
                 const data = await response.json();
                 setClients(data);
@@ -42,18 +43,26 @@ const ClientsPage = () => {
         }
     };
 
+    const toggleFormVisibility = () => {
+        setIsFormVisible(!isFormVisible);
+    };
+
     return (
         <>
             <Header />
             <div className="container mx-auto px-4">
-                <div className="flex flex-row justify-between space-x-4">
-                    <div className="flex-1">
-                        <ClientForm onClientAdded={handleClientAdded} />
-                    </div>
-                    <div className="flex-1">
-                        <ClientData clients={clients} onDeleteClient={handleDeleteClient} />
-                    </div>
-                </div>
+                <button 
+                    onClick={toggleFormVisibility}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                >
+                    {isFormVisible ? 'Hide Form' : 'Add New Client'}
+                </button>
+
+                {isFormVisible ? (
+                    <ClientForm onClientAdded={handleClientAdded} />
+                ) : (
+                    <ClientData clients={clients} onDeleteClient={handleDeleteClient} />
+                )}
             </div>
         </>
     );
