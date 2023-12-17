@@ -14,7 +14,7 @@
   
   body {
     /* Pink and dark blue gradient background */
-    background: linear-gradient(to right, #fffffffc, #000000fd);
+    background: linear-gradient(to right, #fffffff4, #12010f7b);
     background-size: 200% 200%; /* Enlarge background size for animation effect */
   
     /* Apply the animation */

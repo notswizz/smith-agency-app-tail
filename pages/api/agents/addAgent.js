@@ -25,15 +25,22 @@ export default async function handler(req, res) {
             try {
                 await run();
                 const db = client.db('TSA'); // Replace with your database name
-                let agentData = fields;
-
-                // Check for required fields
-                const requiredFields = ['name', 'email', 'phone', 'location', 'instagram'];
-                for (const field of requiredFields) {
-                    if (!agentData[field]) {
-                        return res.status(400).json({ message: `Missing required field: ${field}` });
+                let agentData = {};
+            
+                // Process each field to ensure correct format
+                Object.keys(fields).forEach(field => {
+                    if (field === 'location') {
+                        // Ensure 'location' is always an array
+                        agentData[field] = fields[field] instanceof Array
+                            ? fields[field]
+                            : [fields[field]]; // Convert to an array if it's a single value
+                    } else {
+                        // Handle other fields
+                        agentData[field] = fields[field] instanceof Array && fields[field].length === 1
+                            ? fields[field][0]  // If it's an array with one element, use that element
+                            : fields[field];    // Otherwise, use the array or the value as is
                     }
-                }
+                });
 
                 // Check for duplicate agent
                 const existingAgent = await db.collection('agents').findOne({ email: agentData.email });

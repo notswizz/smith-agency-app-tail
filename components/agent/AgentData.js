@@ -48,25 +48,32 @@ const AgentData = ({ agents, onDeleteAgent }) => {
     return (
         <div className="flex flex-col space-y-4 max-h-96 overflow-auto">
             {agents.map(agent => (
-                <div className="bg-white p-4 rounded shadow-md flex justify-between" key={agent._id}>
-                    <div>
-                    {agent.imageUrl && (
-                            <img src={agent.imageUrl} alt={agent.name} className="w-20 h-20 object-cover rounded-full mb-4" />
+                <div className="bg-white p-4 rounded shadow-md flex" key={agent._id}>
+                    {/* Agent Info and Image Container */}
+                    <div className="flex-1 flex">
+                        {/* Image */}
+                        {agent.imageUrl && (
+                            <img src={agent.imageUrl} alt={agent.name} className="w-40 h-40 object-cover rounded-full mr-4" />
                         )}
-                        <h3 className="text-lg font-bold">
-                            <a href={`https://www.instagram.com/${agent.instagram}/`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">{agent.name}</a>
-                        </h3>
-                         <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                            {agentDaysWorked[agent.name] || 0} Days Worked
-                        </span>
-                        <p className="text-gray-600">{agent.email}</p>
-                        <p className="text-gray-600">{agent.phone}</p>
-                        <p className="text-gray-600">Location: {agent.location.join(', ')}</p>
-                       
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">Email</button>
-                        <button onClick={() => onDeleteAgent(agent._id)} className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete</button>
+    
+                        {/* Agent Details */}
+                        <div>
+                            <h3 className="text-lg font-bold">
+                                <a href={`https://www.instagram.com/${agent.instagram}/`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">{agent.name}</a>
+                            </h3>
+                            <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
+                                {agentDaysWorked[agent.name] || 0} Days Worked
+                            </span>
+                            <p className="text-gray-600">{agent.email}</p>
+                            <p className="text-gray-600">{agent.phone}</p>
+                            <p className="text-gray-600">Location: {agent.location.join(', ')}</p>
+                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">Email</button>
+                            <button onClick={() => onDeleteAgent(agent._id)} className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete</button>
+                        </div>
                     </div>
-                    <div className="clients-list">
+    
+                    {/* Clients List */}
+                    <div className="clients-list ml-4">
                         <h4 className="font-bold">Bookings:</h4>
                         <ul>
                             {agentClients[agent.name] && agentClients[agent.name].map(client => (
@@ -78,6 +85,7 @@ const AgentData = ({ agents, onDeleteAgent }) => {
             ))}
         </div>
     );
+    
 };
 
 export default AgentData;
