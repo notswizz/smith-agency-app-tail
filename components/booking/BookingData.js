@@ -48,6 +48,7 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
                     <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col cursor-pointer" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
                         <div className="flex justify-between items-center mb-4">
                             <h2 className="text-xl font-bold text-gray-800">{booking.client}</h2>
+                           
                             <span className={`py-1 px-3 rounded-md text-sm font-medium shadow-sm ${isFull ? 'bg-green-500 text-white' : 'bg-yellow-500 text-gray-800'}`}>
                                 {isFull ? 'Booked' : `${emptyCount} Empty`}
                             </span>
