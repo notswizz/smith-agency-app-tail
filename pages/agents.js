@@ -76,9 +76,9 @@ const AgentsPage = () => {
     return (
         <>
             <Header />
-            <div className="container mx-auto px-4">
-                <div className="flex flex-col md:flex-row">
-                    <div className="md:w-1/4 mb-4 md:mb-4 md:mr-4">
+            <div className="container mx-auto px-4 ">
+                <div className="flex flex-col md:flex-row ">
+                    <div className="md:w-1/4 mb-4 md:mb-4 md:mr-4 ">
                         <button 
                             onClick={toggleFormVisibility}
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full mb-4"

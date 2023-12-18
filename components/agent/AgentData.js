@@ -48,12 +48,19 @@ const AgentData = ({ agents, onDeleteAgent }) => {
     return (
         <div className="flex flex-col space-y-4 max-h-96 overflow-auto">
             {agents.map(agent => (
-                <div className="bg-white p-4 rounded shadow-md flex" key={agent._id}>
+                <div className="bg-white p-4 rounded shadow-md flex relative" key={agent._id}>
+                    {/* Delete Button in the Top Right Corner */}
+                    <button 
+                        onClick={() => onDeleteAgent(agent._id)} 
+                        className="absolute top-2 right-2 bg-red-400 hover:bg-red-500 text-white font-bold py-1 px-2 text-xs rounded focus:outline-none focus:shadow-outline">
+                        Delete
+                    </button>
+    
                     {/* Agent Info and Image Container */}
                     <div className="flex-1 flex">
                         {/* Image */}
                         {agent.imageUrl && (
-                            <img src={agent.imageUrl} alt={agent.name} className="w-40 h-40 object-cover rounded-full mr-4" />
+                            <img src={agent.imageUrl} alt={agent.name} className="w-40 h-40 object-cover rounded-full mr-4 shadow-sm" />
                         )}
     
                         {/* Agent Details */}
@@ -67,24 +74,16 @@ const AgentData = ({ agents, onDeleteAgent }) => {
                             <p className="text-gray-600">{agent.email}</p>
                             <p className="text-gray-600">{agent.phone}</p>
                             <p className="text-gray-600">Location: {agent.location.join(', ')}</p>
-                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">Email</button>
-                            <button onClick={() => onDeleteAgent(agent._id)} className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete</button>
+                            <button className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded mr-2">Email</button>
+                            <button className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded mr-2">Text</button>
                         </div>
                     </div>
-    
-                    <div className="clients-list ml-4 hidden md:block">
-    <h4 className="font-bold">Bookings:</h4>
-    <ul>
-        {agentClients[agent.name] && agentClients[agent.name].map(client => (
-            <li key={client}>{client}</li>
-        ))}
-    </ul>
-</div>
-
                 </div>
             ))}
         </div>
     );
+    
+    
     
 };
 

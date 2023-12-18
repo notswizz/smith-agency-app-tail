@@ -35,7 +35,7 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
         }));
     }, [startDate, endDate, selectedDays]);
 
-   // Handle show selection and update date range
+  // Handle show selection and update date range
 const handleShowSelection = (showId) => {
     const selectedShow = shows.find(show => show._id === showId);
     if (selectedShow) {
@@ -43,13 +43,15 @@ const handleShowSelection = (showId) => {
             startDate: selectedShow.startDate,
             endDate: selectedShow.endDate
         });
-        setSelectedShow(showId);
+        // Set the show's name instead of its ID
+        setSelectedShow(selectedShow.id); // Assuming the show object has a 'name' property
     } else {
         // Reset the selected show and date range if no show is found
         setShowDateRange({ startDate: '', endDate: '' });
         setSelectedShow('');
     }
 };
+
 
     // Handle date checkbox change
     const handleDateCheckboxChange = (date) => {
