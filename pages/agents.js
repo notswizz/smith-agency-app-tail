@@ -3,12 +3,15 @@ import Header from '../components/nav/Header';
 import AgentForm from '../components/agent/AgentForm';
 import AgentData from '../components/agent/AgentData';
 import AgentFilter from '../components/agent/AgentFilter';
+import AgentModal from '../components/agent/AgentModal'; // Import AgentModal
 
 const AgentsPage = () => {
     const [agents, setAgents] = useState([]);
     const [filteredAgents, setFilteredAgents] = useState([]);
-    const [filteredAgentCount, setFilteredAgentCount] = useState(0); 
+    const [filteredAgentCount, setFilteredAgentCount] = useState(0);
     const [isFormVisible, setIsFormVisible] = useState(false);
+    const [isModalVisible, setIsModalVisible] = useState(false); // State for modal visibility
+    const [selectedAgent, setSelectedAgent] = useState(null); // State for selected agent
 
     useEffect(() => {
         const fetchAgents = async () => {
@@ -17,7 +20,7 @@ const AgentsPage = () => {
                 const data = await response.json();
                 setAgents(data);
                 setFilteredAgents(data);
-                setFilteredAgentCount(data.length); // Initialize with the total number of agents
+                setFilteredAgentCount(data.length);
             }
         };
         fetchAgents();
@@ -73,7 +76,19 @@ const AgentsPage = () => {
         }
     };
 
-    return (
+   // Function to handle agent selection for modal
+   const handleAgentSelect = (agent) => {
+    setSelectedAgent(agent);
+    setIsModalVisible(true);
+};
+
+// Function to close the modal
+const handleCloseModal = () => {
+    setIsModalVisible(false);
+    setSelectedAgent(null);
+};
+
+return (
         <>
             <Header />
             <div className="container mx-auto px-4 ">
@@ -94,11 +109,15 @@ const AgentsPage = () => {
                         {isFormVisible ? (
                             <AgentForm onAgentAdded={handleAgentAdded} />
                         ) : (
-                            <AgentData agents={filteredAgents} onDeleteAgent={handleDeleteAgent} />
+                            <AgentData agents={filteredAgents} onDeleteAgent={handleDeleteAgent} onAgentSelect={handleAgentSelect} />
                         )}
                     </div>
                 </div>
             </div>
+            {/* AgentModal */}
+            {selectedAgent && (
+                <AgentModal agent={selectedAgent} isOpen={isModalVisible} onClose={handleCloseModal} />
+            )}
         </>
     );
 };
