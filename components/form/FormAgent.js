@@ -1,7 +1,17 @@
 import React, { useState } from 'react';
 
-const AgentForm = ({ onAgentAdded }) => {
-    const [agent, setAgent] = useState({ name: '', email: '', phone: '', location: [], instagram: '', notes: '', image: null });
+const AgentFormAgent = ({ onAgentAdded }) => {
+    const [agent, setAgent] = useState({ 
+        name: '', 
+        email: '', 
+        phone: '', 
+        location: [], 
+        instagram: '', 
+        notes: '', // Keep the notes variable in state
+        college: '', // Added college field
+        shoeSize: '', // Added shoe size field
+        image: null 
+    });
 
     const handleChange = (e) => {
         if (e.target.name === 'location') {
@@ -76,16 +86,36 @@ const AgentForm = ({ onAgentAdded }) => {
                         <option value="DAL">DAL</option>
                     </select>
                 </div>
+                <div className="mb-4">
+                    <label htmlFor="college" className="block text-gray-700 text-sm font-bold mb-2">College:</label>
+                    <input 
+                        type="text" 
+                        id="college" 
+                        name="college" 
+                        value={agent.college} 
+                        onChange={handleChange} 
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label htmlFor="shoeSize" className="block text-gray-700 text-sm font-bold mb-2">Shoe Size:</label>
+                    <input 
+                        type="text" 
+                        id="shoeSize" 
+                        name="shoeSize" 
+                        value={agent.shoeSize} 
+                        onChange={handleChange} 
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                    />
+                </div>
                 <div className="mb-6">
                     <label htmlFor="instagram" className="block text-gray-700 text-sm font-bold mb-2">Instagram:</label>
                     <input type="text" id="instagram" name="instagram" value={agent.instagram} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
+               
                 <div className="mb-4">
-                    <label htmlFor="notes" className="block text-gray-700 text-sm font-bold mb-2">Notes:</label>
-                    <textarea id="notes" name="notes" value={agent.notes} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
-                </div>
-                <div className="mb-4">
-                    <label htmlFor="image" className="block text-gray-700 text-sm font-bold mb-2">Profile Pic:</label>
+                    <label htmlFor="image" className="block text-gray-700 text-sm font-bold mb-2">Image:</label>
                     <input type="file" id="image" name="image" onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
                 <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Agent</button>
@@ -94,4 +124,4 @@ const AgentForm = ({ onAgentAdded }) => {
     );
 };
 
-export default AgentForm;
+export default AgentFormAgent;
