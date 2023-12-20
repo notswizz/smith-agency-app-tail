@@ -4,8 +4,7 @@ import { toUTCDateString } from '../../lib/utils';
 const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
     const [selectedAgent, setSelectedAgent] = useState('');
     const [selectedShow, setSelectedShow] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [agentId, setAgentId] = useState('');
     const [selectedDays, setSelectedDays] = useState({});
     const [showDateRange, setShowDateRange] = useState({ startDate: '', endDate: '' });
     const [notes, setNotes] = useState(''); // Add this line to declare the notes state
@@ -26,27 +25,26 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
         return dates;
     };
 
-    // useMemo hook to create date checkboxes
-    const dateCheckboxes = useMemo(() => {
-        const dateRange = generateDateRange(startDate, endDate);
-        return dateRange.map(date => ({
-            date,
-            checked: selectedDays[date] || false,
-        }));
-    }, [startDate, endDate, selectedDays]);
+    // useMemo hook to create date checkboxes based on the selected show's date range
+const dateCheckboxes = useMemo(() => {
+    const { startDate, endDate } = showDateRange;
+    const dateRange = generateDateRange(startDate, endDate);
+    return dateRange.map(date => ({
+        date,
+        checked: selectedDays[date] || false,
+    }));
+}, [showDateRange, selectedDays]);
 
-  // Handle show selection and update date range
+// Handle show selection and update date range
 const handleShowSelection = (showId) => {
-    const selectedShow = shows.find(show => show._id === showId);
-    if (selectedShow) {
+    const show = shows.find(show => show._id === showId);
+    if (show) {
         setShowDateRange({
-            startDate: selectedShow.startDate,
-            endDate: selectedShow.endDate
+            startDate: show.startDate,
+            endDate: show.endDate
         });
-        // Set the show's name instead of its ID
-        setSelectedShow(selectedShow.id); // Assuming the show object has a 'name' property
+        setSelectedShow(showId);
     } else {
-        // Reset the selected show and date range if no show is found
         setShowDateRange({ startDate: '', endDate: '' });
         setSelectedShow('');
     }
@@ -61,66 +59,77 @@ const handleShowSelection = (showId) => {
         }));
     };
 
-    // Handle form submission
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        const availabilityArray = Object.entries(selectedDays)
-            .filter(([date, isChecked]) => isChecked)
-            .map(([date]) => date);
+// Handle form submission
+const handleSubmit = async (event) => {
+    event.preventDefault();
+    const uppercaseAgentId = agentId.toUpperCase();
 
-        const submissionData = {
-            agent: selectedAgent,
-            show: selectedShow,
-            availability: availabilityArray,
-            notes: notes
-        };
+    // Verify the Agent ID
+    try {
+        const verifyResponse = await fetch(`/api/agents/verifyAgent?agentId=${uppercaseAgentId}`);
+        if (verifyResponse.ok) {
+            const agentData = await verifyResponse.json();
+            
+            if (agentData) {
+                // If the agent exists, use the agent's name in the submission data
+                const submissionData = {
+                    agent: agentData.name, // Using agent's name
+                    show: selectedShow,
+                    availability: Object.entries(selectedDays)
+                        .filter(([date, isChecked]) => isChecked)
+                        .map(([date]) => date),
+                    notes: notes
+                };
 
-        try {
-            const response = await fetch('/api/availability/addAvailability', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(submissionData),
-            });
+                // Submit the availability data
+                const response = await fetch('/api/availability/addAvailability', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(submissionData),
+                });
 
-            if (response.ok) {
-                setSubmissionSuccess(true); //
-                // Reset form on successful submission
-                setSelectedAgent('');
-                setSelectedShow('');
-                setStartDate('');
-                setEndDate('');
-                setSelectedDays({});
-                setNotes('');
+                if (response.ok) {
+                    setSubmissionSuccess(true);
+                    // Reset form on successful submission
+                    setSelectedAgent('');
+                    setSelectedShow('');
+                    setSelectedDays({});
+                    setNotes('');
+                } else {
+                    console.error('Submission was not successful:', await response.json());
+                }
             } else {
-                console.error('Submission was not successful:', await response.json());
+                alert('Agent ID does not exist.');
             }
-        } catch (error) {
-            console.error('Error occurred during form submission:', error);
+        } else {
+            alert('Error verifying Agent ID.');
         }
-    };
+    } catch (error) {
+        console.error('Error occurred during agent ID verification:', error);
+    }
+};
 
-    return (
-        <div className="max-w-md mx-auto max-h-96 overflow-auto"> {/* Adjust the max-width as needed */}
+
+     return (
+        <div className="max-w-md mx-auto max-h-96 overflow-auto">
             <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            {/* Agent Dropdown */}
-            <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="agent">
-                    Agent:
-                </label>
-                <select
-                    id="agent"
-                    value={selectedAgent}
-                    onChange={(e) => setSelectedAgent(e.target.value)}
-                    className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                >
-                    <option value="" disabled>Select an agent...</option> {/* Default option */}
-                    {agents.map(agent => (
-                        <option key={agent._id.$oid} value={agent._id.$oid}>{agent.name}</option>
-                    ))}
-                </select>
-            </div>
+                
+                {/* Agent ID Input */}
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="agentId">
+                        Agent ID:
+                    </label>
+                    <input
+                        type="text"
+                        id="agentId"
+                        value={agentId}
+                        onChange={(e) => setAgentId(e.target.value)}
+                        placeholder="Agent ID (AB001)"
+                        className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
 
          {/* Show Dropdown */}
 <div className="mb-4">
@@ -143,42 +152,10 @@ const handleShowSelection = (showId) => {
            
 
 
-{/* Start Date Input */}
-<div className="mb-4">
-    <label htmlFor="start-date" className="block text-gray-700 text-sm font-bold mb-2">
-        Start Date:
-    </label>
-    <input 
-        type="date" 
-        id="start-date" 
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-        min={showDateRange.startDate || '2023-01-01'}
-        max={showDateRange.endDate || '2099-12-31'}
-        className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-    />
-</div>
-
-{/* End Date Input */}
-<div className="mb-4">
-    <label htmlFor="end-date" className="block text-gray-700 text-sm font-bold mb-2">
-        End Date:
-    </label>
-    <input 
-        type="date" 
-        id="end-date" 
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-        min={showDateRange.startDate || '2023-01-01'}
-        max={showDateRange.endDate || '2099-12-31'}
-        className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-    />
-</div>
 
 
-    {/* Dynamically Created Checkboxes */}
-             {/* Dynamically Created Checkboxes */}
-             <fieldset className="mb-4">
+      {/* Dynamically Created Date Checkboxes */}
+      <fieldset className="mb-4">
                     <legend className="block text-gray-700 text-sm font-bold mb-2">Select Days:</legend>
                     {dateCheckboxes.map(({ date, checked }) => (
                         <label key={date} className="block">

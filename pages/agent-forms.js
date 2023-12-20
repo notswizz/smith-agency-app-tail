@@ -75,13 +75,13 @@ const FormsAgent = () => {
                 {isAgentFormActive ? (
                     <div className="p-6 rounded-lg shadow-lg bg-white">
                         <h2 className="text-center text-pink-600 text-xl font-bold mb-4">New Agent Form</h2>
-                        <p className="text-gray-600 mb-4">Use this form to add new agents. Fill in the details like name, email, phone, and more.</p>
+                        <p className="text-gray-600 text-base font-medium mb-4 px-4 py-2">Before completing the Availability Form, all agents, both new and existing, are required to fill out this form to receive their unique Agent ID #. Please note this ID, as it will be required for all future submissions.</p>
                         <AgentFormAgent />
                     </div>
                 ) : (
                     <div className="p-6 rounded-lg shadow-lg bg-white">
                         <h2 className="text-center text-pink-800 text-xl font-bold mb-4">Availability Form</h2>
-                        <p className="text-gray-600 mb-4">This form is used to update the availability of agents for various shows. Select an agent, a show, and set the available dates.</p>
+                        <p className="text-gray-600 text-base font-medium mb-4 px-4 py-2">Select a show in your location and input the days you are available to work. A standard day is 9-5.</p>
                         <AvailabilityForm 
                             agents={agents} 
                             shows={shows} 

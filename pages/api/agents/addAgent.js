@@ -40,11 +40,10 @@ export default async function handler(req, res) {
                     }
                 });
 
-                   // Check for duplicate agent
-                   const existingAgent = await db.collection('agents').findOne({ email: agentData.email });
-                   if (existingAgent) {
-                       return res.status(409).json({ message: 'An agent with this email already exists' });
-                   }
+                const existingAgent = await db.collection('agents').findOne({ email: agentData.email });
+                if (existingAgent) {
+                    return res.status(409).json({ message: 'An agent with this email already exists' });
+                }
                    
                 if (files.image && files.image.length > 0) {
                     const image = files.image[0];
@@ -63,8 +62,12 @@ export default async function handler(req, res) {
                     console.log('Image file not found');
                 }
 
-                const result = await db.collection('agents').insertOne(agentData);
+                // Generate agent_id here
+                const agentInitials = getInitials(agentData.name);
+                const agentCount = await db.collection('agents').countDocuments({ agent_id: { $regex: `^${agentInitials}` } });
+                agentData.agent_id = `${agentInitials}${String(agentCount + 1).padStart(3, '0')}`;
 
+                const result = await db.collection('agents').insertOne(agentData);
                 if (result.acknowledged) {
                     res.status(200).json({ ...agentData, _id: result.insertedId });
                 } else {
@@ -78,4 +81,8 @@ export default async function handler(req, res) {
     } else {
         res.status(405).json({ message: 'Method Not Allowed' });
     }
+}
+
+function getInitials(name) {
+    return name.split(' ').map(part => part[0].toUpperCase()).join('');
 }
