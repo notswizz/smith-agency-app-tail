@@ -26,10 +26,6 @@ body {
   color: #000000; /* White text color for readability on dark background */
 }
 
-  
-  
-  
-
 @media print {
   body * {
       visibility: hidden; /* Hide everything in the body when printing */
@@ -91,4 +87,3 @@ body {
   max-width: 800px; /* Adjust the size as needed */
   /* Add any additional styling here */
 }
-
