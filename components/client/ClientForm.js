@@ -7,6 +7,7 @@ const ClientForm = ({ onClientAdded }) => {
         contact: '',
         email: '',
         boothLocation: '',
+        clientType: '', // Add clientType to state
     });
 
     const handleChange = (e) => {
@@ -16,7 +17,7 @@ const ClientForm = ({ onClientAdded }) => {
     const handleSubmit = (e) => {
         e.preventDefault();
         onClientAdded(client);
-        setClient({ company: '', website: '', contact: '', email: '', boothLocation: '' });
+        setClient({ company: '', website: '', contact: '', email: '', boothLocation: '', clientType: '' });
     };
 
         return (
@@ -38,6 +39,14 @@ const ClientForm = ({ onClientAdded }) => {
                         <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">Email:</label>
                         <input type="email" id="email" name="email" value={client.email} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
+                    <div className="mb-4">
+                    <label htmlFor="clientType" className="block text-gray-700 text-sm font-bold mb-2">Client Type:</label>
+                    <select id="clientType" name="clientType" value={client.clientType} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        <option value="">Select Type</option>
+                        <option value="permanent">Permanent</option>
+                        <option value="temporary">Temporary</option>
+                    </select>
+                </div>
                     <div className="mb-6">
                         <label htmlFor="boothLocation" className="block text-gray-700 text-sm font-bold mb-2">Booth Location (BLD-FL-#):</label>
                         <input type="text" id="boothLocation" name="boothLocation" value={client.boothLocation} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />

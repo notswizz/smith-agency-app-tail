@@ -10,16 +10,18 @@ const ClientsPage = () => {
     const [filteredClientCount, setFilteredClientCount] = useState(0);
     const [isFormVisible, setIsFormVisible] = useState(false);
 
+    // Define fetchClients function at component level
+    const fetchClients = async () => {
+        const response = await fetch('/api/clients/getClients');
+        if (response.ok) {
+            const data = await response.json();
+            setClients(data);
+            setFilteredClients(data);
+            setFilteredClientCount(data.length);
+        }
+    };
+
     useEffect(() => {
-        const fetchClients = async () => {
-            const response = await fetch('/api/clients/getClients');
-            if (response.ok) {
-                const data = await response.json();
-                setClients(data);
-                setFilteredClients(data);
-                setFilteredClientCount(data.length); // Initialize with the total number of clients
-            }
-        };
         fetchClients();
     }, []);
 
@@ -33,7 +35,7 @@ const ClientsPage = () => {
         });
 
         if (response.ok) {
-            fetchClients(); // Refresh the clients list
+            fetchClients(); // Now fetchClients is accessible here
         } else {
             console.error('Failed to add client', await response.json());
         }

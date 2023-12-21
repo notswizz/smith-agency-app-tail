@@ -11,20 +11,33 @@ export const config = {
     },
 };
 
-export default async function handler(req, res) {
-    if (req.method === 'POST') {
-        const form = new IncomingForm({ keepExtensions: true });
+export default function handler(req, res) {
+    if (req.method !== 'POST') {
+        console.log('Method not allowed');
+        return res.status(405).json({ message: 'Method Not Allowed' });
+    }
 
-        form.parse(req, async (err, fields, files) => {
-            if (err) {
-                console.error('Error processing form:', err);
-                return res.status(500).json({ message: 'Form processing error' });
-            }
+    const form = new IncomingForm({ keepExtensions: true });
 
-            try {
-                await run();
-                const db = client.db('TSA');
-                let agentData = {};
+    form.parse(req, (err, fields, files) => {
+        if (err) {
+            console.error('Error processing form:', err);
+            return res.status(500).json({ message: 'Form processing error' });
+        }
+
+        processForm(fields, files, res).catch(error => {
+            console.error('Error in processForm:', error);
+            res.status(500).json({ message: 'Server error' });
+        });
+    });
+}
+
+async function processForm(fields, files, res) {
+    try {
+        await run();
+        console.log('MongoDB client run successful');
+        const db = client.db('TSA');
+        let agentData = {};
 
                 Object.keys(fields).forEach(field => {
                     if (field === 'location') {
@@ -42,6 +55,7 @@ export default async function handler(req, res) {
 
                 const existingAgent = await db.collection('agents').findOne({ email: agentData.email });
                 if (existingAgent) {
+                    console.log('Agent with this email already exists');
                     return res.status(409).json({ message: 'An agent with this email already exists' });
                 }
                    
@@ -62,27 +76,22 @@ export default async function handler(req, res) {
                     console.log('Image file not found');
                 }
 
-                // Generate agent_id here
                 const agentInitials = getInitials(agentData.name);
                 const agentCount = await db.collection('agents').countDocuments({ agent_id: { $regex: `^${agentInitials}` } });
                 agentData.agent_id = `${agentInitials}${String(agentCount + 1).padStart(3, '0')}`;
-
+        
                 const result = await db.collection('agents').insertOne(agentData);
                 if (result.acknowledged) {
-                    res.status(200).json({ ...agentData, _id: result.insertedId });
+                    return res.status(200).json({ ...agentData, _id: result.insertedId });
                 } else {
-                    res.status(400).json({ message: 'Agent insertion failed' });
+                    return res.status(400).json({ message: 'Agent insertion failed' });
                 }
             } catch (error) {
                 console.error('Error adding agent to MongoDB', error);
-                res.status(500).json({ message: 'Failed to add agent' });
+                return res.status(500).json({ message: 'Failed to add agent' });
             }
-        });
-    } else {
-        res.status(405).json({ message: 'Method Not Allowed' });
-    }
-}
-
-function getInitials(name) {
-    return name.split(' ').map(part => part[0].toUpperCase()).join('');
-}
+        }
+        
+        function getInitials(name) {
+            return name.split(' ').map(part => part[0].toUpperCase()).join('');
+        }

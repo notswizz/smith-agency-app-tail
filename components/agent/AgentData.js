@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const AgentData = ({ agents, onDeleteAgent }) => {
+const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
     const [agentClients, setAgentClients] = useState({});
     const [agentDaysWorked, setAgentDaysWorked] = useState({});
 
@@ -48,7 +48,11 @@ const AgentData = ({ agents, onDeleteAgent }) => {
     return (
         <div className="flex flex-col space-y-4 max-h-96 overflow-auto">
             {agents.map(agent => (
-                <div className="bg-white p-4 rounded shadow-md flex relative" key={agent._id}>
+                <div 
+                    className="bg-white p-4 rounded shadow-md flex relative cursor-pointer"
+                    key={agent._id}
+                    onClick={() => onAgentSelect(agent)} // Add onClick event
+                >
                     {/* Delete Button in the Top Right Corner */}
                     <button 
                         onClick={() => onDeleteAgent(agent._id)} 

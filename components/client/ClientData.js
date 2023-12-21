@@ -15,6 +15,7 @@ const ClientData = ({ clients, onDeleteClient }) => {
                     </h3>
                     <p className="text-gray-600">{client.contact}</p>
                     <p className="text-gray-600">{client.email}</p>
+                    <p className="text-gray-600">{client.clientType}</p>
                     <p className="text-gray-600">Booth: {client.boothLocation}</p>
                     <button onClick={() => onDeleteClient(client._id)} className="mt-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Delete</button> {/* Use _id for deletion */}
                 </div>

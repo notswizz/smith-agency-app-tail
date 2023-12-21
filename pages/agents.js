@@ -36,7 +36,7 @@ const AgentsPage = () => {
         });
 
         if (response.ok) {
-            fetchAgents(); // Refresh the agents list
+            fetchAgents(); // This will now work as expected
         } else {
             console.error('Failed to add agent', await response.json());
         }
