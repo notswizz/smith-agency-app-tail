@@ -109,7 +109,12 @@ return (
                         {isFormVisible ? (
                             <AgentForm onAgentAdded={handleAgentAdded} />
                         ) : (
-                            <AgentData agents={filteredAgents} onDeleteAgent={handleDeleteAgent} onAgentSelect={handleAgentSelect} />
+                            <AgentData 
+                            agents={filteredAgents} 
+                            onDeleteAgent={handleDeleteAgent} 
+                            onAgentSelect={handleAgentSelect}  // Add this line
+                        />
+                        
                         )}
                     </div>
                 </div>
