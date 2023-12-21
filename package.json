@@ -25,7 +25,8 @@
     "react": "^18",
     "react-calendar": "^4.7.0",
     "react-date-range": "^1.4.0",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-loader-spinner": "^6.1.1-0"
   },
   "devDependencies": {
     "tailwindcss": "^3.3.6"

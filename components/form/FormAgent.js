@@ -1,4 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+
+
+
 
 const AgentFormAgent = ({ onAgentAdded }) => {
     const [agent, setAgent] = useState({ 
@@ -7,11 +11,48 @@ const AgentFormAgent = ({ onAgentAdded }) => {
         phone: '', 
         location: [], 
         instagram: '', 
-        notes: '', // Keep the notes variable in state
-        college: '', // Added college field
-        shoeSize: '', // Added shoe size field
+        notes: '', 
+        college: '', 
+        shoeSize: '', 
         image: null 
     });
+    const [existingAgents, setExistingAgents] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [statusMessage, setStatusMessage] = useState('');
+
+    useEffect(() => {
+        fetchAgents();
+    }, []);
+
+    const fetchAgents = async () => {
+        try {
+            const response = await fetch('/api/agents/getAgents');
+            if (response.ok) {
+                const data = await response.json();
+                setExistingAgents(data);
+            } else {
+                console.error('Failed to fetch agents');
+            }
+        } catch (error) {
+            console.error('Error fetching agents:', error);
+        }
+    };
+
+    const generateAgentId = (name) => {
+        const initials = name.split(' ').map(part => part[0].toUpperCase()).join('');
+        let count = 1;
+    
+        existingAgents.forEach(existingAgent => {
+            // Check if agent_id exists and then if it starts with the initials
+            if (existingAgent.agent_id && existingAgent.agent_id.startsWith(initials)) {
+                count++;
+            }
+        });
+    
+        return `${initials}${String(count).padStart(3, '0')}`;
+    };
+    
+
 
     const handleChange = (e) => {
         if (e.target.name === 'location') {
@@ -30,27 +71,61 @@ const AgentFormAgent = ({ onAgentAdded }) => {
         }
     };
 
+    const sendAgentIdEmail = async (email, agentId) => {
+        try {
+            const response = await fetch('/api/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    recipient: email,
+                    agentId: agentId
+                })
+            });
+    
+            if (!response.ok) {
+                console.error('Failed to send email', await response.json());
+            }
+        } catch (error) {
+            console.error('Error sending email:', error);
+        }
+    };
+    
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+        setStatusMessage('Creating agent...'); // Set initial status message
 
+    
+        // Generate agent_id here
+        const agentId = generateAgentId(agent.name);
+    
         const formData = new FormData();
         for (const key in agent) {
             formData.append(key, agent[key]);
         }
-
+        formData.append('agent_id', agentId);
+    
         try {
             const response = await fetch('/api/agents/addAgent', {
                 method: 'POST',
-                body: formData, // Send formData instead of JSON
+                body: formData,
             });
 
             if (response.ok) {
+                setStatusMessage('Agent created successfully. Sending email...');
                 const newAgent = await response.json();
-                alert('Agent added successfully!');
+                alert(`Agent added successfully! Agent ID: ${agentId}`);
+    
+                // Send the Agent ID to the agent's email
+                await sendAgentIdEmail(agent.email, agentId);
+    
                 onAgentAdded && onAgentAdded(newAgent);
-
+    
                 // Reset form fields
-                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', notes: '', image: null });
+                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', college:'', shoeSize:'', notes: '', image: null });
             } else {
                 const errorData = await response.json();
                 console.error('Failed to add agent', errorData);
@@ -61,10 +136,17 @@ const AgentFormAgent = ({ onAgentAdded }) => {
             alert('An error occurred while adding the agent.');
         }
     };
+    
 
     return (
         <div className="max-w-md mx-auto bg-white p-6 rounded shadow max-h-96 overflow-auto">
-            <form onSubmit={handleSubmit}>
+            {loading ? (
+                <div className="flex justify-center items-center">
+                
+                    <p>{statusMessage}</p>
+                </div>
+            ) : (
+                <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
                     <input type="text" id="name" name="name" value={agent.name} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
@@ -113,13 +195,18 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                     <label htmlFor="instagram" className="block text-gray-700 text-sm font-bold mb-2">Instagram:</label>
                     <input type="text" id="instagram" name="instagram" value={agent.instagram} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
-               
+              
                 <div className="mb-4">
                     <label htmlFor="image" className="block text-gray-700 text-sm font-bold mb-2">Image:</label>
                     <input type="file" id="image" name="image" onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" />
                 </div>
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Agent</button>
-            </form>
+                
+                {/* Conditionally render the submit button based on the loading state */}
+                {!loading && (
+                        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Add Agent</button>
+                    )}
+                </form>
+            )}
         </div>
     );
 };

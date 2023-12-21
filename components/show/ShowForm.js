@@ -2,23 +2,23 @@ import React, { useState } from 'react';
 
 const ShowForm = ({ onShowAdded }) => {
     const [show, setShow] = useState({
-        season: '',
         type: '',
         location: '',
         startDate: '',
         endDate: '',
-        active: true // Boolean 'active' variable set to true
+        active: true
     });
 
     const handleChange = (e) => {
-        // Check if the changed field is 'active' to handle boolean values
         const value = e.target.name === 'active' ? e.target.checked : e.target.value;
         setShow({ ...show, [e.target.name]: value });
     };
 
     const generateShowId = () => {
-        const year = show.startDate ? new Date(show.startDate).getFullYear() : 'YYYY';
-        return `${show.location.toUpperCase()}${show.season}${show.type}${year}`;
+        const date = show.startDate ? new Date(show.startDate) : new Date();
+        const month = date.toLocaleString('default', { month: 'long' }); // Extract the month from the start date
+        const year = date.getFullYear();
+        return `${show.location.toUpperCase()}${month.charAt(0).toUpperCase() + month.slice(1).toLowerCase()}${show.type}${year}`;
     };
 
     const handleSubmit = async (e) => {
@@ -42,22 +42,13 @@ const ShowForm = ({ onShowAdded }) => {
             console.error('Failed to add show');
         }
 
-        setShow({ season: '', type: '', location: '', startDate: '', endDate: '', active: true }); // Reset form fields, including active
+        setShow({ type: '', location: '', startDate: '', endDate: '', active: true });
     };
 
     return (
         <div className="max-w-md mx-auto bg-white p-6 rounded shadow max-h-96 overflow-auto">
             <form onSubmit={handleSubmit}>
-                <div className="mb-4">
-                    <label htmlFor="season" className="block text-gray-700 text-sm font-bold mb-2">Season:</label>
-                    <select id="season" name="season" value={show.season} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                        <option value="">Select Season</option>
-                        <option value="Summer">Summer</option>
-                        <option value="Winter">Winter</option>
-                        <option value="Fall">Fall</option>
-                        <option value="Spring">Spring</option>
-                    </select>
-                </div>
+              
                 <div className="mb-4">
                     <label htmlFor="location" className="block text-gray-700 text-sm font-bold mb-2">Location:</label>
                     <select id="location" name="location" value={show.location} onChange={handleChange} className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
