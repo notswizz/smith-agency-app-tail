@@ -115,7 +115,7 @@ const AgentForm = ({ onAgentAdded }) => {
                 onAgentAdded && onAgentAdded(newAgent);
     
                 // Reset form fields
-                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', notes: '', image: null });
+                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', college:'', shoeSize:'', notes: '', image: null });
             } else {
                 const errorData = await response.json();
                 console.error('Failed to add agent', errorData);

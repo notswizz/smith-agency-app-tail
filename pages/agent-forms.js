@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Header from '../components/nav/Header';
 import AvailabilityForm from '../components/form/AvailabilityForm';
 import AgentFormAgent from '../components/form/FormAgent'; // Imported AgentFormAgent
 
@@ -63,7 +62,7 @@ const FormsAgent = () => {
 
     return (
         <>
-            <Header />
+        
             <div className="container mx-auto px-4 py-4 bg-gray-100">
                 <img src="/tsalogo.png" alt="TSA Logo" className="mx-auto mb-4 max-w-full h-auto" />
                 <button 
