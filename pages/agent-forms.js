@@ -64,7 +64,8 @@ const FormsAgent = () => {
         <>
         
             <div className="container mx-auto px-4 py-4 bg-gray-100">
-                <img src="/tsalogo.png" alt="TSA Logo" className="mx-auto mb-4 max-w-full h-auto" />
+            <img src="/tsawhite.png" alt="TSA Logo" className="mx-auto mb-4" style={{ width: '250px', height: '250px' }} />
+
                 <button 
                     onClick={toggleForm} 
                     className="mb-4 bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded block w-full sm:w-auto transition duration-300 ease-in-out">
