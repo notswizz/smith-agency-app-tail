@@ -37,57 +37,58 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
     };
 
 
-  return (
-    <div className="container mx-auto p-4 max-h-96 overflow-auto shadow border border-gray-300 rounded-lg hover:shadow-md transition duration-300">
-        <div className="grid md:grid-cols-2 gap-4">
-            {bookings.map(booking => {
-                const { isFull, emptyCount } = getAgentSelectionStatus(booking);
-                const agentCounts = compileAgentCounts(booking.agentSelection);
-
-                return (
-                    <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col cursor-pointer" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold text-gray-800">{booking.client}</h2>
-                           
-                            <span className={`py-1 px-3 rounded-md text-sm font-medium shadow-sm ${isFull ? 'bg-green-500 text-white' : 'bg-yellow-500 text-gray-800'}`}>
-                                {isFull ? 'Booked' : `${emptyCount} Empty`}
-                            </span>
-                        </div>
-                        <div className="flex flex-col md:flex-row justify-between">
-                            <div className="mb-4 md:mb-0">
-                                <div className="p-2 bg-gray-50 border border-gray-200 rounded-lg shadow-inner">
-                                    <p className="text-md font-medium text-gray-700">{booking.show}</p>
-                                    <div className="flex flex-col mt-1">
-                                        <span className="text-sm text-gray-500">{booking.startDate}</span>
-                                        <span className="text-sm text-gray-500">{booking.endDate}</span>
+    return (
+        <div className="container mx-auto p-6 max-h-96 overflow-auto shadow-lg border border-gray-400 rounded-xl hover:shadow-xl transition duration-500 ease-in-out">
+            <div className="grid md:grid-cols-2 gap-6">
+                {bookings.map(booking => {
+                    const { isFull, emptyCount } = getAgentSelectionStatus(booking);
+                    const agentCounts = compileAgentCounts(booking.agentSelection);
+    
+                    return (
+                        <div className="bg-white p-5 rounded-xl shadow hover:shadow-md transition duration-300 flex flex-col cursor-pointer" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
+                            <div className="flex justify-between items-center mb-5">
+                                <h2 className="text-2xl font-semibold text-gray-900">{booking.client}</h2>
+                                
+                                <span className={`py-2 px-4 rounded-md text-sm font-semibold shadow ${isFull ? 'bg-green-600 text-white' : 'bg-yellow-600 text-gray-100'}`}>
+                                    {isFull ? 'Booked' : `${emptyCount} Empty`}
+                                </span>
+                            </div>
+                            <div className="flex flex-col md:flex-row justify-between">
+                                <div className="mb-5 md:mb-0">
+                                    <div className="p-3 bg-gray-100 border border-gray-300 rounded-xl shadow-inner">
+                                        <p className="text-lg font-medium text-gray-800">{booking.show}</p>
+                                        <div className="flex flex-col mt-2">
+                                            <span className="text-sm text-gray-600">{booking.startDate}</span>
+                                            <span className="text-sm text-gray-600">{booking.endDate}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-md font-medium text-gray-800">{getTotalDays(booking.agentCounts)} days</p>
+                                    <div className="mt-3 p-4 bg-yellow-200 border border-yellow-300 rounded-xl shadow-inner relative"> 
+                                        <p className="text-md text-gray-800">{booking.notes}</p>
                                     </div>
                                 </div>
                             </div>
-                            <div className="text-right">
-                                <p className="text-sm font-medium text-gray-700">Total Days: {getTotalDays(booking.agentCounts)}</p>
-                                <div className="mt-2 p-3 bg-yellow-100 border border-yellow-200 rounded-lg shadow-inner relative"> 
-                                    <p className="text-sm text-gray-700">{booking.notes}</p>
-                                </div>
+                            <div className="mt-3 flex flex-wrap gap-3">
+                                {Object.entries(agentCounts).sort((a, b) => b[1] - a[1]).map(([agent, count]) => (
+                                    <span key={agent} className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-2 rounded-full">
+                                        {agent}: {count}
+                                    </span>
+                                ))}
+                            </div>
+                            <div className="mt-5 flex justify-end">
+                                <button onClick={(e) => handleDelete(booking._id, e)} className="ring-2 ring-red-300 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring focus:ring-red-300 transition duration-300">
+                                    Delete
+                                </button>
                             </div>
                         </div>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                            {Object.entries(agentCounts).sort((a, b) => b[1] - a[1]).map(([agent, count]) => (
-                                <span key={agent} className="bg-blue-50 text-blue-700 text-xs font-medium px-2 py-1 rounded-full">
-                                    {agent}: {count}
-                                </span>
-                            ))}
-                        </div>
-                        <div className="mt-4 flex justify-end">
-                            <button onClick={(e) => handleDelete(booking._id, e)} className="ring-2 ring-red-200 bg-red-400 hover:bg-red-500 text-white font-medium py-1 px-3 rounded-full focus:outline-none focus:ring focus:ring-red-200">
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                );
-            })}
+                    );
+                })}
+            </div>
         </div>
-    </div>
-);
+    );
+    
 
   
   
