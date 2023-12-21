@@ -87,3 +87,39 @@ body {
   border-radius: 4px; /* Optional: round corners */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add shadow for depth */
 }
+
+/* Container with a subtle background glow */
+.landing-container {
+  background-color: #fff;
+  box-shadow: 0 0 15px rgba(255, 182, 193, 0.5); /* Light pink glow */
+}
+
+/* Glowing effect for image and text with pink accents */
+.glowing-content .glowing-image,
+.glowing-content .glowing-text {
+  text-shadow: 0 0 15px rgba(255, 105, 180, 0.7); /* Hot pink glow */
+  box-shadow: 0 0 20px rgba(255, 105, 180, 0.6); /* Hot pink glow */
+  transition: all 0.3s ease-in-out;
+}
+
+.glowing-content .glowing-image:hover,
+.glowing-content .glowing-text:hover {
+  text-shadow: 0 0 25px rgba(255, 20, 147, 1); /* Deep pink glow */
+  box-shadow: 0 0 30px rgba(255, 20, 147, 0.8); /* Deep pink glow */
+  transform: scale(1.05);
+}
+
+/* Additional Styling */
+.glowing-text {
+  color: #333; /* Dark text for contrast */
+  padding: 10px;
+  background-color: rgba(255, 192, 203, 0.2); /* Light pink background */
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.glowing-image {
+  border-radius: 50%; /* Circular image */
+  overflow: hidden;
+  border: 5px solid rgba(255, 182, 193, 0.5); /* Light pink border */
+}

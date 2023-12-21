@@ -1,27 +1,28 @@
 import React, { useEffect } from 'react';
 import Header from '../components/nav/Header';
-import Router from 'next/router';
 import Image from 'next/image';
 
 const HomePage = () => {
   useEffect(() => {
-  
-  
+    // Add any required logic here
   }, []);
 
   return (
     <>
       <Header />
-      <div className="flex justify-center items-center flex-wrap gap-5 p-5">
-        <div className="text-center">
+      <div className="flex justify-center items-center flex-wrap gap-5 p-5 landing-container">
+        <div>
+        <h1 className="text-3xl font-bold my-4 glowing-text">The Smith Agency</h1>
+        <p className="text-xl my-2">Premiere Boutique Staffing</p> 
+        </div>
+        <div className="text-center glowing-content">
           <Image
-            src="/tsalogoai2.png" // Assuming the image is in the public directory
+            src="/tsalogo.png"
             alt="The Smith Agency Logo"
-            width={300} // Adjust the size as needed
-            height={300} // Adjust the size as needed
-            className="inline-block" // Add any additional classes if required
+            width={300}
+            height={300}
+            className="inline-block glowing-image"
           />
-          <h1 className="text-3xl font-bold my-4">The Smith Agency</h1>
         </div>
       </div>
     </>
