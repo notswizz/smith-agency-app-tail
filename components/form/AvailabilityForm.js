@@ -7,8 +7,9 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
     const [agentId, setAgentId] = useState('');
     const [selectedDays, setSelectedDays] = useState({});
     const [showDateRange, setShowDateRange] = useState({ startDate: '', endDate: '' });
-    const [notes, setNotes] = useState(''); // Add this line to declare the notes state
+    const [notes, setNotes] = useState(''); 
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
+
 
     // Function to generate a range of dates
     const generateDateRange = (start, end) => {
@@ -49,6 +50,12 @@ const handleShowSelection = (showId) => {
         setSelectedShow('');
     }
 };
+
+ // Sort shows by startDate
+ const sortedShows = useMemo(() => {
+    return [...shows].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+}, [shows]);
+
 
 
     // Handle date checkbox change
@@ -132,23 +139,23 @@ const handleSubmit = async (event) => {
                 </div>
 
          {/* Show Dropdown */}
-<div className="mb-4">
-    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="show">
-        Show:
-    </label>
-    <select
-        id="show"
-        value={selectedShow}
-        onChange={(e) => handleShowSelection(e.target.value)}
-        className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-    >
-        <option value="" disabled>Select a show...</option>
-        {shows.map(show => (
-            <option key={show._id} value={show._id}>{show.id}</option> // Ensure the correct key and value are set
-        ))}
-    </select>
-</div>
-
+ {/* Show Dropdown */}
+ <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="show">
+                        Show:
+                    </label>
+                    <select
+                        id="show"
+                        value={selectedShow}
+                        onChange={(e) => handleShowSelection(e.target.value)}
+                        className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    >
+                        <option value="" disabled>Select a show...</option>
+                        {sortedShows.map(show => (
+                            <option key={show._id} value={show._id}>{show.id}</option> // Assuming each show has a 'name' property
+                        ))}
+                    </select>
+                </div>
            
 
 
