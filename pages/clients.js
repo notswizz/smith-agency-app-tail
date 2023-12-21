@@ -78,12 +78,12 @@ const ClientsPage = () => {
     return (
         <>
             <Header />
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 mt-6"> {/* Add margin-top for spacing after the header */}
                 <div className="flex flex-col md:flex-row">
-                    <div className="md:w-1/4 mb-4 md:mb-4 md:mr-4">
+                    <div className="md:w-1/4 mb-4 md:mb-0 md:mr-4">
                         <button 
                             onClick={toggleFormVisibility}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full mb-4"
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-5 rounded w-full mb-4 transition duration-300 ease-in-out" /* Enhanced button styling */
                         >
                             {isFormVisible ? 'Hide Form' : 'Add New Client'}
                         </button>
@@ -94,9 +94,13 @@ const ClientsPage = () => {
                     </div>
                     <div className="flex-1">
                         {isFormVisible ? (
-                            <ClientForm onClientAdded={handleClientAdded} />
+                            <div className="p-4 bg-white shadow-md rounded-lg"> {/* Add padding and shadow to form container */}
+                                <ClientForm onClientAdded={handleClientAdded} />
+                            </div>
                         ) : (
-                            <ClientData clients={filteredClients} onDeleteClient={handleDeleteClient} />
+                            <div className="p-4 bg-white shadow-md rounded-lg"> {/* Add padding and shadow to data container */}
+                                <ClientData clients={filteredClients} onDeleteClient={handleDeleteClient} />
+                            </div>
                         )}
                     </div>
                 </div>

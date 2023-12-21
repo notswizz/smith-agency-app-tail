@@ -1,59 +1,56 @@
-/* globals.css */
-
 @keyframes gradient {
   0% {
-      background-position: 0% 50%;
+    background-position: 0% 50%;
   }
   50% {
-      background-position: 100% 50%;
+    background-position: 100% 50%;
   }
   100% {
-      background-position: 0% 50%;
+    background-position: 0% 50%;
   }
 }
 
 body {
-  /* Dark background with pink gradient */
   background: linear-gradient(to right, #12010fad, #ffffff);
-  background-size: 200% 200%; /* Enlarge background size for animation effect */
-
-  /* Apply the animation */
+  background-size: 200% 200%;
   animation: gradient 8s ease infinite;
-
-  /* Modern font settings */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-  Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  color: #000000; /* White text color for readability on dark background */
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: #000000;
+  margin: 5; /* Reset default margin */
+  padding: 5; /* Reset default padding */
+  overflow-x: hidden; /* Prevent horizontal scrollbar */
 }
 
 @media print {
   body * {
-      visibility: hidden; /* Hide everything in the body when printing */
+    visibility: hidden;
   }
 
   .print-area, .print-area * {
-      visibility: visible; /* Only print elements inside .print-area */
+    visibility: visible;
   }
 
   .print-area {
-      position: absolute;
-      left: 0;
-      top: 0;
+    position: absolute;
+    left: 0;
+    top: 0;
   }
 }
 
-/* AutoFillSearchBar.css */
 .search-bar-container {
   position: relative;
   width: 100%;
+  margin-bottom: 20px; /* Add some space below the search bar */
 }
 
 .search-input {
   width: 100%;
-  padding: 10px;
+  padding: 12px 15px; /* Slightly increase padding for better usability */
   font-size: 16px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow for depth */
 }
 
 .suggestions-list {
@@ -66,13 +63,13 @@ body {
   border: 1px solid #ddd;
   border-top: none;
   border-radius: 0 0 4px 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-height: 200px;
   overflow-y: auto;
 }
 
 .suggestion-item {
-  padding: 10px;
+  padding: 12px 15px; /* Increase padding for better readability */
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
@@ -81,9 +78,12 @@ body {
   background-color: #f0f0f0;
 }
 
-/* CalendarStyles.css */
 .customCalendar {
   width: 100%;
-  max-width: 800px; /* Adjust the size as needed */
-  /* Add any additional styling here */
+  max-width: 800px;
+  margin: 20px auto; /* Center calendar with margin */
+  padding: 20px; /* Add padding for better spacing */
+  border: 1px solid #ddd; /* Optional: add border */
+  border-radius: 4px; /* Optional: round corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: add shadow for depth */
 }

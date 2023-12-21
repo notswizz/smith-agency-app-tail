@@ -56,7 +56,7 @@ const ShowsPage = () => {
     return (
         <>
             <Header />
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto px-4 mt-6">
                 <button 
                     onClick={toggleFormVisibility}
                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"

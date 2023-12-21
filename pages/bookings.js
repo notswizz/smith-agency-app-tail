@@ -108,7 +108,7 @@ const BookingsPage = () => {
     return (
         <>
             <Header />
-            <div className="container mx-auto p-4">
+            <div className="container mx-auto px-4 mt-6">
                 {/* Responsive layout with Flexbox */}
                 <div className="flex flex-col md:flex-row">
                     

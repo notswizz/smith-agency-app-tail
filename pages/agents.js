@@ -91,7 +91,7 @@ const handleCloseModal = () => {
 return (
         <>
             <Header />
-            <div className="container mx-auto px-4 ">
+            <div className="container mx-auto px-4 mt-6">
                 <div className="flex flex-col md:flex-row ">
                     <div className="md:w-1/4 mb-4 md:mb-4 md:mr-4 ">
                         <button 
