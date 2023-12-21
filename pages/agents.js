@@ -121,7 +121,12 @@ return (
             </div>
             {/* AgentModal */}
             {selectedAgent && (
-                <AgentModal agent={selectedAgent} isOpen={isModalVisible} onClose={handleCloseModal} />
+                 <AgentModal 
+                 agent={selectedAgent} 
+                 isOpen={isModalVisible} 
+                 onClose={handleCloseModal}
+                 onDeleteAgent={handleDeleteAgent} // Pass this prop to AgentModal
+             />
             )}
         </>
     );

@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-
-
-
-
 const AgentFormAgent = ({ onAgentAdded }) => {
     const [agent, setAgent] = useState({ 
         name: '', 
@@ -115,7 +111,7 @@ const AgentFormAgent = ({ onAgentAdded }) => {
             });
 
             if (response.ok) {
-                setStatusMessage('Agent created successfully. Sending email...');
+                setStatusMessage('Agent created successfully.');
                 const newAgent = await response.json();
                 alert(`Agent added successfully! Agent ID: ${agentId}`);
     

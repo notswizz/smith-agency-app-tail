@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const AgentModal = ({ agent, isOpen, onClose }) => {
+const AgentModal = ({ agent, isOpen, onClose, onDeleteAgent }) => {
     const [clientWorkSummary, setClientWorkSummary] = useState({});
 
     useEffect(() => {
@@ -57,6 +57,8 @@ const AgentModal = ({ agent, isOpen, onClose }) => {
 
                 {/* Agent Details */}
                 <div className="py-2">
+                   
+    
                     <h2 className="text-lg font-semibold text-gray-900">{agent.name}</h2>
                     <p className="text-gray-600">Email: {agent.email}</p>
                     <p className="text-gray-600">Phone: {agent.phone}</p>
@@ -74,7 +76,14 @@ const AgentModal = ({ agent, isOpen, onClose }) => {
                         ))}
                     </ul>
                 </div>
+                
             </div>
+              {/* Delete Button in the Top Right Corner */}
+              <button 
+                        onClick={() => onDeleteAgent(agent._id)} 
+                        className="absolute top-2 right-2 bg-red-400 hover:bg-red-500 text-white font-bold py-1 px-2 text-xs rounded focus:outline-none focus:shadow-outline">
+                        Delete
+                    </button>
         </div>
     );
 };

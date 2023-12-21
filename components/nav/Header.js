@@ -20,14 +20,9 @@ const Header = () => {
             <Link href="/clients">Clients</Link>
           </li>
           <li className="hover:text-gray-400">
-            <Link href="/shows">Shows</Link>
-          </li>
-          <li className="hover:text-gray-400">
             <Link href="/bookings">Bookings</Link>
           </li>
-          <li className="hover:text-gray-400">
-            <Link href="/agent-forms">Forms</Link>
-          </li>
+      
         </ul>
       </nav>
     </header>

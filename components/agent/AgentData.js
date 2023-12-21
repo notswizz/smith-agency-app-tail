@@ -53,13 +53,7 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
                     key={agent._id}
                     onClick={() => onAgentSelect(agent)} // Add onClick event
                 >
-                    {/* Delete Button in the Top Right Corner */}
-                    <button 
-                        onClick={() => onDeleteAgent(agent._id)} 
-                        className="absolute top-2 right-2 bg-red-400 hover:bg-red-500 text-white font-bold py-1 px-2 text-xs rounded focus:outline-none focus:shadow-outline">
-                        Delete
-                    </button>
-    
+                   
                     {/* Agent Info and Image Container */}
                     <div className="flex-1 flex">
                         {/* Image */}
