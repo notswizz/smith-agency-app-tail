@@ -67,7 +67,7 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
                                 <a href={`https://www.instagram.com/${agent.instagram}/`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">{agent.name}</a>
                             </h3>
                             <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                                {agentDaysWorked[agent.name] || 0} Days Worked
+                                {agentDaysWorked[agent.name] || 0} Days Booked
                             </span>
                             <p className="text-gray-600">{agent.email}</p>
                             <p className="text-gray-600">{agent.phone}</p>
