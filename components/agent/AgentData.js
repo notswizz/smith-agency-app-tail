@@ -71,7 +71,6 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
                             </span>
                             <p className="text-gray-600">{agent.email}</p>
                             <p className="text-gray-600">{agent.phone}</p>
-                            <p className="text-gray-600">{agent.agent_id}</p>
                             <p className="text-gray-600">Location: {agent.location.join(', ')}</p>
                             <button className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded mr-2">Email</button>
                             <button className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded mr-2">Text</button>

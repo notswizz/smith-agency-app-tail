@@ -14,7 +14,7 @@ const Header = () => {
         </div>
         <ul className="flex space-x-4">
           <li className="hover:text-gray-400">
-            <Link href="/agents">Agents</Link>
+            <Link href="/agents">Team</Link>
           </li>
           <li className="hover:text-gray-400">
             <Link href="/clients">Clients</Link>

@@ -32,22 +32,6 @@ const AgentForm = ({ onAgentAdded }) => {
         }
     };
 
-    const generateAgentId = (name) => {
-        const initials = name.split(' ').map(part => part[0].toUpperCase()).join('');
-        let count = 1;
-    
-        existingAgents.forEach(existingAgent => {
-            // Check if agent_id exists and then if it starts with the initials
-            if (existingAgent.agent_id && existingAgent.agent_id.startsWith(initials)) {
-                count++;
-            }
-        });
-    
-        return `${initials}${String(count).padStart(3, '0')}`;
-    };
-    
-
-
     const handleChange = (e) => {
         if (e.target.name === 'location') {
             const options = e.target.options;
@@ -65,39 +49,13 @@ const AgentForm = ({ onAgentAdded }) => {
         }
     };
 
-    const sendAgentIdEmail = async (email, agentId) => {
-        try {
-            const response = await fetch('/api/send-email', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    recipient: email,
-                    agentId: agentId
-                })
-            });
-    
-            if (!response.ok) {
-                console.error('Failed to send email', await response.json());
-            }
-        } catch (error) {
-            console.error('Error sending email:', error);
-        }
-    };
-    
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        // Generate agent_id here
-        const agentId = generateAgentId(agent.name);
-    
+
         const formData = new FormData();
         for (const key in agent) {
             formData.append(key, agent[key]);
         }
-        formData.append('agent_id', agentId);
     
         try {
             const response = await fetch('/api/agents/addAgent', {
@@ -107,16 +65,14 @@ const AgentForm = ({ onAgentAdded }) => {
     
             if (response.ok) {
                 const newAgent = await response.json();
-                alert(`Agent added successfully! Agent ID: ${agentId}`);
+                alert('Agent added successfully!');
     
-                // Send the Agent ID to the agent's email
-                await sendAgentIdEmail(agent.email, agentId);
-    
+                // Invoke callback function if provided
                 onAgentAdded && onAgentAdded(newAgent);
     
                 // Reset form fields
                 setAgent({ name: '', email: '', phone: '', location: [], instagram: '', college:'', shoeSize:'', notes: '', image: null });
-
+    
                 // Fetch updated list of agents
                 fetchAgents();
             } else {
@@ -129,6 +85,7 @@ const AgentForm = ({ onAgentAdded }) => {
             alert('An error occurred while adding the agent.');
         }
     };
+    
     
 
     return (

@@ -13,7 +13,7 @@ const HomePage = () => {
       <div className="flex justify-center items-center flex-wrap gap-5 p-5 landing-container">
         <div>
         <h1 className="text-3xl font-bold my-4 glowing-text">The Smith Agency</h1>
-        <p className="text-xl my-2">Premiere Boutique Staffing</p> 
+        <p className="text-xl my-2">Premier Boutique Staffing</p> 
         </div>
         <div className="text-center glowing-content">
           <Image

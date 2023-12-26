@@ -2,14 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { toUTCDateString } from '../../lib/utils';
 
 const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
-    const [selectedAgent, setSelectedAgent] = useState('');
+    const [agentName, setAgentName] = useState('');
+    const [agentPhone, setAgentPhone] = useState('');
     const [selectedShow, setSelectedShow] = useState('');
-    const [agentId, setAgentId] = useState('');
     const [selectedDays, setSelectedDays] = useState({});
     const [showDateRange, setShowDateRange] = useState({ startDate: '', endDate: '' });
     const [notes, setNotes] = useState(''); 
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
-
 
     // Function to generate a range of dates
     const generateDateRange = (start, end) => {
@@ -27,36 +26,34 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
     };
 
     // useMemo hook to create date checkboxes based on the selected show's date range
-const dateCheckboxes = useMemo(() => {
-    const { startDate, endDate } = showDateRange;
-    const dateRange = generateDateRange(startDate, endDate);
-    return dateRange.map(date => ({
-        date,
-        checked: selectedDays[date] || false,
-    }));
-}, [showDateRange, selectedDays]);
+    const dateCheckboxes = useMemo(() => {
+        const { startDate, endDate } = showDateRange;
+        const dateRange = generateDateRange(startDate, endDate);
+        return dateRange.map(date => ({
+            date,
+            checked: selectedDays[date] || false,
+        }));
+    }, [showDateRange, selectedDays]);
 
-// Handle show selection and update date range
-const handleShowSelection = (showId) => {
-    const show = shows.find(show => show._id === showId);
-    if (show) {
-        setShowDateRange({
-            startDate: show.startDate,
-            endDate: show.endDate
-        });
-        setSelectedShow(showId);
-    } else {
-        setShowDateRange({ startDate: '', endDate: '' });
-        setSelectedShow('');
-    }
-};
+    // Handle show selection and update date range
+    const handleShowSelection = (showId) => {
+        const show = shows.find(show => show._id === showId);
+        if (show) {
+            setShowDateRange({
+                startDate: show.startDate,
+                endDate: show.endDate
+            });
+            setSelectedShow(showId);
+        } else {
+            setShowDateRange({ startDate: '', endDate: '' });
+            setSelectedShow('');
+        }
+    };
 
- // Sort shows by startDate
- const sortedShows = useMemo(() => {
-    return [...shows].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
-}, [shows]);
-
-
+    // Sort shows by startDate
+    const sortedShows = useMemo(() => {
+        return [...shows].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
+    }, [shows]);
 
     // Handle date checkbox change
     const handleDateCheckboxChange = (date) => {
@@ -66,81 +63,73 @@ const handleShowSelection = (showId) => {
         }));
     };
 
-// Handle form submission
-const handleSubmit = async (event) => {
-    event.preventDefault();
-    const uppercaseAgentId = agentId.toUpperCase();
+    // Handle form submission
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
-    // Verify the Agent ID
-    try {
-        const verifyResponse = await fetch(`/api/agents/verifyAgent?agentId=${uppercaseAgentId}`);
-        if (verifyResponse.ok) {
-            const agentData = await verifyResponse.json();
-            
-            if (agentData) {
-                // If the agent exists, use the agent's name in the submission data
-                const submissionData = {
-                    agent: agentData.name, // Using agent's name
-                    show: selectedShow,
-                    availability: Object.entries(selectedDays)
-                        .filter(([date, isChecked]) => isChecked)
-                        .map(([date]) => date),
-                    notes: notes
-                };
+        const submissionData = {
+            agent: { name: agentName, phone: agentPhone },
+            show: selectedShow,
+            availability: Object.keys(selectedDays).filter(date => selectedDays[date]),
+            notes
+        };
 
-                // Submit the availability data
-                const response = await fetch('/api/availability/addAvailability', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(submissionData),
-                });
+        const response = await fetch('/api/availability/addAvailability', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(submissionData),
+        });
 
-                if (response.ok) {
-                    setSubmissionSuccess(true);
-                    // Reset form on successful submission
-                    setSelectedAgent('');
-                    setSelectedShow('');
-                    setSelectedDays({});
-                    setNotes('');
-                } else {
-                    console.error('Submission was not successful:', await response.json());
-                }
-            } else {
-                alert('Agent ID does not exist.');
-            }
+        if (response.ok) {
+            setSubmissionSuccess(true);
+            setAgentName('');
+            setAgentPhone('');
+            setSelectedShow('');
+            setSelectedDays({});
+            setNotes('');
         } else {
-            alert('Error verifying Agent ID.');
+            console.error('Submission was not successful:', await response.json());
         }
-    } catch (error) {
-        console.error('Error occurred during agent ID verification:', error);
-    }
-};
+    };
 
 
-     return (
+    return (
         <div className="max-w-md mx-auto max-h-96 overflow-auto">
             <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                
-                {/* Agent ID Input */}
+                {/* Agent Name Input */}
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="agentId">
-                        Agent ID:
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="agentName">
+                        Agent Name:
                     </label>
                     <input
                         type="text"
-                        id="agentId"
-                        value={agentId}
-                        onChange={(e) => setAgentId(e.target.value)}
-                        placeholder="Agent ID (AB001)"
+                        id="agentName"
+                        value={agentName}
+                        onChange={(e) => setAgentName(e.target.value)}
+                        placeholder="Agent Name"
                         className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
                 </div>
 
-         {/* Show Dropdown */}
- {/* Show Dropdown */}
- <div className="mb-4">
+                {/* Agent Phone Number Input */}
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="agentPhone">
+                        Agent Phone:
+                    </label>
+                    <input
+                        type="tel"
+                        id="agentPhone"
+                        value={agentPhone}
+                        onChange={(e) => setAgentPhone(e.target.value)}
+                        placeholder="Agent Phone Number"
+                        className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
+
+                {/* Show Dropdown */}
+                <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="show">
                         Show:
                     </label>
@@ -152,17 +141,13 @@ const handleSubmit = async (event) => {
                     >
                         <option value="" disabled>Select a show...</option>
                         {sortedShows.map(show => (
-                            <option key={show._id} value={show._id}>{show.id}</option> // Assuming each show has a 'name' property
+                            <option key={show._id} value={show._id}>{show.id}</option>
                         ))}
                     </select>
                 </div>
-           
 
-
-
-
-      {/* Dynamically Created Date Checkboxes */}
-      <fieldset className="mb-4">
+                {/* Dynamically Created Date Checkboxes */}
+                <fieldset className="mb-4">
                     <legend className="block text-gray-700 text-sm font-bold mb-2">Select Days:</legend>
                     {dateCheckboxes.map(({ date, checked }) => (
                         <label key={date} className="block">
@@ -172,26 +157,27 @@ const handleSubmit = async (event) => {
                                 onChange={() => handleDateCheckboxChange(date)}
                                 className="mr-2 leading-tight"
                             />
-                            {date}
+                            {toUTCDateString(date)}
                         </label>
                     ))}
                 </fieldset>
 
- {/* Notes Section */}
- <div className="mb-4">
-                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
-                    Notes:
-                </label>
-                <textarea
-                    id="notes"
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="shadow border rounded py-2 px-3 text-gray-700 w-full"
-                    placeholder="Enter any notes here"
-                />
-            </div>
-            {/* Submit Button */}
-            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                {/* Notes Section */}
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
+                        Notes:
+                    </label>
+                    <textarea
+                        id="notes"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        className="shadow border rounded py-2 px-3 text-gray-700 w-full"
+                        placeholder="Enter any notes here"
+                    />
+                </div>
+
+                {/* Submit Button */}
+                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Submit
                 </button>
 
@@ -199,7 +185,7 @@ const handleSubmit = async (event) => {
                 {submissionSuccess && (
                     <div className="alert alert-success">Form submitted successfully!</div>
                 )}
-        </form>
+            </form>
         </div>
     );
 };
