@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { toUTCDateString } from '../../lib/utils'; // Corrected import statement
+import { toUTCDateString } from '../../lib/utils';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 
@@ -19,24 +19,33 @@ const generateDateRange = (start, end) => {
 const Modal = ({ booking, onClose, onUpdateBooking }) => {
     if (!booking) return null;
 
-    // Fetch agents data on component mount
-    useEffect(() => {
-        const fetchAgents = async () => {
-            const response = await fetch('/api/agents/getAgents');
-            if (response.ok) {
-                const data = await response.json();
-                setAgents(data);
-            }
-        };
-        fetchAgents();
-    }, []);
-
+    const [selectedAgents, setSelectedAgents] = useState(booking.agentSelection || []);
+    const [agentsByDate, setAgentsByDate] = useState({});
+    
     const startDate = useMemo(() => new Date(toUTCDateString(booking.startDate)), [booking.startDate]);
     const endDate = useMemo(() => new Date(toUTCDateString(booking.endDate)), [booking.endDate]);
     const dateRange = useMemo(() => generateDateRange(startDate, endDate), [startDate, endDate]);
 
-    const [selectedAgents, setSelectedAgents] = useState(booking.agentSelection || []);
-    const [agents, setAgents] = useState([]);
+    useEffect(() => {
+        const fetchAgentsForDate = async (date) => {
+            const response = await fetch(`/api/agents/getAvailAgents?date=${date}`);
+            const data = response.ok ? await response.json() : [];
+            return data;
+        };
+
+        const fetchAgentsForAllDates = async () => {
+            const agentsForDates = {};
+            for (const date of dateRange) {
+                const formattedDate = toUTCDateString(date);
+                agentsForDates[formattedDate] = await fetchAgentsForDate(formattedDate);
+            }
+            setAgentsByDate(agentsForDates);
+        };
+
+        if (booking && booking.startDate && booking.endDate) {
+            fetchAgentsForAllDates();
+        }
+    }, [booking, dateRange]);
 
     useEffect(() => {
         // Initialize selected agents state based on booking data
@@ -45,14 +54,6 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
         });
         setSelectedAgents(initialSelectedAgents);
     }, [dateRange, booking.agentSelection, booking.agentCounts]);
-
-    const bookingInfoHeader = () => (
-        <tr className="bg-gray-50">
-            <th colSpan="100%" className="py-2 px-4 text-left text-gray-700">
-                -- {booking.show} ---- {booking.client} ---- {startDate.toISOString().split('T')[0]} -- {endDate.toISOString().split('T')[0]} --
-            </th>
-        </tr>
-    );
 
     const handleAgentSelection = (dayIndex, agentIndex, selectedAgentId) => {
         const updatedSelection = [...selectedAgents];
@@ -79,15 +80,18 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
         }
     };
 
-    const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentId) => {
+    const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentId, date) => {
+        const formattedDate = toUTCDateString(date);
+        const agentsForThisDate = agentsByDate[formattedDate] || [];
+        
         return (
             <select
                 value={selectedAgentId || ''}
                 onChange={(e) => handleAgentSelection(dayIndex, agentIndex, e.target.value)}
             >
                 <option value="">Select Agent</option>
-                {agents.map((agent) => (
-                    <option key={agent.id} value={agent.id}>
+                {agentsForThisDate.map((agent) => (
+                    <option key={agent._id} value={agent._id}>
                         {agent.name}
                     </option>
                 ))}
@@ -109,7 +113,7 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
                     )}
                     {agentsInRow.map((agentId, agentIndex) => (
                         <td key={`agent-${agentIndex}`} className={agentId ? 'bg-green-100' : 'bg-red-100'}>
-                            {renderAgentDropdown(dayIndex, i + agentIndex, agentId)}
+                            {renderAgentDropdown(dayIndex, i + agentIndex, agentId, date)}
                         </td>
                     ))}
                 </tr>
@@ -117,6 +121,14 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
         }
         return rows;
     };
+
+    const bookingInfoHeader = () => (
+        <tr className="bg-gray-50">
+            <th colSpan="100%" className="py-2 px-4 text-left text-gray-700">
+                -- {booking.show} ---- {booking.client} ---- {startDate.toISOString().split('T')[0]} -- {endDate.toISOString().split('T')[0]} --
+            </th>
+        </tr>
+    );
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">

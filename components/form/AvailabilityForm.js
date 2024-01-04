@@ -66,21 +66,28 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
     // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+    
+        const availabilityDates = Object.keys(selectedDays).filter(date => selectedDays[date]);
+    
+        // Make sure some dates are selected
+        if (availabilityDates.length === 0) {
+            console.error('No dates selected');
+            return;
+        }
+    
         const submissionData = {
-            agent: { name: agentName, phone: agentPhone },
-            show: selectedShow,
-            availability: Object.keys(selectedDays).filter(date => selectedDays[date]),
-            notes
+            agentPhone, // Assuming the API uses only the phone to identify the agent
+            availability: availabilityDates,
         };
-
-        const response = await fetch('/api/availability/addAvailability', {
+    
+        const response = await fetch('/api/availability/updateAvailability', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(submissionData),
         });
+    
 
         if (response.ok) {
             setSubmissionSuccess(true);

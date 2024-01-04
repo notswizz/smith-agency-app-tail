@@ -39,6 +39,7 @@ async function processForm(fields, files, res) {
         const db = client.db('TSA');
         let agentData = {};
 
+        // Processing form fields
         Object.keys(fields).forEach(field => {
             if (field === 'location') {
                 if (fields[field] instanceof Array) {
@@ -53,12 +54,17 @@ async function processForm(fields, files, res) {
             }
         });
 
+        // Initialize availability as an empty array
+        agentData.availability = [];
+
+        // Check for existing agent by email
         const existingAgent = await db.collection('agents').findOne({ email: agentData.email });
         if (existingAgent) {
             console.log('Agent with this email already exists');
             return res.status(409).json({ message: 'An agent with this email already exists' });
         }
 
+        // Handle image upload if present
         if (files.image && files.image.length > 0) {
             const image = files.image[0];
             const imageKey = `agents/${uuidv4()}_${image.originalFilename}`;
@@ -76,8 +82,7 @@ async function processForm(fields, files, res) {
             console.log('Image file not found');
         }
 
-        // Removed agent_id generation logic here
-
+        // Insert new agent into database
         const result = await db.collection('agents').insertOne(agentData);
         if (result.acknowledged) {
             return res.status(200).json({ ...agentData, _id: result.insertedId });
