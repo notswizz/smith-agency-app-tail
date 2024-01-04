@@ -18,6 +18,9 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     const [selectedAgents, setSelectedAgents] = useState(booking.agentSelection || []);
     const [agentsByDate, setAgentsByDate] = useState({});
     const [allAgents, setAllAgents] = useState([]);
+    const [deselectedAgents, setDeselectedAgents] = useState({});
+
+  
 
     // Declare dateRange here
     const dateRange = useMemo(() => {
@@ -74,59 +77,106 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
         return map;
     }, [allAgents]);
 
+    // Updated handleAgentSelection to accurately track deselections
     const handleAgentSelection = (dayIndex, agentIndex, agentPhone) => {
+        const previousAgentPhone = selectedAgents[dayIndex][agentIndex];
         const updatedAgents = [...selectedAgents];
         updatedAgents[dayIndex][agentIndex] = agentPhone;
         setSelectedAgents(updatedAgents);
+    
+        // Update deselectedAgents state when an agent is deselected
+        if (previousAgentPhone && previousAgentPhone !== agentPhone) {
+            const date = toUTCDateString(dateRange[dayIndex]);
+            setDeselectedAgents(prev => ({...prev, [`${date}-${previousAgentPhone}`]: true}));
+        }
     };
 
    
     const handleSaveSelection = async () => {
-        // ... [rest of the code in the function]
-    
-        // Collect all update requests
+        // Preparing update requests for new selections
         const updateRequests = selectedAgents.flatMap((agentsForDay, dayIndex) => {
             const date = toUTCDateString(dateRange[dayIndex]);
             return agentsForDay
                 .filter(agentPhone => agentPhone) // Filter out empty selections
-                .map(agentPhone => fetch('/api/availability/modifyAvailability', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ agentPhone, dateToBook: date })
+                .map(agentPhone => ({
+                    agentPhone, 
+                    dateToBook: date, 
+                    status: 'booked'
                 }));
         });
     
-        try {
-            // Execute all update requests
-            await Promise.all(updateRequests);
+        // Preparing deselection requests
+        const deselectionRequests = Object.keys(deselectedAgents).map(key => {
+            const [date, agentPhone] = key.split("-");
+            return {
+                agentPhone, 
+                dateToBook: date, 
+                status: 'open'
+            };
+        });
     
-            // Update the booking
+        // Combine and send all requests
+        try {
+            const allRequests = [...updateRequests, ...deselectionRequests];
+            
+            // Debugging: Log the requests to be sent
+            console.log('All requests:', JSON.stringify(allRequests, null, 2));
+    
+            const isValidPhone = phone => /^\d{10}$/.test(phone);
+            const isValidDate = date => !isNaN(new Date(date).getTime());
+            
+            await Promise.all(allRequests.map(req => {
+                // Validate each request
+                if (!isValidPhone(req.agentPhone) || !isValidDate(req.dateToBook) || !req.status) {
+                    console.error('Invalid request data:', req);
+                    return Promise.resolve(); // Skip invalid requests
+                }
+    
+                // Sending the API request
+                return fetch('/api/availability/modifyAvailability', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(req)
+                }).then(response => {
+                    if (!response.ok) {
+                        console.error(`Failed request: ${JSON.stringify(req)}`); // Log the failed request
+                        console.error(`HTTP error! Status: ${response.status}`);
+                        return; // Prevent further execution in this fetch chain
+                    }
+                    return response.json();
+                });
+            }));
+    
+            // Update the booking and close the modal
             const updatedBooking = { ...booking, agentSelection: selectedAgents };
             onUpdateBooking(updatedBooking);
             onClose();
         } catch (error) {
             console.error('Error updating agent availability:', error);
-            // Handle error (e.g., show an error message to the user)
+            // Handle error
         }
     };
+    
+    
+    
     
     
 
     const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentPhone, date) => {
         const formattedDate = toUTCDateString(date);
         const agentsForThisDate = agentsByDate[formattedDate] || [];
-
+    
         return (
             <select
                 value={selectedAgentPhone || ''}
                 onChange={(e) => handleAgentSelection(dayIndex, agentIndex, e.target.value)}
             >
                 {selectedAgentPhone ? (
-                    <option value={selectedAgentPhone}>
+                    <option value={selectedAgentPhone} key={selectedAgentPhone}>
                         {phoneToNameMap[selectedAgentPhone]}
                     </option>
                 ) : (
-                    <option value="">Select Agent</option>
+                    <option value="" key="default">Select Agent</option>
                 )}
                 {agentsForThisDate.map((agent) => (
                     <option key={agent._id.$oid} value={agent.phone}>
@@ -136,6 +186,7 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
             </select>
         );
     };
+    
 
     const renderRowForDate = (date, agentsForDay, dayIndex) => {
         const MAX_AGENTS_PER_ROW = 3;
