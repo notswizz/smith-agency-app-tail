@@ -35,7 +35,7 @@ const BookingsPage = () => {
 
     const handleUpdateBooking = async (updatedBooking) => {
         // Update booking in database
-        const response = await fetch(`/api/bookings/updateBooking/${updatedBooking._id}`, {
+        const response = await fetch(`/api/bookings/updateBooking/${bookingId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedBooking),

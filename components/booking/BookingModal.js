@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { toUTCDateString } from '../../lib/utils';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
 
 const generateDateRange = (start, end) => {
     let dates = [];
@@ -16,60 +14,77 @@ const generateDateRange = (start, end) => {
     return dates;
 };
 
-const Modal = ({ booking, onClose, onUpdateBooking }) => {
-    if (!booking) return null;
-
+const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     const [selectedAgents, setSelectedAgents] = useState(booking.agentSelection || []);
     const [agentsByDate, setAgentsByDate] = useState({});
-    
-    const startDate = useMemo(() => new Date(toUTCDateString(booking.startDate)), [booking.startDate]);
-    const endDate = useMemo(() => new Date(toUTCDateString(booking.endDate)), [booking.endDate]);
-    const dateRange = useMemo(() => generateDateRange(startDate, endDate), [startDate, endDate]);
+    const [allAgents, setAllAgents] = useState([]);
+
+    // Declare dateRange here
+    const dateRange = useMemo(() => {
+        if (booking && booking.startDate && booking.endDate) {
+            const startDate = new Date(toUTCDateString(booking.startDate));
+            const endDate = new Date(toUTCDateString(booking.endDate));
+            return generateDateRange(startDate, endDate);
+        }
+        return [];
+    }, [booking]);
 
     useEffect(() => {
-        const fetchAgentsForDate = async (date) => {
-            try {
-                const response = await fetch(`/api/agents/getAvailAgents?date=${date}`);
-                const data = await response.json();
-                console.log(`Data for ${date}:`, data); // Debug log
-                return response.ok ? data : [];
-            } catch (error) {
-                console.error(`Error fetching agents for ${date}:`, error);
-                return [];
-            }
-        };
+        if (!booking) return;
 
         const fetchAgentsForAllDates = async () => {
             const agentsForDates = {};
             for (const date of dateRange) {
                 const formattedDate = toUTCDateString(date);
-                agentsForDates[formattedDate] = await fetchAgentsForDate(formattedDate);
+                try {
+                    const response = await fetch(`/api/agents/getAvailAgents?date=${formattedDate}`);
+                    const data = await response.json();
+                    agentsForDates[formattedDate] = response.ok ? data : [];
+                } catch (error) {
+                    console.error(`Error fetching agents for ${formattedDate}:`, error);
+                }
             }
             setAgentsByDate(agentsForDates);
         };
 
-        if (booking && booking.startDate && booking.endDate) {
-            fetchAgentsForAllDates();
-        }
+        fetchAgentsForAllDates();
     }, [booking, dateRange]);
 
+    // Fetch all agents once and store them
     useEffect(() => {
-        const initialSelectedAgents = dateRange.map((_, index) => {
-            return booking.agentSelection[index] || new Array(booking.agentCounts[index] || 0).fill('');
-        });
-        setSelectedAgents(initialSelectedAgents);
-    }, [dateRange, booking.agentSelection, booking.agentCounts]);
+        const fetchAllAgents = async () => {
+            try {
+                const response = await fetch('/api/agents/getAgents');
+                const data = await response.json();
+                setAllAgents(data);
+            } catch (error) {
+                console.error('Error fetching all agents:', error);
+            }
+        };
 
-    const handleAgentSelection = (dayIndex, agentIndex, selectedAgentId) => {
-        const updatedSelection = [...selectedAgents];
-        updatedSelection[dayIndex][agentIndex] = selectedAgentId;
-        setSelectedAgents(updatedSelection);
+        fetchAllAgents();
+    }, []);
+
+    // Create a mapping of phone numbers to agent names
+    const phoneToNameMap = useMemo(() => {
+        const map = {};
+        allAgents.forEach(agent => {
+            map[agent.phone] = agent.name;
+        });
+        return map;
+    }, [allAgents]);
+
+    const handleAgentSelection = (dayIndex, agentIndex, agentPhone) => {
+        const updatedAgents = [...selectedAgents];
+        updatedAgents[dayIndex][agentIndex] = agentPhone;
+        setSelectedAgents(updatedAgents);
     };
 
     const handleSubmit = async () => {
-        // Update the booking data first
         const updatedBooking = { ...booking, agentSelection: selectedAgents };
-        const response = await fetch(`/api/bookings/updateBooking/${booking._id}`, {
+        const bookingId = booking._id.$oid; // Correctly extract the bookingId
+    
+        const response = await fetch(`/api/bookings/updateBooking/${bookingId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -78,34 +93,6 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
         });
     
         if (response.ok) {
-            console.log("Agent selection updated: ", selectedAgents);
-    
-            // Iterate over each day and the agents selected for that day
-            for (let dayIndex = 0; dayIndex < selectedAgents.length; dayIndex++) {
-                const agentsForDay = selectedAgents[dayIndex];
-                const date = toUTCDateString(dateRange[dayIndex]);
-    
-                for (let agentId of agentsForDay) {
-                    if (agentId) {
-                        // Send request to update the agent's availability
-                        const modifyResponse = await fetch(`/api/availability/modifyAvailability`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                            },
-                            body: JSON.stringify({ agentId, dateToBook: date }),
-                        });
-    
-                        if (!modifyResponse.ok) {
-                            const modifyResult = await modifyResponse.json();
-                            console.error(`Failed to modify availability for agent ${agentId} on ${date}:`, modifyResult.message);
-                        } else {
-                            console.log(`Modified availability for agent ${agentId} on ${date}`);
-                        }
-                    }
-                }
-            }
-    
             onUpdateBooking(updatedBooking);
             onClose();
         } else {
@@ -114,33 +101,26 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
     };
     
     
-    
 
-    const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentId, date) => {
+    const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentPhone, date) => {
         const formattedDate = toUTCDateString(date);
-        console.log(`Rendering dropdown for ${formattedDate}`); // Debug log
-        const agentsForThisDate = agentsByDate[formattedDate];
-
-        if (!agentsForThisDate) {
-            console.log(`No agents for ${formattedDate}`); // Debug log
-            return null;
-        }
-    
-        const availableAgents = agentsForThisDate.filter(agent =>
-            agent.availability.some(avail =>
-                avail.date === formattedDate && avail.status === 'open'
-            )
-        );
+        const agentsForThisDate = agentsByDate[formattedDate] || [];
 
         return (
             <select
-                value={selectedAgentId || ''}
+                value={selectedAgentPhone || ''}
                 onChange={(e) => handleAgentSelection(dayIndex, agentIndex, e.target.value)}
             >
-                <option value="">Select Agent</option>
-                {availableAgents.map((agent) => (
-                    <option key={agent._id.$oid} value={agent._id.$oid}>
-                        {agent.name}
+                {selectedAgentPhone ? (
+                    <option value={selectedAgentPhone}>
+                        {phoneToNameMap[selectedAgentPhone]}
+                    </option>
+                ) : (
+                    <option value="">Select Agent</option>
+                )}
+                {agentsForThisDate.map((agent) => (
+                    <option key={agent._id.$oid} value={agent.phone}>
+                        {phoneToNameMap[agent.phone] || agent.name}
                     </option>
                 ))}
             </select>
@@ -165,13 +145,20 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
         return rows;
     };
 
-    const bookingInfoHeader = () => (
-        <tr className="bg-gray-50">
-            <th colSpan="100%" className="py-2 px-4 text-left text-gray-700">
-                -- {booking.show} ---- {booking.client} ---- {startDate.toISOString().split('T')[0]} -- {endDate.toISOString().split('T')[0]} --
-            </th>
-        </tr>
-    );
+    const bookingInfoHeader = () => {
+        const startDate = booking && new Date(toUTCDateString(booking.startDate));
+        const endDate = booking && new Date(toUTCDateString(booking.endDate));
+        if (booking && startDate && endDate) {
+            return (
+                <tr className="bg-gray-50">
+                    <th colSpan="100%" className="py-2 px-4 text-left text-gray-700">
+                        -- {booking.show} ---- {booking.client} ---- {startDate.toISOString().split('T')[0]} -- {endDate.toISOString().split('T')[0]} --
+                    </th>
+                </tr>
+            );
+        }
+        return null;
+    };
 
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
@@ -198,4 +185,4 @@ const Modal = ({ booking, onClose, onUpdateBooking }) => {
     );
 };
 
-export default Modal;
+export default BookingModal;

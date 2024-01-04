@@ -1,31 +1,40 @@
-import { client, run } from '../../../../lib/mongodb';
+// In your /api/bookings/updateBooking/[bookingId].js file
 import { ObjectId } from 'mongodb';
+import { client, run } from '../../../../lib/mongodb';
 
 export default async function handler(req, res) {
     if (req.method === 'PUT') {
         try {
             await run();
             const db = client.db('TSA');
-            let bookingData = req.body;
+            const bookingsCollection = db.collection('bookings');
 
-            // Remove _id from bookingData if it exists
-            delete bookingData._id;
+            const { bookingId } = req.query; // Get the bookingId from the URL
 
-            const bookingId = new ObjectId(req.query.bookingId);
+// Check if bookingId is a valid ObjectId
+if (!ObjectId.isValid(bookingId)) {
+    return res.status(400).json({ message: 'Invalid booking ID' });
+}
 
-            const result = await db.collection('bookings').updateOne(
-                { _id: bookingId },
-                { $set: bookingData }
-            );
+const _id = new ObjectId(bookingId); // Convert bookingId to ObjectId
+const updatedBookingData = req.body;
 
-            if (result.modifiedCount === 1) {
-                res.status(200).json({ message: 'Booking updated successfully' });
-            } else {
-                res.status(404).json({ message: 'Booking not found' });
-            }
+console.log('Updating booking with ID:', bookingId);
+console.log('Updated booking data:', updatedBookingData);
+
+// Update the booking
+const result = await bookingsCollection.updateOne({ _id }, { $set: updatedBookingData });
+
+console.log('Modified count:', result.modifiedCount);
+
+if (result.modifiedCount === 0) {
+    return res.status(404).json({ message: 'Booking not found' });
+}
+
+res.status(200).json({ message: 'Booking updated successfully' });
         } catch (error) {
             console.error('Error updating booking in MongoDB', error);
-            res.status(500).json({ message: 'Failed to update booking', error: error.message });
+            res.status(500).json({ message: 'Error updating booking' });
         }
     } else {
         res.status(405).json({ message: 'Method Not Allowed' });

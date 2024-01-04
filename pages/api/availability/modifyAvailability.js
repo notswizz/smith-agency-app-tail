@@ -1,22 +1,33 @@
 import { client, run } from '../../../lib/mongodb';
-import { ObjectId } from 'mongodb'; // Import ObjectId from mongodb
 
 export default async function handler(req, res) {
     if (req.method === 'POST') {
         try {
             await run();
-            const db = client.db('TSA'); // Replace with your database name
-            const { agentId, dateToBook } = req.body; // Use agentId instead of agentPhone
+            const db = client.db('TSA');
+            const { agentPhone, dateToBook } = req.body; // Using agentPhone instead of agentId
 
-            if (!agentId || !dateToBook) {
-                return res.status(400).json({ message: 'Missing or invalid required fields' });
+            console.log("Received agentPhone:", agentPhone);
+            console.log("Received dateToBook:", dateToBook);
+             // Basic validation for agentPhone to check if it's likely a phone number
+    if (!agentPhone || !/^\d{10}$/.test(agentPhone)) {
+        return res.status(400).json({ message: 'Invalid or missing agent phone number' });
+    }
+
+            if (!agentPhone) {
+                return res.status(400).json({ message: 'Agent phone number is required' });
             }
 
-            // Update the agent's availability for the given date to 'booked'
+            if (!dateToBook) {
+                return res.status(400).json({ message: 'Date to book is required' });
+            }
+
             const result = await db.collection('agents').updateOne(
-                { "_id": ObjectId(agentId), "availability.date": dateToBook }, // Use ObjectId to match the agentId
+                { "phone": agentPhone, "availability.date": dateToBook },
                 { $set: { "availability.$.status": "booked" } }
             );
+
+            console.log("MongoDB update result:", result);
 
             if (result.modifiedCount === 0) {
                 res.status(404).json({ message: 'Agent or date not found' });
@@ -25,7 +36,7 @@ export default async function handler(req, res) {
             }
         } catch (error) {
             console.error('Error updating availability in MongoDB', error);
-            res.status(500).json({ message: 'Failed to update availability' });
+            res.status(500).json({ message: 'Failed to update availability', error: error.message });
         }
     } else {
         res.status(405).json({ message: 'Method Not Allowed' });

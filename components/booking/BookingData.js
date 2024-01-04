@@ -63,6 +63,7 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
                 {bookings.map(booking => {
                     const { isFull, emptyCount } = getAgentSelectionStatus(booking);
                     const agentCounts = compileAgentCounts(booking.agentSelection);
+                    console.log("Booking clicked:", booking);
     
                     return (
                         <div className="bg-white p-5 rounded-xl shadow hover:shadow-md transition duration-300 flex flex-col cursor-pointer" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
