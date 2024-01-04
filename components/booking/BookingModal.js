@@ -16,12 +16,27 @@ const generateDateRange = (start, end) => {
 
 const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     const [selectedAgents, setSelectedAgents] = useState(booking.agentSelection || []);
+    const [originalBooking, setOriginalBooking] = useState(null);
     const [agentsByDate, setAgentsByDate] = useState({});
     const [allAgents, setAllAgents] = useState([]);
     const [deselectedAgents, setDeselectedAgents] = useState({});
 
-  
+    // Fetch original booking data
+    useEffect(() => {
+        const fetchOriginalBooking = async () => {
+            try {
+                const response = await fetch(`/api/bookings/getBookings`);
+                const bookings = await response.json();
+                const originalBooking = bookings.find(b => b._id === booking._id);
+                setOriginalBooking(originalBooking);
+            } catch (error) {
+                console.error('Error fetching original booking:', error);
+            }
+        };
 
+        fetchOriginalBooking();
+    }, [booking]);
+  
     // Declare dateRange here
     const dateRange = useMemo(() => {
         if (booking && booking.startDate && booking.endDate) {
@@ -53,7 +68,6 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
         fetchAgentsForAllDates();
     }, [booking, dateRange]);
 
-    // Fetch all agents once and store them
     useEffect(() => {
         const fetchAllAgents = async () => {
             try {
@@ -68,7 +82,6 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
         fetchAllAgents();
     }, []);
 
-    // Create a mapping of phone numbers to agent names
     const phoneToNameMap = useMemo(() => {
         const map = {};
         allAgents.forEach(agent => {
@@ -77,23 +90,35 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
         return map;
     }, [allAgents]);
 
-    // Updated handleAgentSelection to accurately track deselections
-    const handleAgentSelection = (dayIndex, agentIndex, agentPhone) => {
-        const previousAgentPhone = selectedAgents[dayIndex][agentIndex];
-        const updatedAgents = [...selectedAgents];
-        updatedAgents[dayIndex][agentIndex] = agentPhone;
-        setSelectedAgents(updatedAgents);
+   
     
-        // Update deselectedAgents state when an agent is deselected
-        if (previousAgentPhone && previousAgentPhone !== agentPhone) {
-            const date = toUTCDateString(dateRange[dayIndex]);
-            setDeselectedAgents(prev => ({...prev, [`${date}-${previousAgentPhone}`]: true}));
-        }
+    const handleAgentSelection = (dayIndex, agentIndex, agentPhone) => {
+        setSelectedAgents((prevSelectedAgents) => {
+            const updatedAgents = [...prevSelectedAgents];
+            const previousAgentPhone = updatedAgents[dayIndex][agentIndex];
+            updatedAgents[dayIndex][agentIndex] = agentPhone;
+    
+            // If the newly selected agent is different from the previous one, update the deselectedAgents state
+            if (previousAgentPhone && previousAgentPhone !== agentPhone) {
+                const date = toUTCDateString(dateRange[dayIndex]);
+    
+                // If the previous agent was part of the original booking, mark it as deselected
+                const originalAgentPhone = originalBooking?.agentSelection[dayIndex][agentIndex];
+                if (originalAgentPhone === previousAgentPhone) {
+                    setDeselectedAgents((prevDeselectedAgents) => ({
+                        ...prevDeselectedAgents,
+                        [`${date}-${previousAgentPhone}`]: true
+                    }));
+                }
+            }
+            return updatedAgents;
+        });
     };
+    
 
    
     const handleSaveSelection = async () => {
-        // Preparing update requests for new selections
+        // Prepare update requests for new selections
         const updateRequests = selectedAgents.flatMap((agentsForDay, dayIndex) => {
             const date = toUTCDateString(dateRange[dayIndex]);
             return agentsForDay
@@ -105,58 +130,42 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
                 }));
         });
     
-        // Preparing deselection requests
-        const deselectionRequests = Object.keys(deselectedAgents).map(key => {
-            const [date, agentPhone] = key.split("-");
-            return {
-                agentPhone, 
-                dateToBook: date, 
-                status: 'open'
-            };
-        });
+        // Prepare deselection requests based on original booking data
+        const deselectionRequests = originalBooking?.agentSelection.flatMap((agentsForDay, dayIndex) => {
+            const date = toUTCDateString(dateRange[dayIndex]);
+            return agentsForDay
+                .filter(agentPhone => agentPhone && !selectedAgents[dayIndex].includes(agentPhone))
+                .map(agentPhone => ({
+                    agentPhone, 
+                    dateToBook: date, 
+                    status: 'open'
+                }));
+        }) || [];
     
         // Combine and send all requests
         try {
             const allRequests = [...updateRequests, ...deselectionRequests];
-            
-            // Debugging: Log the requests to be sent
-            console.log('All requests:', JSON.stringify(allRequests, null, 2));
-    
-            const isValidPhone = phone => /^\d{10}$/.test(phone);
-            const isValidDate = date => !isNaN(new Date(date).getTime());
-            
             await Promise.all(allRequests.map(req => {
-                // Validate each request
-                if (!isValidPhone(req.agentPhone) || !isValidDate(req.dateToBook) || !req.status) {
-                    console.error('Invalid request data:', req);
-                    return Promise.resolve(); // Skip invalid requests
-                }
-    
-                // Sending the API request
                 return fetch('/api/availability/modifyAvailability', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(req)
                 }).then(response => {
                     if (!response.ok) {
-                        console.error(`Failed request: ${JSON.stringify(req)}`); // Log the failed request
-                        console.error(`HTTP error! Status: ${response.status}`);
-                        return; // Prevent further execution in this fetch chain
+                        throw new Error(`HTTP error! Status: ${response.status}`);
                     }
                     return response.json();
                 });
             }));
     
-            // Update the booking and close the modal
+            // Update the booking and close modal
             const updatedBooking = { ...booking, agentSelection: selectedAgents };
             onUpdateBooking(updatedBooking);
             onClose();
         } catch (error) {
             console.error('Error updating agent availability:', error);
-            // Handle error
         }
     };
-    
     
     
     
