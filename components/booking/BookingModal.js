@@ -99,41 +99,60 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
             const updatedAgents = [...prevSelectedAgents];
             const previousAgentPhone = updatedAgents[dayIndex][agentIndex];
             updatedAgents[dayIndex][agentIndex] = agentPhone;
-    
+        
             // If the agent selection has changed, update trackedChanges
             if (previousAgentPhone !== agentPhone) {
                 const date = toUTCDateString(dateRange[dayIndex]);
-                const agent = allAgents.find(a => a.phone === agentPhone);
-                const availabilityEntry = agent?.availability.find(a => a.date === date);
     
-                setTrackedChanges(prev => ({
-                    ...prev,
-                    [date]: [
-                        ...(prev[date] || []),
-                        {
-                            agentPhone,
-                            availabilityId: availabilityEntry?.id,
-                            status: agentPhone ? 'booked' : 'open' // 'booked' if selected, 'open' if deselected
+                // Deselection of previous agent
+                if (previousAgentPhone) {
+                    const prevAgent = allAgents.find(a => a.phone === previousAgentPhone);
+                    const prevAvailabilityEntry = prevAgent?.availability.find(a => a.date === date);
+    
+                    setTrackedChanges(prev => ({
+                        ...prev,
+                        [`${date}-${prevAvailabilityEntry?.id}`]: {
+                            agentPhone: previousAgentPhone,
+                            availabilityId: prevAvailabilityEntry?.id,
+                            status: 'open'
                         }
-                    ]
-                }));
+                    }));
+                }
+    
+                // Selection of new agent
+                if (agentPhone) {
+                    const newAgent = allAgents.find(a => a.phone === agentPhone);
+                    const newAvailabilityEntry = newAgent?.availability.find(a => a.date === date);
+    
+                    setTrackedChanges(prev => ({
+                        ...prev,
+                        [`${date}-${newAvailabilityEntry?.id}`]: {
+                            agentPhone,
+                            availabilityId: newAvailabilityEntry?.id,
+                            status: 'booked'
+                        }
+                    }));
+                }
             }
     
             return updatedAgents;
         });
     };
     
+    
+    
 
     const handleSaveSelection = async () => {
-        // Prepare requests based on trackedChanges
         const requests = [];
     
-        for (const [date, agents] of Object.entries(trackedChanges)) {
-            for (const { agentPhone, availabilityId, status } of agents) {
+        // Iterate over trackedChanges
+        for (const changeKey in trackedChanges) {
+            if (trackedChanges.hasOwnProperty(changeKey)) {
+                const change = trackedChanges[changeKey];
                 requests.push({
-                    agentPhone,
-                    availabilityId,
-                    status
+                    agentPhone: change.agentPhone,
+                    availabilityId: change.availabilityId,
+                    status: change.status
                 });
             }
         }
