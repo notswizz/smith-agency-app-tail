@@ -1,24 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
-    const getTotalDays = (agentCounts) => {
-        return Array.isArray(agentCounts) ? agentCounts.reduce((a, b) => a + b, 0) : 0;
-    };
+    const [agents, setAgents] = useState([]);
 
-    const getAgentSelectionStatus = (booking) => {
-        const totalSelectionsMade = booking.agentSelection.reduce(
-            (total, day) => total + day.filter(agent => agent).length, 0
-        );
-        const totalAgentSlots = getTotalDays(booking.agentCounts);
-        const emptyCount = totalAgentSlots - totalSelectionsMade;
-        const isFull = emptyCount === 0;
-        return { isFull, emptyCount };
-    };
+    useEffect(() => {
+        const fetchAgents = async () => {
+            const response = await fetch('/api/agents/getAgents');
+            if (response.ok) {
+                const data = await response.json();
+                setAgents(data);
+            }
+        };
+
+        fetchAgents();
+    }, []);
 
     const compileAgentCounts = (agentSelection) => {
-        return agentSelection.flat().reduce((acc, agent) => {
-            if (agent) {
-                acc[agent] = (acc[agent] || 0) + 1;
+        const agentMap = agents.reduce((map, agent) => {
+            map[agent._id] = agent.name; // Assuming each agent has _id and name
+            return map;
+        }, {});
+
+        return agentSelection.flat().reduce((acc, agentId) => {
+            if (agentId) {
+                const agentName = agentMap[agentId] || 'Unknown Agent';
+                acc[agentName] = (acc[agentName] || 0) + 1;
             }
             return acc;
         }, {});
@@ -34,6 +40,20 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
         } else {
             console.error('Failed to delete booking');
         }
+    };
+
+    const getAgentSelectionStatus = (booking) => {
+        const totalSelectionsMade = booking.agentSelection.reduce(
+            (total, day) => total + day.filter(agent => agent).length, 0
+        );
+        const totalAgentSlots = getTotalDays(booking.agentCounts);
+        const emptyCount = totalAgentSlots - totalSelectionsMade;
+        const isFull = emptyCount === 0;
+        return { isFull, emptyCount };
+    };
+
+    const getTotalDays = (agentCounts) => {
+        return Array.isArray(agentCounts) ? agentCounts.reduce((a, b) => a + b, 0) : 0;
     };
 
 

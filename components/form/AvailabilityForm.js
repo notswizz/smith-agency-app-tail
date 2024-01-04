@@ -9,6 +9,7 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
     const [showDateRange, setShowDateRange] = useState({ startDate: '', endDate: '' });
     const [notes, setNotes] = useState(''); 
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
+    const [submissionFailure, setSubmissionFailure] = useState(false); // New state variable
 
     // Function to generate a range of dates
     const generateDateRange = (start, end) => {
@@ -66,6 +67,7 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
     // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setSubmissionFailure(false); 
     
         const availabilityDates = Object.keys(selectedDays).filter(date => selectedDays[date]);
     
@@ -98,6 +100,7 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
             setNotes('');
         } else {
             console.error('Submission was not successful:', await response.json());
+            setSubmissionFailure(true); 
         }
     };
 
@@ -183,14 +186,19 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
                     />
                 </div>
 
-                {/* Submit Button */}
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+              {/* Submit Button */}
+              <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Submit
                 </button>
 
                 {/* Success Notification */}
                 {submissionSuccess && (
                     <div className="alert alert-success">Form submitted successfully!</div>
+                )}
+
+                {/* Failure Notification */}
+                {submissionFailure && (
+                    <div className="alert alert-danger">Failed to submit the form. Please try again.</div>
                 )}
             </form>
         </div>
