@@ -13,7 +13,9 @@ export default async function handler(req, res) {
 
             // Find agents who are available on the given date
             const availableAgents = await db.collection('agents').find({
-                availability: date
+                "availability": {
+                    $elemMatch: { "date": date, "status": "open" }
+                }
             }).toArray();
 
             res.status(200).json(availableAgents);

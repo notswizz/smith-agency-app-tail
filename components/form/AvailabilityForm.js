@@ -78,8 +78,8 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
         }
     
         const submissionData = {
-            agentPhone, // Assuming the API uses only the phone to identify the agent
-            availability: availabilityDates,
+            agentPhone,
+            availabilityDates: Object.keys(selectedDays).filter(date => selectedDays[date])
         };
     
         const response = await fetch('/api/availability/updateAvailability', {
