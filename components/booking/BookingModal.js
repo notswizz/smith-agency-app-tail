@@ -80,23 +80,33 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
         setSelectedAgents(updatedAgents);
     };
 
-    const handleSubmit = async () => {
-        const updatedBooking = { ...booking, agentSelection: selectedAgents };
-        const bookingId = booking._id.$oid; // Correctly extract the bookingId
+   
+    const handleSaveSelection = async () => {
+        // ... [rest of the code in the function]
     
-        const response = await fetch(`/api/bookings/updateBooking/${bookingId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(updatedBooking),
+        // Collect all update requests
+        const updateRequests = selectedAgents.flatMap((agentsForDay, dayIndex) => {
+            const date = toUTCDateString(dateRange[dayIndex]);
+            return agentsForDay
+                .filter(agentPhone => agentPhone) // Filter out empty selections
+                .map(agentPhone => fetch('/api/availability/modifyAvailability', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agentPhone, dateToBook: date })
+                }));
         });
     
-        if (response.ok) {
+        try {
+            // Execute all update requests
+            await Promise.all(updateRequests);
+    
+            // Update the booking
+            const updatedBooking = { ...booking, agentSelection: selectedAgents };
             onUpdateBooking(updatedBooking);
             onClose();
-        } else {
-            console.error('Failed to update booking');
+        } catch (error) {
+            console.error('Error updating agent availability:', error);
+            // Handle error (e.g., show an error message to the user)
         }
     };
     
@@ -178,7 +188,9 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
                             ))}
                         </tbody>
                     </table>
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50" onClick={handleSubmit}>Save Selection</button>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50" onClick={handleSaveSelection}>Save Selection</button>
+        
+
                 </div>
             </div>
         </div>

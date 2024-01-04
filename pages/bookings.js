@@ -35,12 +35,15 @@ const BookingsPage = () => {
 
     const handleUpdateBooking = async (updatedBooking) => {
         // Update booking in database
-        const response = await fetch(`/api/bookings/updateBooking/${bookingId}`, {
+        console.log('Updating Booking with ID:', updatedBooking._id); // Added console log
+        const response = await fetch(`/api/bookings/updateBooking/${updatedBooking._id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updatedBooking),
         });
-
+    
+        console.log('Update Booking Response Status:', response.status); // Added console log
+    
         if (response.ok) {
             const updatedBookings = bookings.map(booking => 
                 booking._id === updatedBooking._id ? updatedBooking : booking
@@ -49,6 +52,8 @@ const BookingsPage = () => {
             setFilteredCount(updatedBookings.length); // Update count
         }
     };
+    
+    
 
     const handleDeleteBooking = async (bookingId) => {
         if (window.confirm('Are you sure you want to delete this booking?')) {

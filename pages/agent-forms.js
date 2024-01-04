@@ -40,19 +40,7 @@ const FormsAgent = () => {
         }
     };
 
-    const handleAvailabilityAdded = async (availabilityData) => {
-        const response = await fetch('/api/availability/addAvailability', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(availabilityData),
-        });
-
-        if (!response.ok) {
-            console.error('Failed to add availability', await response.json());
-        }
-    };
+  
 
 
 
@@ -85,7 +73,7 @@ const FormsAgent = () => {
                         <AvailabilityForm 
                             agents={agents} 
                             shows={shows} 
-                            onAvailabilityAdded={handleAvailabilityAdded} 
+                           
                         />
                     </div>
                 )}

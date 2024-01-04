@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { toUTCDateString } from '../../lib/utils';
 
-const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
+const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
+    const [agents, setAgents] = useState([]);
     const [agentPhone, setAgentPhone] = useState(''); 
     const [selectedShow, setSelectedShow] = useState('');
     const [selectedDays, setSelectedDays] = useState({});
@@ -9,6 +10,23 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
     const [notes, setNotes] = useState(''); 
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
     const [submissionFailure, setSubmissionFailure] = useState(false);
+
+    useEffect(() => {
+        const fetchAgents = async () => {
+            try {
+                const response = await fetch('/api/agents/getAgents');
+                if (response.ok) {
+                    const data = await response.json();
+                    setAgents(data);
+                } else {
+                    console.error('Failed to fetch agents');
+                }
+            } catch (error) {
+                console.error('Error fetching agents:', error);
+            }
+        };
+        fetchAgents();
+    }, []);
 
     const generateDateRange = (start, end) => {
         if (!start || !end) return [];
@@ -23,6 +41,7 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
 
         return dates;
     };
+
 
     const dateCheckboxes = useMemo(() => {
         const { startDate, endDate } = showDateRange;
@@ -60,20 +79,24 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setSubmissionFailure(false); 
+        setSubmissionFailure(false);
+        setSubmissionSuccess(false);
     
-        const selectedDates = Object.keys(selectedDays).filter(date => selectedDays[date]);
+        // Check if agentPhone exists in agents array
+        const agentExists = agents.some(agent => agent.phone === agentPhone);
     
-        if (selectedDates.length === 0) {
-            console.error('No dates selected');
-            setSubmissionFailure(true); 
+        if (!agentExists) {
+            console.error('Agent phone number does not match any agent records');
+            setSubmissionFailure(true);
             return;
         }
+    
+        // Extract the selected dates
+        const selectedDates = Object.keys(selectedDays).filter(date => selectedDays[date]);
     
         let allUpdatesSuccessful = true;
     
         for (const date of selectedDates) {
-            // Change the API endpoint to 'createAvailability'
             const response = await fetch('/api/availability/createAvailability', {
                 method: 'POST',
                 headers: {
@@ -100,6 +123,7 @@ const AvailabilityForm = ({ agents, shows, onAvailabilityAdded }) => {
             setSubmissionFailure(true); 
         }
     };
+    
     
 
     return (
