@@ -125,46 +125,55 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     };
     
     
-
     return (
         <div className="max-w-md mx-auto max-h-96 overflow-auto">
+            <h2 className="text-xl font-semibold mb-4">Agent Availability Submission</h2>
+            <p className="text-gray-600 mb-6">
+                Use this form to update an agent's availability for upcoming shows. Ensure the phone number is accurate to properly record the dates.
+            </p>
             <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                 {/* Agent Phone Number Input */}
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="agentPhone">
-                        Agent Phone:
+                        Phone Number*:
                     </label>
                     <input
-                        type="tel"
-                        id="agentPhone"
-                        value={agentPhone}
-                        onChange={(e) => setAgentPhone(e.target.value)}
-                        placeholder="Agent Phone Number"
-                        className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                </div>
+    type="tel"
+    id="agentPhone"
+    value={agentPhone}
+    onChange={(e) => setAgentPhone(e.target.value)}
+    placeholder="9 digits, no dashes or slashes"
+    pattern="\d*"
+    title="Please enter a 9 digit phone number without any dashes or slashes."
+    maxLength="9"
+    required
+    className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+/>
 
+                </div>
+    
                 {/* Show Dropdown */}
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="show">
-                        Show:
+                        Select Show*:
                     </label>
                     <select
                         id="show"
                         value={selectedShow}
                         onChange={(e) => handleShowSelection(e.target.value)}
+                        required
                         className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     >
-                        <option value="" disabled>Select a show...</option>
+                        <option value="" disabled>Select a show from the list</option>
                         {sortedShows.map(show => (
                             <option key={show._id} value={show._id}>{show.id}</option>
                         ))}
                     </select>
                 </div>
-
+    
                 {/* Date Checkboxes */}
                 <fieldset className="mb-4">
-                    <legend className="block text-gray-700 text-sm font-bold mb-2">Select Days:</legend>
+                    <legend className="block text-gray-700 text-sm font-bold mb-2">Available Dates*:</legend>
                     {dateCheckboxes.map(({ date, checked }) => (
                         <label key={date} className="block">
                             <input
@@ -177,36 +186,47 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
                         </label>
                     ))}
                 </fieldset>
-
+    
                 {/* Notes Section */}
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
-                        Notes:
+                        Additional Notes:
                     </label>
                     <textarea
                         id="notes"
                         value={notes}
                         onChange={(e) => setNotes(e.target.value)}
+                        rows="3"
+                        placeholder="Include any specific details or preferences"
                         className="shadow border rounded py-2 px-3 text-gray-700 w-full"
-                        placeholder="Enter any notes here"
                     />
                 </div>
-
+    
                 {/* Submit Button */}
-                <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                    Submit
-                </button>
-
+                <div className="flex justify-center">
+                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Submit Availability
+                    </button>
+                </div>
+    
                 {/* Success and Failure Notifications */}
                 {submissionSuccess && (
-                    <div className="alert alert-success">Form submitted successfully!</div>
+                    <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                        <strong className="font-bold">Success!</strong>
+                        <span className="block sm:inline"> The availability has been successfully submitted.</span>
+                    </div>
                 )}
                 {submissionFailure && (
-                    <div className="alert alert-danger">Failed to submit the form. Please try again.</div>
+                    <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <strong className="font-bold">Error!</strong>
+                        <span className="block sm:inline"> There was a problem submitting the availability. Please try again.</span>
+                    </div>
                 )}
             </form>
         </div>
     );
+    
+   
 };
 
 export default AvailabilityForm;
