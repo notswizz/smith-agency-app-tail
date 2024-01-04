@@ -142,10 +142,10 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     id="agentPhone"
     value={agentPhone}
     onChange={(e) => setAgentPhone(e.target.value)}
-    placeholder="9 digits, no dashes or slashes"
+    placeholder="10 digits, no dashes or slashes"
     pattern="\d*"
-    title="Please enter a 9 digit phone number without any dashes or slashes."
-    maxLength="9"
+    title="Please enter a 10 digit phone number without any dashes or slashes."
+    maxLength="10"
     required
     className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
 />
