@@ -20,6 +20,7 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     const [agentsByDate, setAgentsByDate] = useState({});
     const [allAgents, setAllAgents] = useState([]);
     const [deselectedAgents, setDeselectedAgents] = useState({});
+    const [trackedChanges, setTrackedChanges] = useState({});
 
     // Fetch original booking data
     useEffect(() => {
@@ -92,60 +93,54 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
 
    
     
+   
     const handleAgentSelection = (dayIndex, agentIndex, agentPhone) => {
         setSelectedAgents((prevSelectedAgents) => {
             const updatedAgents = [...prevSelectedAgents];
             const previousAgentPhone = updatedAgents[dayIndex][agentIndex];
             updatedAgents[dayIndex][agentIndex] = agentPhone;
     
-            // If the newly selected agent is different from the previous one, update the deselectedAgents state
-            if (previousAgentPhone && previousAgentPhone !== agentPhone) {
+            // If the agent selection has changed, update trackedChanges
+            if (previousAgentPhone !== agentPhone) {
                 const date = toUTCDateString(dateRange[dayIndex]);
+                const agent = allAgents.find(a => a.phone === agentPhone);
+                const availabilityEntry = agent?.availability.find(a => a.date === date);
     
-                // If the previous agent was part of the original booking, mark it as deselected
-                const originalAgentPhone = originalBooking?.agentSelection[dayIndex][agentIndex];
-                if (originalAgentPhone === previousAgentPhone) {
-                    setDeselectedAgents((prevDeselectedAgents) => ({
-                        ...prevDeselectedAgents,
-                        [`${date}-${previousAgentPhone}`]: true
-                    }));
-                }
+                setTrackedChanges(prev => ({
+                    ...prev,
+                    [date]: [
+                        ...(prev[date] || []),
+                        {
+                            agentPhone,
+                            availabilityId: availabilityEntry?.id,
+                            status: agentPhone ? 'booked' : 'open' // 'booked' if selected, 'open' if deselected
+                        }
+                    ]
+                }));
             }
+    
             return updatedAgents;
         });
     };
     
 
-   
     const handleSaveSelection = async () => {
-        // Prepare update requests for new selections
-        const updateRequests = selectedAgents.flatMap((agentsForDay, dayIndex) => {
-            const date = toUTCDateString(dateRange[dayIndex]);
-            return agentsForDay
-                .filter(agentPhone => agentPhone) // Filter out empty selections
-                .map(agentPhone => ({
-                    agentPhone, 
-                    dateToBook: date, 
-                    status: 'booked'
-                }));
-        });
+        // Prepare requests based on trackedChanges
+        const requests = [];
     
-        // Prepare deselection requests based on original booking data
-        const deselectionRequests = originalBooking?.agentSelection.flatMap((agentsForDay, dayIndex) => {
-            const date = toUTCDateString(dateRange[dayIndex]);
-            return agentsForDay
-                .filter(agentPhone => agentPhone && !selectedAgents[dayIndex].includes(agentPhone))
-                .map(agentPhone => ({
-                    agentPhone, 
-                    dateToBook: date, 
-                    status: 'open'
-                }));
-        }) || [];
+        for (const [date, agents] of Object.entries(trackedChanges)) {
+            for (const { agentPhone, availabilityId, status } of agents) {
+                requests.push({
+                    agentPhone,
+                    availabilityId,
+                    status
+                });
+            }
+        }
     
-        // Combine and send all requests
+        // Send the requests
         try {
-            const allRequests = [...updateRequests, ...deselectionRequests];
-            await Promise.all(allRequests.map(req => {
+            await Promise.all(requests.map(req => {
                 return fetch('/api/availability/modifyAvailability', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -158,7 +153,7 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
                 });
             }));
     
-            // Update the booking and close modal
+            // Update the booking and close the modal
             const updatedBooking = { ...booking, agentSelection: selectedAgents };
             onUpdateBooking(updatedBooking);
             onClose();
@@ -170,7 +165,7 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     
     
     
-
+    
     const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentPhone, date) => {
         const formattedDate = toUTCDateString(date);
         const agentsForThisDate = agentsByDate[formattedDate] || [];
@@ -180,21 +175,29 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
                 value={selectedAgentPhone || ''}
                 onChange={(e) => handleAgentSelection(dayIndex, agentIndex, e.target.value)}
             >
-                {selectedAgentPhone ? (
-                    <option value={selectedAgentPhone} key={selectedAgentPhone}>
+                {selectedAgentPhone && (
+                    <option value={selectedAgentPhone} key={`selected-${selectedAgentPhone}`}>
                         {phoneToNameMap[selectedAgentPhone]}
                     </option>
-                ) : (
-                    <option value="" key="default">Select Agent</option>
                 )}
-                {agentsForThisDate.map((agent) => (
-                    <option key={agent._id.$oid} value={agent.phone}>
-                        {phoneToNameMap[agent.phone] || agent.name}
-                    </option>
-                ))}
+                {!selectedAgentPhone && (
+                    <option value="" key={`default-${dayIndex}-${agentIndex}`}>Select Agent</option>
+                )}
+                {agentsForThisDate.map((agent) => {
+                    // Find the matching availability entry for the date
+                    const availabilityEntry = agent.availability.find(a => a.date === formattedDate);
+                    return (
+                        <option key={availabilityEntry.id} value={agent.phone}>
+                            {phoneToNameMap[agent.phone] || agent.name}
+                        </option>
+                    );
+                })}
             </select>
         );
     };
+    
+   
+    
     
 
     const renderRowForDate = (date, agentsForDay, dayIndex) => {

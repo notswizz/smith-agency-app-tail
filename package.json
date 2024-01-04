@@ -28,7 +28,8 @@
     "react-chartjs-2": "^5.2.0",
     "react-date-range": "^1.4.0",
     "react-dom": "^18",
-    "react-loader-spinner": "^6.1.1-0"
+    "react-loader-spinner": "^6.1.1-0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "tailwindcss": "^3.3.6"
