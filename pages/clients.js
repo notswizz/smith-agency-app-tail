@@ -41,15 +41,7 @@ const ClientsPage = () => {
         }
     };
 
-    const handleDeleteClient = async (clientId) => {
-        const response = await fetch(`/api/clients/deleteClient?id=${clientId}`, {
-            method: 'DELETE',
-        });
-
-        if (response.ok) {
-            setClients(clients.filter(client => client._id !== clientId));
-        }
-    };
+  
 
     const toggleFormVisibility = () => {
         setIsFormVisible(!isFormVisible);
@@ -77,6 +69,27 @@ const ClientsPage = () => {
         }
     };
 
+    const handleDeleteConfirmation = async (clientId) => {
+        if (window.confirm("Are you sure you want to delete this client? This action cannot be undone.")) {
+            await handleDeleteClient(clientId);
+        }
+    };
+
+    const handleDeleteClient = async (clientId) => {
+        const response = await fetch(`/api/clients/deleteClient?id=${clientId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            setClients(clients.filter(client => client._id !== clientId));
+            setFilteredClients(filteredClients.filter(client => client._id !== clientId));
+            // Update the filtered count as well
+            setFilteredClientCount(prevCount => prevCount - 1);
+        } else {
+            alert('Failed to delete the client. Please try again.');
+        }
+    };
+
     return (
         <>
             <Header />
@@ -101,7 +114,10 @@ const ClientsPage = () => {
                             </div>
                         ) : (
                             <div className="p-4 bg-white shadow-md rounded-lg"> {/* Add padding and shadow to data container */}
-                                <ClientData clients={filteredClients} onDeleteClient={handleDeleteClient} />
+                                <ClientData 
+                        clients={filteredClients} 
+                        onDeleteClient={handleDeleteConfirmation} // Pass handleDeleteConfirmation instead
+                    />
                             </div>
                         )}
                     </div>

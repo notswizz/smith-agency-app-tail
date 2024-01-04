@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { MailOutline, ChatbubblesOutline } from 'react-ionicons';
 
 const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
     const [agentClients, setAgentClients] = useState({});
@@ -72,8 +73,23 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
                             <p className="text-gray-600">{agent.email}</p>
                             <p className="text-gray-600">{agent.phone}</p>
                             <p className="text-gray-600">Location: {agent.location.join(', ')}</p>
-                            <button className="bg-blue-400 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded mr-2">Email</button>
-                            <button className="bg-orange-400 hover:bg-orange-500 text-white font-bold py-2 px-4 rounded mr-2">Text</button>
+                            <br></br>
+                             {/* Icons for Email and Text */}
+                    <div className="flex items-center">
+                        <MailOutline
+                            color={'#00000'} 
+                            height="35px"
+                            width= "35px"
+                            style={{ marginRight: '10px' }}
+                            onClick={() => {/* Handle Email Action */}}
+                        />
+                        <ChatbubblesOutline
+                            color={'#00000'} 
+                            height="35px"
+                            width="35px"
+                            onClick={() => {/* Handle Text Action */}}
+                        />
+                    </div>
                         </div>
                     </div>
                 </div>

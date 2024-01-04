@@ -42,15 +42,7 @@ const AgentsPage = () => {
         }
     };
 
-    const handleDeleteAgent = async (agentId) => {
-        const response = await fetch(`/api/agents/deleteAgent?id=${agentId}`, {
-            method: 'DELETE',
-        });
-
-        if (response.ok) {
-            setAgents(agents.filter(agent => agent._id !== agentId));
-        }
-    };
+   
 
     const toggleFormVisibility = () => {
         setIsFormVisible(!isFormVisible);
@@ -76,17 +68,35 @@ const AgentsPage = () => {
         }
     };
 
-   // Function to handle agent selection for modal
-   const handleAgentSelect = (agent) => {
-    setSelectedAgent(agent);
-    setIsModalVisible(true);
-};
+    const handleAgentSelect = (agent) => {
+        setSelectedAgent(agent);
+        setIsModalVisible(true);
+    };
 
-// Function to close the modal
-const handleCloseModal = () => {
-    setIsModalVisible(false);
-    setSelectedAgent(null);
-};
+    const handleCloseModal = () => {
+        setIsModalVisible(false);
+        setSelectedAgent(null);
+    };
+
+    const handleDeleteConfirmation = async (agentId) => {
+        if (window.confirm("Are you sure you want to delete this agent? This action cannot be undone.")) {
+            await handleDeleteAgent(agentId);
+        }
+    };
+
+    const handleDeleteAgent = async (agentId) => {
+        const response = await fetch(`/api/agents/deleteAgent?id=${agentId}`, {
+            method: 'DELETE',
+        });
+
+        if (response.ok) {
+            setAgents(agents.filter(agent => agent._id !== agentId));
+            setFilteredAgents(filteredAgents.filter(agent => agent._id !== agentId));
+            setFilteredAgentCount(prevCount => prevCount - 1);
+        } else {
+            alert('Failed to delete the agent. Please try again.');
+        }
+    };
 
 return (
         <>
@@ -111,8 +121,8 @@ return (
                         ) : (
                             <AgentData 
                             agents={filteredAgents} 
-                            onDeleteAgent={handleDeleteAgent} 
-                            onAgentSelect={handleAgentSelect}  // Add this line
+                            onDeleteAgent={handleDeleteConfirmation} // Pass handleDeleteConfirmation instead
+                            onAgentSelect={handleAgentSelect} 
                         />
                         
                         )}
@@ -121,12 +131,12 @@ return (
             </div>
             {/* AgentModal */}
             {selectedAgent && (
-                 <AgentModal 
-                 agent={selectedAgent} 
-                 isOpen={isModalVisible} 
-                 onClose={handleCloseModal}
-                 onDeleteAgent={handleDeleteAgent} // Pass this prop to AgentModal
-             />
+                  <AgentModal 
+                  agent={selectedAgent} 
+                  isOpen={isModalVisible} 
+                  onClose={handleCloseModal}
+                  onDeleteAgent={handleDeleteAgent} 
+              />
             )}
         </>
     );
