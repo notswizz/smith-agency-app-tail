@@ -88,7 +88,8 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
                             height="35px"
                             width= "35px"
                             style={{ marginRight: '10px' }}
-                            onClick={() => {/* Handle Email Action */}}
+                            onClick={() => window.location.href = `mailto:${agent.email}`}
+                            style={{ cursor: 'pointer', marginRight: '10px' }}
                         />
                         <ChatbubblesOutline
                                 color={'#00000'} 
