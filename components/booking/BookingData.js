@@ -17,30 +17,20 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
 
     const compileAgentCounts = (agentSelection) => {
         const agentMap = agents.reduce((map, agent) => {
-            map[agent._id] = agent.name; // Assuming each agent has _id and name
+            map[agent.phone] = agent.name; // Using agent.phone as key
             return map;
         }, {});
 
-        return agentSelection.flat().reduce((acc, agentId) => {
-            if (agentId) {
-                const agentName = agentMap[agentId] || 'Unknown Agent';
+        return agentSelection.flat().reduce((acc, agentPhone) => {
+            if (agentPhone) {
+                const agentName = agentMap[agentPhone] || 'Unknown Agent';
                 acc[agentName] = (acc[agentName] || 0) + 1;
             }
             return acc;
         }, {});
     };
 
-    const handleDelete = async (id, event) => {
-        event.stopPropagation();
-        const response = await fetch(`/api/bookings/deleteBooking?id=${id}`, {
-            method: 'DELETE',
-        });
-        if (response.ok) {
-            onDeleteBooking(id);
-        } else {
-            console.error('Failed to delete booking');
-        }
-    };
+   
 
     const getAgentSelectionStatus = (booking) => {
         const totalSelectionsMade = booking.agentSelection.reduce(
@@ -98,11 +88,7 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
                                     </span>
                                 ))}
                             </div>
-                            <div className="mt-5 flex justify-end">
-                                <button onClick={(e) => handleDelete(booking._id, e)} className="ring-2 ring-red-300 bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-full focus:outline-none focus:ring focus:ring-red-300 transition duration-300">
-                                    Delete
-                                </button>
-                            </div>
+                           
                         </div>
                     );
                 })}

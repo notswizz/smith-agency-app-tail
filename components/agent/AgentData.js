@@ -88,14 +88,14 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
                             <br></br>
                              {/* Icons for Email and Text */}
                     <div className="flex items-center">
-                        <MailOutline
-                            color={'#00000'} 
-                            height="35px"
-                            width= "35px"
-                            style={{ marginRight: '10px' }}
-                            onClick={() => window.location.href = `mailto:${agent.email}`}
-                            style={{ cursor: 'pointer', marginRight: '10px' }}
-                        />
+                    <MailOutline
+    color={'#00000'} 
+    height="35px"
+    width="35px"
+    onClick={() => window.location.href = `mailto:${agent.email}`}
+    style={{ cursor: 'pointer', marginRight: '10px' }} // Corrected: Merge the style attributes into one
+/>
+
                         <ChatbubblesOutline
                                 color={'#00000'} 
                                 height="35px"

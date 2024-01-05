@@ -181,7 +181,29 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
         }
     };
     
-    
+     // Function to handle the deletion of a booking
+     const handleDeleteBooking = async () => {
+        if (!booking || !booking._id) return;
+        
+        const confirmDelete = window.confirm("Are you sure you want to delete this booking?");
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`/api/bookings/deleteBooking?id=${booking._id}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                // Call a function passed via props to update the parent component
+                // This function should remove the deleted booking from the state
+                onClose(); // Close the modal after deletion
+            } else {
+                console.error('Failed to delete booking');
+            }
+        } catch (error) {
+            console.error('Error deleting booking:', error);
+        }
+    };
     
     
     
@@ -244,7 +266,7 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
             return (
                 <tr className="bg-gray-50">
                     <th colSpan="100%" className="py-2 px-4 text-left text-gray-700">
-                        -- {booking.show} ---- {booking.client} ---- {startDate.toISOString().split('T')[0]} -- {endDate.toISOString().split('T')[0]} --
+                        {booking.show} - {booking.client} - {startDate.toISOString().split('T')[0]} -- {endDate.toISOString().split('T')[0]}
                     </th>
                 </tr>
             );
@@ -255,9 +277,18 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
             <div className="bg-white p-4 rounded-lg shadow-lg w-3/4">
+                 {/* Positioned Delete Button */}
+                 <button 
+                    className="absolute top-0 right-0 mt-4 mr-4 bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 text-sm rounded focus:outline-none focus:ring focus:ring-red-300 focus:ring-opacity-50"
+                    onClick={handleDeleteBooking}
+                >
+                    Delete
+                </button>
                 <span className="close text-gray-700 text-2xl leading-none hover:text-gray-500 cursor-pointer" onClick={onClose}>&times;</span>
                 <div className="mt-4">
+                     
                     <table className="min-w-full border-collapse border border-gray-300">
+
                         <thead>
                             {bookingInfoHeader()}
                         </thead>
