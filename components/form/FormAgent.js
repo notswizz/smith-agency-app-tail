@@ -10,6 +10,9 @@ const AgentFormAgent = ({ onAgentAdded }) => {
         notes: '', 
         college: '', 
         shoeSize: '', 
+        salesExperience: '', 
+        clothingSize: '', 
+        resume: null, 
         image: null 
     });
     const [existingAgents, setExistingAgents] = useState([]);
@@ -46,6 +49,8 @@ const AgentFormAgent = ({ onAgentAdded }) => {
             setAgent({ ...agent, location: value });
         } else if (e.target.name === 'image') {
             setAgent({ ...agent, image: e.target.files[0] });
+        } else if (e.target.name === 'resume') {
+            setAgent({ ...agent, resume: e.target.files[0] }); // Handle resume file
         } else {
             setAgent({ ...agent, [e.target.name]: e.target.value });
         }
@@ -56,7 +61,11 @@ const AgentFormAgent = ({ onAgentAdded }) => {
     
         const formData = new FormData();
         for (const key in agent) {
-            formData.append(key, agent[key]);
+            if (key === 'resume' && agent[key]) {
+                formData.append(key, agent[key], agent[key].name); // Add resume file to formData
+            } else {
+                formData.append(key, agent[key]);
+            }
         }
     
         try {
@@ -73,7 +82,7 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                 onAgentAdded && onAgentAdded(newAgent);
     
                 // Reset form fields
-                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', college:'', shoeSize:'', image: null });
+                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', college:'', shoeSize:'', salesExperience:'', clothingSize:'', resume: null, image: null });
     
                 // Fetch updated list of agents
                 fetchAgents();
@@ -186,7 +195,22 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                         />
                     </div>
-    
+                    <div className="mb-4">
+                <label htmlFor="clothingSize" className="block text-gray-700 text-sm font-bold mb-2">
+                    Clothing Size (0-14):
+                </label>
+                <input 
+                    type="number" 
+                    id="clothingSize" 
+                    name="clothingSize" 
+                    value={agent.clothingSize} 
+                    onChange={handleChange} 
+                    min="0" 
+                    max="14"
+                    placeholder="Clothing Size"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                />
+            </div>
                     <div className="mb-4">
                         <label htmlFor="shoeSize" className="block text-gray-700 text-sm font-bold mb-2">
                             Shoe Size:
@@ -201,6 +225,34 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
                         />
                     </div>
+                    <div className="mb-4">
+                <label htmlFor="salesExperience" className="block text-gray-700 text-sm font-bold mb-2">
+                    Sales Experience:
+                </label>
+                <input 
+                    type="text" 
+                    id="salesExperience" 
+                    name="salesExperience" 
+                    value={agent.salesExperience} 
+                    onChange={handleChange} 
+                    placeholder="Sales Experience"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                />
+            </div>
+            <div className="mb-4">
+    <label htmlFor="resume" className="block text-gray-700 text-sm font-bold mb-2">
+        Resume:
+    </label>
+    <input 
+        type="file" 
+        id="resume" 
+        name="resume" 
+        onChange={handleChange} 
+        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+    />
+    <small className="text-gray-500">Upload your resume.</small>
+</div>
+
     
                     <div className="mb-4">
                         <label htmlFor="instagram" className="block text-gray-700 text-sm font-bold mb-2">

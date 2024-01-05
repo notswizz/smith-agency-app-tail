@@ -82,6 +82,24 @@ async function processForm(fields, files, res) {
             console.log('Image file not found');
         }
 
+        // Handle resume upload if present
+        if (files.resume && files.resume.length > 0) {
+            const resume = files.resume[0];
+            const resumeKey = `resumes/${uuidv4()}_${resume.originalFilename}`;
+            const resumeCommand = new PutObjectCommand({
+                Bucket: process.env.AWS_RESUME_BUCKET_NAME, // Use the resume bucket name
+                Key: resumeKey,
+                Body: fs.createReadStream(resume.filepath),
+                ContentType: resume.mimetype
+            });
+
+            await s3Client.send(resumeCommand);
+            const resumeUrl = `https://${process.env.AWS_RESUME_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${resumeKey}`;
+            agentData.resumeUrl = resumeUrl;
+        } else {
+            console.log('Resume file not found');
+        } 
+
         // Insert new agent into database
         const result = await db.collection('agents').insertOne(agentData);
         if (result.acknowledged) {
