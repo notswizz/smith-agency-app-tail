@@ -22,22 +22,21 @@ const AgentModal = ({ agent, isOpen, onClose, onDeleteAgent }) => {
 
     const processAgentBookings = (bookings) => {
         const summary = {};
-
+    
         bookings.forEach(booking => {
-            const daysWorked = booking.agentSelection.reduce(
-                (count, selection) => count + (selection.includes(agent.name) ? 1 : 0), 0
-            );
-
-            if (daysWorked > 0) {
-                if (!summary[booking.client]) {
-                    summary[booking.client] = 0;
+            // Loop through each day's array of agents' phone numbers.
+            booking.agentSelection.forEach((daySelection) => {
+                // If the agent's phone number is found in the current day's selection,
+                // increment the count of days worked for the corresponding client.
+                if (daySelection.includes(agent.phone)) {
+                    summary[booking.client] = (summary[booking.client] || 0) + 1;
                 }
-                summary[booking.client] += daysWorked;
-            }
+            });
         });
-
+    
         setClientWorkSummary(summary);
     };
+    
 
     if (!isOpen) return null;
 
@@ -103,7 +102,7 @@ const AgentModal = ({ agent, isOpen, onClose, onDeleteAgent }) => {
                     Close
                 </button>
             </div>
-            
+
             </div>
         </div>
     );
