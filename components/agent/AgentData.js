@@ -23,25 +23,30 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
     };
 
     const processBookings = (bookings) => {
-        const agentToClientsMap = {};
         const daysWorkedMap = {};
-
+    
         bookings.forEach(booking => {
-            booking.agentSelection.flat().forEach(agentName => {
-                if (agentName) {
-                    if (!agentToClientsMap[agentName]) {
-                        agentToClientsMap[agentName] = new Set();
-                        daysWorkedMap[agentName] = 0;
+            // Loop over each day's selection of agents.
+            booking.agentSelection.forEach(daySelection => {
+                daySelection.forEach(agentPhone => {
+                    if (agentPhone) {
+                        // If the agent doesn't have an entry yet, initialize it.
+                        if (!daysWorkedMap[agentPhone]) {
+                            daysWorkedMap[agentPhone] = 0;
+                        }
+                        // Increment the number of days worked for the agent by 1.
+                        // But only if the agent wasn't already counted for this day.
+                        if (!daySelection.includes(daysWorkedMap[agentPhone])) {
+                            daysWorkedMap[agentPhone] += 1;
+                        }
                     }
-                    agentToClientsMap[agentName].add(booking.client);
-                    daysWorkedMap[agentName] += 1;
-                }
+                });
             });
         });
-
-        setAgentClients(convertSetsToArrays(agentToClientsMap));
+    
         setAgentDaysWorked(daysWorkedMap);
     };
+    
 
     const convertSetsToArrays = (setsMap) => {
         const arraysMap = {};
@@ -76,8 +81,8 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
                                 <a href={`https://www.instagram.com/${agent.instagram}/`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:text-blue-800">{agent.name}</a>
                             </h3>
                             <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
-                                {agentDaysWorked[agent.name] || 0} Days Booked
-                            </span>
+        {agentDaysWorked[agent.phone] || 0} Days Booked
+    </span>
                            
                             <br></br>
                             <br></br>
