@@ -10,6 +10,7 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     const [notes, setNotes] = useState(''); 
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
     const [submissionFailure, setSubmissionFailure] = useState(false);
+   
 
     useEffect(() => {
         const fetchAgents = async () => {
