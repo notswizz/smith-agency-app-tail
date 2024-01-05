@@ -48,58 +48,47 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
 
 
     return (
-        <div className="container mx-auto p-6 max-h-96 overflow-auto shadow-lg border border-gray-400 rounded-xl hover:shadow-xl transition duration-500 ease-in-out">
-            <div className="grid md:grid-cols-2 gap-6">
-                {bookings.map(booking => {
-                    const { isFull, emptyCount } = getAgentSelectionStatus(booking);
-                    const agentCounts = compileAgentCounts(booking.agentSelection);
-                 
+        <div className="container mx-auto p-6 space-y-4 max-w-4xl overflow-auto shadow-lg rounded-xl hover:shadow-xl transition duration-500 ease-in-out">
+            {bookings.map(booking => {
+                const { isFull, emptyCount } = getAgentSelectionStatus(booking);
+                const agentCounts = compileAgentCounts(booking.agentSelection);
     
-                    return (
-                        <div className="bg-white p-5 rounded-xl shadow hover:shadow-md transition duration-300 flex flex-col cursor-pointer" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
-                            <div className="flex justify-between items-center mb-5">
-                                <h2 className="text-2xl font-semibold text-gray-900">{booking.client}</h2>
-                                
-                                <span className={`py-2 px-4 rounded-md text-sm font-semibold shadow ${isFull ? 'bg-green-600 text-white' : 'bg-yellow-600 text-gray-100'}`}>
-                                    {isFull ? 'Booked' : `${emptyCount} Empty`}
-                                </span>
-                            </div>
-                            <div className="flex flex-col md:flex-row justify-between">
-                                <div className="mb-5 md:mb-0">
-                                    <div className="p-3 bg-gray-100 border border-gray-300 rounded-xl shadow-inner">
-                                        <p className="text-lg font-medium text-gray-800">{booking.show}</p>
-                                        <div className="flex flex-col mt-2">
-                                            <span className="text-sm text-gray-600">{booking.startDate}</span>
-                                            <span className="text-sm text-gray-600">{booking.endDate}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-md font-medium text-gray-800">{getTotalDays(booking.agentCounts)} days</p>
-                                    <div className="mt-3 p-4 bg-yellow-200 border border-yellow-300 rounded-xl shadow-inner relative"> 
-                                        <p className="text-md text-gray-800">{booking.notes}</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="mt-3 flex flex-wrap gap-3">
-                                {Object.entries(agentCounts).sort((a, b) => b[1] - a[1]).map(([agent, count]) => (
-                                    <span key={agent} className="bg-blue-100 text-blue-800 text-xs font-medium px-3 py-2 rounded-full">
-                                        {agent}: {count}
-                                    </span>
-                                ))}
-                            </div>
-                           
+                return (
+                    <div className="bg-white p-6 rounded-lg shadow transition duration-300 flex flex-col cursor-pointer hover:shadow-md" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-semibold text-gray-800">{booking.client}</h2>
+                            <span className={`py-1 px-3 rounded-full text-sm font-semibold ${isFull ? 'bg-green-200 text-green-800' : 'bg-yellow-200 text-yellow-800'}`}>
+                                {isFull ? 'Booked' : `${emptyCount} Empty`}
+                            </span>
                         </div>
-                    );
-                })}
-            </div>
+                        <div className="flex flex-col lg:flex-row justify-between space-y-4 lg:space-y-0">
+                            <div className="bg-gray-50 p-4 rounded-lg shadow-inner flex-1">
+                                <p className="text-lg font-medium text-gray-700">{booking.show}</p>
+                                <div className="flex flex-col mt-2">
+                                    <span className="text-sm text-gray-500">{booking.startDate}</span>
+                                    <span className="text-sm text-gray-500">{booking.endDate}</span>
+                                </div>
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-right text-lg font-medium text-gray-700">{getTotalDays(booking.agentCounts)} days</p>
+                                <div className="mt-3 p-4 bg-yellow-50 rounded-lg shadow-inner relative"> 
+                                    <p className="text-gray-600">{booking.notes}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                            {Object.entries(agentCounts).sort((a, b) => b[1] - a[1]).map(([agent, count]) => (
+                                <span key={agent} className="bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1 rounded-full">
+                                    {agent}: {count}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                );
+            })}
         </div>
     );
     
-
-  
-  
-  
   
     };
     
