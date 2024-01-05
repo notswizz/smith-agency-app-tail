@@ -55,16 +55,19 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
         <div className="flex flex-col space-y-4 max-h-96 overflow-auto">
             {agents.map(agent => (
                 <div 
-                    className="bg-white p-4 rounded shadow-md flex relative cursor-pointer"
+                    className="bg-white p-4 rounded shadow-md flex relative"
                     key={agent._id}
-                    onClick={() => onAgentSelect(agent)} // Add onClick event
                 >
-                   
                     {/* Agent Info and Image Container */}
                     <div className="flex-1 flex">
                         {/* Image */}
                         {agent.imageUrl && (
-                            <img src={agent.imageUrl} alt={agent.name} className="w-40 h-40 object-cover rounded-full mr-4 shadow-sm" />
+                            <img 
+                                src={agent.imageUrl} 
+                                alt={agent.name} 
+                                className="w-40 h-40 object-cover rounded-full mr-4 shadow-sm cursor-pointer"
+                                onClick={() => onAgentSelect(agent)} // Moved onClick event here
+                            />
                         )}
     
                         {/* Agent Details */}
