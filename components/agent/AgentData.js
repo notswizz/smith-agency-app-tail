@@ -17,6 +17,11 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
         fetchBookings();
     }, []);
 
+     // Function to handle SMS action
+     const handleTextMessage = (phoneNumber) => {
+        window.location.href = `sms:${phoneNumber}`;
+    };
+
     const processBookings = (bookings) => {
         const agentToClientsMap = {};
         const daysWorkedMap = {};
@@ -84,11 +89,12 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
                             onClick={() => {/* Handle Email Action */}}
                         />
                         <ChatbubblesOutline
-                            color={'#00000'} 
-                            height="35px"
-                            width="35px"
-                            onClick={() => {/* Handle Text Action */}}
-                        />
+                                color={'#00000'} 
+                                height="35px"
+                                width="35px"
+                                onClick={() => handleTextMessage(agent.phone)}
+                                style={{ cursor: 'pointer' }}
+                            />
                     </div>
                         </div>
                     </div>
