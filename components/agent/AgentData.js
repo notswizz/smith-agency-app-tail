@@ -51,7 +51,7 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
         return arraysMap;
     };
 
-    return (
+  return (
         <div className="flex flex-col space-y-4 max-h-96 overflow-auto">
             {agents.map(agent => (
                 <div 
@@ -78,9 +78,8 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
                             <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold mr-2 px-2.5 py-0.5 rounded">
                                 {agentDaysWorked[agent.name] || 0} Days Booked
                             </span>
-                            <p className="text-gray-600">{agent.email}</p>
-                            <p className="text-gray-600">{agent.phone}</p>
-                            <p className="text-gray-600">Location: {agent.location.join(', ')}</p>
+                           
+                            <br></br>
                             <br></br>
                              {/* Icons for Email and Text */}
                     <div className="flex items-center">
