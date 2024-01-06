@@ -121,7 +121,7 @@ const BookingsPage = () => {
                     <div className="md:w-1/4 flex flex-col space-y-4 mb-4 md:mb-0">
                         <button 
                             onClick={toggleFormVisibility}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            className="bg-black hover:bg-pink text-white font-bold py-2 px-4 rounded"
                         >
                             {isFormVisible ? 'Hide Form' : 'Add New Booking'}
                         </button>

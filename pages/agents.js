@@ -98,48 +98,48 @@ const AgentsPage = () => {
         }
     };
 
-return (
+    return (
         <>
             <Header />
             <div className="container mx-auto px-4 mt-6">
                 <div className="flex flex-col md:flex-row ">
-                    <div className="md:w-1/4 mb-4 md:mb-4 md:mr-4 ">
+                    <div className="md:w-1/4 mb-4 md:mb-0 md:mr-4 ">
                         <button 
                             onClick={toggleFormVisibility}
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full mb-4"
+                            className="bg-black hover:bg-pink-700 text-white font-bold py-2 px-4 rounded w-full mb-4 transition-colors duration-300"
                         >
                             {isFormVisible ? 'Hide Form' : 'Add New Agent'}
                         </button>
-                        {!isFormVisible &&  <AgentFilter 
-                        onFilterChange={handleFilterChange}
-                        filteredAgentCount={filteredAgentCount} // Pass the count to the filter component
-                    />}
+                        {!isFormVisible && <AgentFilter 
+                            onFilterChange={handleFilterChange}
+                            filteredAgentCount={filteredAgentCount} // Pass the count to the filter component
+                        />}
                     </div>
                     <div className="flex-1">
                         {isFormVisible ? (
                             <AgentForm onAgentAdded={handleAgentAdded} />
                         ) : (
                             <AgentData 
-                            agents={filteredAgents} 
-                            onDeleteAgent={handleDeleteConfirmation} // Pass handleDeleteConfirmation instead
-                            onAgentSelect={handleAgentSelect} 
-                        />
-                        
+                                agents={filteredAgents} 
+                                onDeleteAgent={handleDeleteConfirmation} // Pass handleDeleteConfirmation instead
+                                onAgentSelect={handleAgentSelect} 
+                            />
                         )}
                     </div>
                 </div>
             </div>
             {/* AgentModal */}
             {selectedAgent && (
-                  <AgentModal 
-                  agent={selectedAgent} 
-                  isOpen={isModalVisible} 
-                  onClose={handleCloseModal}
-                  onDeleteAgent={handleDeleteAgent} 
-              />
+                <AgentModal 
+                    agent={selectedAgent} 
+                    isOpen={isModalVisible} 
+                    onClose={handleCloseModal}
+                    onDeleteAgent={handleDeleteAgent} 
+                />
             )}
         </>
     );
+    
 };
 
 export default AgentsPage;
