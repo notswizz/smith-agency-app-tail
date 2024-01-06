@@ -48,10 +48,11 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
 
 
     return (
-        <div className="container mx-auto p-6 space-y-4 max-w-4xl overflow-auto shadow-lg rounded-xl hover:shadow-xl transition duration-500 ease-in-out">
+        <div className="container mx-auto p-6 space-y-4 max-w-4xl shadow-lg rounded-xl hover:shadow-xl transition duration-500 ease-in-out" style={{ maxHeight: '90vh', overflowY: 'auto', overflowX: 'hidden' }}>
             {bookings.map(booking => {
                 const { isFull, emptyCount } = getAgentSelectionStatus(booking);
                 const agentCounts = compileAgentCounts(booking.agentSelection);
+    
     
                 return (
                     <div className="bg-white p-6 rounded-lg shadow transition duration-300 flex flex-col cursor-pointer hover:shadow-md" key={booking._id} onClick={() => onShowBookingDetails(booking)}>
@@ -88,6 +89,7 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
             })}
         </div>
     );
+    
     
   
     };
