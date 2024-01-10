@@ -48,7 +48,7 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
 
 
     return (
-        <div className="container mx-auto p-6 space-y-4 max-w-4xl shadow-lg rounded-xl hover:shadow-xl transition duration-500 ease-in-out bg-pink-50" style={{ maxHeight: '70vh', overflowY: 'auto', overflowX: 'hidden' }}>
+        <div className="container mx-auto p-6 space-y-4 max-w-4xl shadow-lg rounded-xl hover:shadow-xl transition duration-500 ease-in-out bg-white" style={{ maxHeight: '70vh', overflowY: 'auto', overflowX: 'hidden' }}>
         {bookings.map(booking => {
             const { isFull, emptyCount } = getAgentSelectionStatus(booking);
             const agentCounts = compileAgentCounts(booking.agentSelection);
