@@ -303,7 +303,7 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
                 </button>
                 {/* Visible Close Button */}
                 <button 
-                    className="absolute top-0 left-0 mt-4 ml-4 text-white bg-gray-800 hover:bg-gray-700 font-bold py-1 px-3 rounded focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
+                    className="top-0 left-0 mt-4 ml-4 text-white bg-gray-800 hover:bg-gray-700 font-bold py-1 px-3 rounded focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
                     onClick={onClose}
                 >
                     &times; Close

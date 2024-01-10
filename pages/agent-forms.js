@@ -50,16 +50,22 @@ const FormsAgent = () => {
 
     return (
         <>
-        
             <div className="container mx-auto px-4 py-4 bg-gray-100">
-            <img src="/tsawhite.png" alt="TSA Logo" className="mx-auto mb-4" style={{ width: '250px', height: '250px' }} />
-
-                <button 
-                    onClick={toggleForm} 
-                    className="mb-4 bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded block w-full sm:w-auto transition duration-300 ease-in-out">
-                    {isAgentFormActive ? 'Switch to Availability Form' : 'Switch to New Agent Form'}
-                </button>
-
+                <img src="/tsawhite.png" alt="TSA Logo" className="mx-auto mb-4" style={{ width: '250px', height: '250px' }} />
+    
+                <div className="flex justify-center gap-4 mb-4">
+                    <button 
+                        onClick={toggleForm} 
+                        className={`font-bold py-2 px-4 rounded transition duration-300 ease-in-out ${isAgentFormActive ? 'bg-gray-300 text-gray-700' : 'bg-pink-500 hover:bg-pink-700 text-white'}`}>
+                        Availability Form
+                    </button>
+                    <button 
+                        onClick={toggleForm} 
+                        className={`font-bold py-2 px-4 rounded transition duration-300 ease-in-out ${isAgentFormActive ? 'bg-pink-500 hover:bg-pink-700 text-white' : 'bg-gray-300 text-gray-700'}`}>
+                        New Salesperson Form
+                    </button>
+                </div>
+    
                 {isAgentFormActive ? (
                     <div className="p-6 rounded-lg shadow-lg bg-white">
                         <h2 className="text-center text-pink-600 text-xl font-bold mb-4">New Agent Form</h2>
@@ -69,17 +75,17 @@ const FormsAgent = () => {
                 ) : (
                     <div className="p-6 rounded-lg shadow-lg bg-white">
                         <h2 className="text-center text-pink-600 text-xl font-bold mb-4">Availability Form</h2>
-                        <p className="text-gray-600 text-base font-medium mb-4 px-4 py-2">FIll out this Availability form before each show in your location.</p>
+                        <p className="text-gray-600 text-base font-medium mb-4 px-4 py-2">Fill out this Availability form before each show in your location.</p>
                         <AvailabilityForm 
                             agents={agents} 
                             shows={shows} 
-                           
                         />
                     </div>
                 )}
             </div>
         </>
     );
+    
 };
 
 export default FormsAgent;
