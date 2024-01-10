@@ -51,7 +51,7 @@ const FormsAgent = () => {
     return (
         <>
             <div className="container mx-auto px-4 py-4 bg-gray-100">
-                <img src="/tsawhite.png" alt="TSA Logo" className="mx-auto mb-4" style={{ width: '250px', height: '250px' }} />
+                <img src="/tsawhite.png" alt="TSA Logo" className="mx-auto mb-4" style={{ width: '100px', height: '100px' }} />
     
                 <div className="flex justify-center gap-4 mb-4">
                     <button 
