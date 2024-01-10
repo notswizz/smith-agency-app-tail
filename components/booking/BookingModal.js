@@ -211,33 +211,34 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     
     
     const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentPhone) => {
-        // No changes in this function; it's still responsible for rendering a single dropdown
         const formattedDate = toUTCDateString(dateRange[dayIndex]);
         const agentsForThisDate = agentsByDate[formattedDate] || [];
+        
+        const dropdownClass = selectedAgentPhone ? "bg-pink-200" : ""; // Change the color as per your theme
     
         return (
             <select
-                className="form-select"
-                value={selectedAgentPhone || ''}
-                onChange={(e) => handleAgentSelection(dayIndex, agentIndex, e.target.value)}
-            >
-                {selectedAgentPhone && (
-                    <option value={selectedAgentPhone} key={`selected-${selectedAgentPhone}`}>
-                        {phoneToNameMap[selectedAgentPhone]}
+            className={`form-select ${dropdownClass}`}
+            value={selectedAgentPhone || ''}
+            onChange={(e) => handleAgentSelection(dayIndex, agentIndex, e.target.value)}
+        >
+            {selectedAgentPhone && (
+                <option value={selectedAgentPhone} key={`selected-${selectedAgentPhone}`}>
+                    {phoneToNameMap[selectedAgentPhone]}
+                </option>
+            )}
+            {!selectedAgentPhone && (
+                <option value="" key={`default-${dayIndex}-${agentIndex}`}>Select Agent</option>
+            )}
+            {agentsForThisDate.map((agent) => {
+                const availabilityEntry = agent.availability.find(a => a.date === formattedDate);
+                return (
+                    <option key={availabilityEntry.id} value={agent.phone}>
+                        {phoneToNameMap[agent.phone] || agent.name}
                     </option>
-                )}
-                {!selectedAgentPhone && (
-                    <option value="" key={`default-${dayIndex}-${agentIndex}`}>Select Agent</option>
-                )}
-                {agentsForThisDate.map((agent) => {
-                    const availabilityEntry = agent.availability.find(a => a.date === formattedDate);
-                    return (
-                        <option key={availabilityEntry.id} value={agent.phone}>
-                            {phoneToNameMap[agent.phone] || agent.name}
-                        </option>
-                    );
-                })}
-            </select>
+                );
+            })}
+        </select>
         );
     };
     
