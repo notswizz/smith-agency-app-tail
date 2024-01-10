@@ -293,43 +293,44 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     
     return (
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-start pt-10 md:items-center">
-            <div className="bg-white p-4 rounded-lg shadow-lg w-full max-w-md mx-4 md:max-w-lg lg:max-w-xl">
-                {/* Positioned Delete Button */}
-                <button 
-                    className="absolute top-0 right-0 mt-4 mr-4 bg-red-500 hover:bg-red-600 text-white font-bold py-1 px-3 text-sm rounded focus:outline-none focus:ring focus:ring-red-300 focus:ring-opacity-50"
-                    onClick={handleDeleteBooking}
-                >
-                    Delete
+        <div className="relative bg-white p-4 rounded-lg shadow-lg w-full max-w-md mx-4 md:max-w-lg lg:max-w-xl">
+            {/* Delete Button */}
+            <button 
+                className="absolute top-0 right-0 mt-4 mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:ring focus:ring-red-300 focus:ring-opacity-50"
+                onClick={handleDeleteBooking}
+            >
+                Delete
+            </button>
+            {/* Close Button */}
+            <button 
+                className="absolute top-0 left-0 mt-4 ml-4 text-white bg-gray-800 hover:bg-gray-900 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
+                onClick={onClose}
+            >
+                &times; Close
+            </button>
+            <div className="overflow-x-auto mt-12">
+                <table className="min-w-full divide-y divide-gray-200 text-gray-800">
+                    <thead className="bg-gray-100">
+                        {bookingInfoHeader()}
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {selectedAgents.map((agentsForDay, dayIndex) => (
+                            <React.Fragment key={dayIndex}>
+                                {dayIndex > 0 && <tr className="border-t-2 border-gray-200"><td colSpan="100%"></td></tr>}
+                                {renderRowForDate(dateRange[dayIndex], agentsForDay, dayIndex)}
+                            </React.Fragment>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+            <div className="flex justify-center mt-4">
+                <button className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50" onClick={handleSaveSelection}>
+                    Save Selection
                 </button>
-                {/* Visible Close Button */}
-                <button 
-                    className="top-0 left-0 mt-4 ml-4 text-white bg-gray-800 hover:bg-gray-700 font-bold py-1 px-3 rounded focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
-                    onClick={onClose}
-                >
-                    &times; Close
-                </button>
-                <div className="overflow-x-auto mt-4">
-                    <table className="min-w-full divide-y divide-gray-200">
-                        <thead>
-                            {bookingInfoHeader()}
-                        </thead>
-                        <tbody>
-                            {selectedAgents.map((agentsForDay, dayIndex) => (
-                                <React.Fragment key={dayIndex}>
-                                    {dayIndex > 0 && <tr className="border-t-2 border-gray-200"><td colSpan="100%"></td></tr>}
-                                    {renderRowForDate(dateRange[dayIndex], agentsForDay, dayIndex)}
-                                </React.Fragment>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-                <div className="flex justify-center mt-4">
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50" onClick={handleSaveSelection}>
-                        Save Selection
-                    </button>
-                </div>
             </div>
         </div>
+    </div>
+    
     );
     
    
