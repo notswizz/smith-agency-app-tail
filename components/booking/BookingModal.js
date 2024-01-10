@@ -297,7 +297,7 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
         <div className="relative bg-white p-4 rounded-lg shadow-lg w-full max-w-md mx-4 md:max-w-lg lg:max-w-xl">
             {/* Delete Button */}
             <button 
-                className="absolute top-0 right-0 mt-4 mr-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full focus:outline-none focus:ring focus:ring-red-300 focus:ring-opacity-50"
+                className="absolute top-0 right-0 mt-4 mr-4 bg-red-300 hover:bg-red-700 text-white  py-1 px-1 rounded-full focus:outline-none focus:ring focus:ring-red-300 focus:ring-opacity-50"
                 onClick={handleDeleteBooking}
             >
                 Delete
