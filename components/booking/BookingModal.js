@@ -7,8 +7,7 @@ const generateDateRange = (start, end) => {
     let endDate = new Date(end);
 
     while (currentDate <= endDate) {
-        // Ensure only the date part is used
-        dates.push(new Date(currentDate.toISOString().split('T')[0]));
+        dates.push(new Date(currentDate));
         currentDate.setDate(currentDate.getDate() + 1);
     }
 
@@ -213,38 +212,36 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentPhone) => {
         const formattedDate = toUTCDateString(dateRange[dayIndex]);
         const agentsForThisDate = agentsByDate[formattedDate] || [];
-        
         const dropdownClass = selectedAgentPhone ? "bg-pink-200" : ""; // Change the color as per your theme
     
         return (
             <select
-            className={`form-select ${dropdownClass}`}
-            value={selectedAgentPhone || ''}
-            onChange={(e) => handleAgentSelection(dayIndex, agentIndex, e.target.value)}
-        >
-            {selectedAgentPhone && (
-                <option value={selectedAgentPhone} key={`selected-${selectedAgentPhone}`}>
-                    {phoneToNameMap[selectedAgentPhone]}
+                className={`form-select ${dropdownClass}`}
+                value={selectedAgentPhone || ''}
+                onChange={(e) => handleAgentSelection(dayIndex, agentIndex, e.target.value)}
+            >
+                <option value="" key={`default-${dayIndex}-${agentIndex}`}>
+                    Select Agent
                 </option>
-            )}
-            {!selectedAgentPhone && (
-                <option value="" key={`default-${dayIndex}-${agentIndex}`}>Select Agent</option>
-            )}
-            {agentsForThisDate.map((agent) => {
-                const availabilityEntry = agent.availability.find(a => a.date === formattedDate);
-                return (
-                    <option key={availabilityEntry.id} value={agent.phone}>
-                        {phoneToNameMap[agent.phone] || agent.name}
-                    </option>
-                );
-            })}
-        </select>
+                {agentsForThisDate.map((agent) => {
+                    const availabilityEntry = agent.availability.find(a => a.date === formattedDate);
+                    if (availabilityEntry) {
+                        return (
+                            <option key={availabilityEntry.id} value={agent.phone}>
+                                {phoneToNameMap[agent.phone]}
+                            </option>
+                        );
+                    }
+                    return null;
+                })}
+            </select>
         );
     };
     
+    
     const renderRowForDate = (date, agentsForDay, dayIndex) => {
         // Create sub-rows for each pair of agents
-        const MAX_AGENTS_PER_ROW = 2;
+        const MAX_AGENTS_PER_ROW = 1;
         let rows = [];
         for (let i = 0; i < agentsForDay.length; i += MAX_AGENTS_PER_ROW) {
             const agentsSubset = agentsForDay.slice(i, i + MAX_AGENTS_PER_ROW);
@@ -290,48 +287,74 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
         return null;
     };
     
-
+// Helper function to format the date
+function formatDate(date) {
+    // Format the date as needed
+    return date.toDateString();
+}
     
-    return (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-start pt-10 md:items-center">
-        <div className="relative bg-white p-4 rounded-lg shadow-lg w-full max-w-md mx-4 md:max-w-lg lg:max-w-xl">
-            {/* Delete Button */}
+return (
+    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-start pt-10 md:items-center">
+        <div className="relative bg-white p-4 rounded-lg shadow-lg w-full max-w-md mx-4 md:max-w-lg lg:max-w-xl" style={{ height: '80vh', overflowY: 'auto' }}>
+            {/* Delete and Close Buttons */}
             <button 
-                className="absolute top-0 right-0 mt-4 mr-4 bg-red-300 hover:bg-red-700 text-white  py-1 px-1 rounded-full focus:outline-none focus:ring focus:ring-red-300 focus:ring-opacity-50"
+                className="absolute top-0 right-0 mt-4 mr-4 bg-red-300 hover:bg-red-700 text-white py-1 px-1 rounded-full focus:outline-none focus:ring focus:ring-red-300 focus:ring-opacity-50"
                 onClick={handleDeleteBooking}
             >
                 Delete
             </button>
-            {/* Close Button */}
             <button 
                 className="absolute top-0 left-0 mt-4 ml-4 text-white bg-gray-800 hover:bg-gray-900 font-bold py-2 px-4 rounded-full focus:outline-none focus:ring focus:ring-gray-300 focus:ring-opacity-50"
                 onClick={onClose}
             >
                 &times; Close
             </button>
-            <div className="overflow-x-auto mt-12">
-                <table className="min-w-full divide-y divide-gray-200 text-gray-800">
-                    <thead className="bg-gray-100">
-                        {bookingInfoHeader()}
-                    </thead>
-                    <tbody className="bg-white divide-y divide-gray-200">
-                        {selectedAgents.map((agentsForDay, dayIndex) => (
-                            <React.Fragment key={dayIndex}>
-                                {dayIndex > 0 && <tr className="border-t-2 border-gray-200"><td colSpan="100%"></td></tr>}
-                                {renderRowForDate(dateRange[dayIndex], agentsForDay, dayIndex)}
-                            </React.Fragment>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+        
+
+          {/* Booking Table */}
+<div className="overflow-x-auto mt-12 shadow-lg rounded-lg">
+    <table className="min-w-full divide-y divide-gray-300">
+        <thead className="bg-gray-50">
+            {bookingInfoHeader()}
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+            {selectedAgents.map((agentsForDay, dayIndex) => (
+                <React.Fragment key={dayIndex}>
+                    {/* Date Header */}
+                    <tr className="bg-indigo-100">
+                        <td colSpan="2" className="px-6 py-3 text-left text-xs font-medium text-indigo-600 uppercase tracking-wider">
+                            {formatDate(dateRange[dayIndex])}
+                        </td>
+                    </tr>
+                    {/* Agents Rows */}
+                    {agentsForDay.map((agentPhone, agentIndex) => (
+                        <tr key={`agent-${dayIndex}-${agentIndex}`} className="hover:bg-gray-50">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                {agentPhone ? phoneToNameMap[agentPhone] : 'Select Agent'}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                {renderAgentDropdown(dayIndex, agentIndex, agentPhone)}
+                            </td>
+                        </tr>
+                    ))}
+                </React.Fragment>
+            ))}
+        </tbody>
+    </table>
+</div>
+
+
+            {/* Save Button */}
             <div className="flex justify-center mt-4">
-                <button className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50" onClick={handleSaveSelection}>
+                <button 
+                    className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-6 rounded focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50" 
+                    onClick={handleSaveSelection}
+                >
                     Save Selection
                 </button>
             </div>
         </div>
     </div>
-    
     );
     
    

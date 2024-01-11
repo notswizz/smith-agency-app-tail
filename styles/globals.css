@@ -126,3 +126,12 @@ body {
   border: 5px solid rgba(255, 182, 193, 0.5); /* Light pink border */
 }
 
+/* Add this to your global CSS or inside a <style> tag in your component */
+@keyframes scroll-left {
+  0% {
+      transform: translateX(100%);
+  }
+  100% {
+      transform: translateX(-100%);
+  }
+}
