@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import ApplicationForm from '../components/agent/ApplicationForm';
+import RotatingGalleryGallery from '../components/Gallery';
+import RotatingGallery from '../components/Gallery';
 
 const HomePage = () => {
     const { data: session } = useSession();
     const router = useRouter();
-    const [showApplicationForm, setShowApplicationForm] = useState(false);
 
     useEffect(() => {
         if (session) {
@@ -15,49 +16,67 @@ const HomePage = () => {
         }
     }, [session, router]);
 
-    const closeModal = () => setShowApplicationForm(false);
-
+  
     return (
-      <>
-          <div className="container mx-auto flex justify-center items-center flex-wrap gap-5 p-5">
-              {!session ? (
-                  <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-                      <div className="image-block text-center">
-                          <Image
-                              src="/tsawhite.png"
-                              alt="The Smith Agency Logo"
-                              width={300}
-                              height={300}
-                              className="inline-block"
-                          />
-                      </div>
-                      <div className="text-block">
-                          <button onClick={() => signIn()} className="bg-pink-500 hover:bg-pink-700 text-white font-bold py-2 px-6 rounded-full transition duration-300 ease-in-out shadow-lg">
-                              Sales Rep Sign In
-                          </button>
-                          <button onClick={() => setShowApplicationForm(true)} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-full transition duration-300 ease-in-out shadow-lg mt-4 md:mt-0">
-                              Open Application
-                          </button>
-                      </div>
+        <div className="bg-pink-50 min-h-screen flex flex-col">
+          {!session && (
+            <div className="container mx-auto px-4">
+             
+      
+              {/* Logo and Title */}
+              <div className="text-center mb-6">
+                <Image
+                  src="/tsawhite.png"
+                  alt="The Smith Agency Logo"
+                  width={200}
+                  height={200}
+                  className="inline-block"
+                />
+               {/* Header Images */}
+       <div className="flex justify-center space-x-4 py-4 overflow-x-auto">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <div key={index} className="flex-none">
+                    <Image
+                      src={`/tsa${index + 1}.png`}
+                      alt={`Header Image ${index + 1}`}
+                      width={80}
+                      height={80}
+                      className="border-2 border-pink-300 rounded-full"
+                    />
                   </div>
-              ) : (
-                  <p className="text-center text-lg font-semibold">Redirecting to Agent Portal...</p>
-              )}
-  
-              {showApplicationForm && (
-                  <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 z-50">
-                      <div className="bg-white p-8 rounded-xl shadow-2xl max-w-lg w-full">
-                          <ApplicationForm />
-                          <button onClick={closeModal} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg mt-4 float-right">
-                              Close
-                          </button>
-                      </div>
-                  </div>
-              )}
-          </div>
-      </>
-  );
-  
-}; 
+                ))}
+              </div>
+              </div>
+      
+             {/* Sign In Buttons */}
+<div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
+  <button onClick={() => signIn('sales-rep')} className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-md focus:outline-none focus:ring-2 focus:ring-pink-200 focus:ring-opacity-50">
+    Sales Rep Sign In
+  </button>
+  <button onClick={() => signIn('admin')} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-opacity-50">
+    Admin Sign In
+  </button>
+  <button onClick={() => signIn('client')} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-md focus:outline-none focus:ring-2 focus:ring-green-200 focus:ring-opacity-50">
+    Client Sign In
+  </button>
+</div>
+
+      
+              {/* Application Form */}
+              <ApplicationForm />
+      
+              {/* Rotating Gallery or other content */}
+             
+            </div>
+          )}
+      
+          {session && (
+            <p className="text-center text-lg font-semibold">Redirecting to Agent Portal...</p>
+          )}
+        </div>
+      );
+        
+      
+};
 
 export default HomePage;

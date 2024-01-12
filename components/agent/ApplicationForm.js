@@ -45,57 +45,67 @@ const ApplicationForm = () => {
     };
     return (
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-8 shadow-md rounded-lg">
-            <div className="mb-4">
-                <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-            </div>
+        {/* Heading */}
+        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Join Our Team</h2>
+        <p className="text-center text-gray-600 mb-8">The 1st step to working for The Smith Agency!</p>
     
-            <div className="mb-4">
-                <label htmlFor="resume" className="block text-gray-700 text-sm font-bold mb-2">Resume:</label>
-                <input
-                    type="file"
-                    id="resume"
-                    name="resume"
-                    onChange={handleChange}
-                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-            </div>
+        {/* Name Field */}
+        <div className="mb-6">
+            <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+        </div>
     
-            <div className="mb-4">
-                <label htmlFor="salesExperience" className="block text-gray-700 text-sm font-bold mb-2">Sales Experience:</label>
-                <input
-                    type="text"
-                    id="salesExperience"
-                    name="salesExperience"
-                    value={formData.salesExperience}
-                    onChange={handleChange}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-            </div>
+        {/* Resume Upload */}
+        <div className="mb-6">
+            <label htmlFor="resume" className="block text-gray-700 text-sm font-bold mb-2">Resume:</label>
+            <input
+                type="file"
+                id="resume"
+                name="resume"
+                onChange={handleChange}
+                className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+        </div>
     
-            <div className="mb-6">
-                <label htmlFor="college" className="block text-gray-700 text-sm font-bold mb-2">College:</label>
-                <input
-                    type="text"
-                    id="college"
-                    name="college"
-                    value={formData.college}
-                    onChange={handleChange}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-            </div>
+        {/* Sales Experience Field */}
+        <div className="mb-6">
+            <label htmlFor="salesExperience" className="block text-gray-700 text-sm font-bold mb-2">Sales Experience:</label>
+            <input
+                type="text"
+                id="salesExperience"
+                name="salesExperience"
+                value={formData.salesExperience}
+                onChange={handleChange}
+                className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+        </div>
     
-            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                Submit Application
-            </button>
-        </form>
+        {/* College Field */}
+        <div className="mb-8">
+            <label htmlFor="college" className="block text-gray-700 text-sm font-bold mb-2">College:</label>
+            <input
+                type="text"
+                id="college"
+                name="college"
+                value={formData.college}
+                onChange={handleChange}
+                className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+        </div>
+    
+        {/* Submit Button */}
+        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
+            Submit Application
+        </button>
+    </form>
+    
     );
     
 };

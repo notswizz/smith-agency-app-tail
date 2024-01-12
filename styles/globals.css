@@ -203,3 +203,25 @@ body {
 .sign-in-button:hover {
   background-color: #3a7bd5;
 }
+
+/* globals.css */
+input:focus, button:focus {
+  border-color: #db2777; /* Pink-500 */
+  box-shadow: 0 0 0 3px rgba(219, 39, 119, 0.5); /* Pink-500 with opacity */
+}
+
+@media (max-width: 768px) {
+  /* Custom styles for mobile devices */
+}
+
+.slide {
+  opacity: 0;
+  transition-duration: 1s ease;
+}
+
+.slide.active {
+  opacity: 1;
+  transition-duration: 1s;
+  transform: scale(1.08);
+}
+
