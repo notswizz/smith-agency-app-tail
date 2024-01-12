@@ -1,0 +1,9 @@
+{
+  "appId": "xyz.smithagency",
+  "appName": "The Smith Agency",
+  "webDir": "out",
+  "server": {
+    "url": "https://smithagency.xyz",
+    "androidScheme": "https"
+  }
+}
