@@ -5,6 +5,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import AvailabilityForm from '../components/form/AvailabilityForm';
 import AgentFormAgent from '../components/form/FormAgent';
 import AnnouncementsHeader from '../components/AnnouncementsHeader';
+
 import { signIn, signOut, useSession } from "next-auth/react";
 
 const localizer = momentLocalizer(moment);
@@ -12,10 +13,10 @@ const localizer = momentLocalizer(moment);
 const AgentPortal = () => {
     const [agents, setAgents] = useState([]);
     const [shows, setShows] = useState([]);
-    const [isAgentFormActive, setIsAgentFormActive] = useState(false);
+    const [activeComponent, setActiveComponent] = useState('calendar');
     const { data: session, status } = useSession();
-    const loading = status === "loading";
     const [showEvents, setShowEvents] = useState([]);
+   
 
     const announcements = [
         "Announcement 1: Important update!",
@@ -95,10 +96,27 @@ const AgentPortal = () => {
     return (
         <>
             <AnnouncementsHeader announcements={announcements} />
-            <div className="agent-portal-container"> {/* Added class for styling */}
+            <div className="agent-portal-container">
                 {session ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
+                    <>
+                        <div className="text-center mb-4">
+                            Signed in as <strong>{session.user.email}</strong>
+                            <button onClick={() => signOut()} className="ml-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                                Sign out
+                            </button>
+                        </div>
+                        <div className="flex justify-center gap-4 mb-4">
+                            <button onClick={() => setActiveComponent('calendar')} className="font-bold py-2 px-4 rounded bg-blue-500 hover:bg-blue-700 text-white">
+                                Calendar
+                            </button>
+                            <button onClick={() => setActiveComponent('availabilityForm')} className="font-bold py-2 px-4 rounded bg-green-500 hover:bg-green-700 text-white">
+                                Availability Form
+                            </button>
+                            <button onClick={() => setActiveComponent('newAgentForm')} className="font-bold py-2 px-4 rounded bg-yellow-500 hover:bg-yellow-700 text-white">
+                                New Agent Form
+                            </button>
+                        </div>
+                        {activeComponent === 'calendar' && (
                             <Calendar
                                 localizer={localizer}
                                 events={showEvents}
@@ -106,49 +124,20 @@ const AgentPortal = () => {
                                 endAccessor="end"
                                 style={{ height: 400, minHeight: '400px' }}
                             />
-                        </div>
-                        <div>
-                            <div className="text-center mb-4">
-                                Signed in as <strong>{session.user.email}</strong>
-                                <button onClick={() => signOut()} className="ml-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                    Sign out
-                                </button>
-                            </div>
-                            <div className="flex justify-center gap-4 mb-4">
-                                <button 
-                                    onClick={toggleForm} 
-                                    className={`font-bold py-2 px-4 rounded transition duration-300 ease-in-out ${isAgentFormActive ? 'bg-gray-300 text-gray-700' : 'bg-pink-500 hover:bg-pink-700 text-white'}`}>
-                                    Availability Form
-                                </button>
-                                <button 
-                                    onClick={toggleForm} 
-                                    className={`font-bold py-2 px-4 rounded transition duration-300 ease-in-out ${isAgentFormActive ? 'bg-pink-500 hover:bg-pink-700 text-white' : 'bg-gray-300 text-gray-700'}`}>
-                                    New Salesperson Form
-                                </button>
-                            </div>
-                            {isAgentFormActive ? (
-                                <div className="p-6 rounded-lg shadow-lg bg-white">
-                                    <h2 className="text-center text-pink-600 text-xl font-bold mb-4">New Agent Form</h2>
-                                    <AgentFormAgent />
-                                </div>
-                            ) : (
-                                <div className="p-6 rounded-lg shadow-lg bg-white">
-                                    <h2 className="text-center text-pink-600 text-xl font-bold mb-4">Availability Form</h2>
-                                    <AvailabilityForm 
-                                        agents={agents} 
-                                        shows={shows} 
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    </div>
+                        )}
+                        {activeComponent === 'availabilityForm' && (
+                            <AvailabilityForm agents={agents} shows={shows} />
+                        )}
+                        {activeComponent === 'newAgentForm' && (
+                            <AgentFormAgent />
+                        )}
+                       
+                    </>
                 ) : (
                     <div className="sign-in-container">
-                        <img src="/tsawhite.png" alt="TSA Logo" className="tsa-logo" /> {/* Logo Image */}
+                        <img src="/tsawhite.png" alt="TSA Logo" className="tsa-logo" />
                         <h2 className="welcome-message">Agent Portal</h2>
-                        <button 
-                            onClick={() => signIn()} 
-                            className="sign-in-button">
+                        <button onClick={() => signIn()} className="sign-in-button">
                             Sign in
                         </button>
                     </div>
@@ -156,7 +145,6 @@ const AgentPortal = () => {
             </div>
         </>
     );
-    
 };
 
 export default AgentPortal;
