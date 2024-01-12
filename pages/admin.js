@@ -61,9 +61,9 @@ const AdminPage = () => {
             <div className="container mx-auto px-4 mt-6">
                  {/* New Link button to navigate to Agent Forms */}
                  <div>
-                 <Link href="/agent-forms" passHref>
+                 <Link href="/agent-portal" passHref>
                     <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mb-4">
-                        Go to Agent Forms
+                        Go to Agent Portal
                     </button>
                 </Link>
                 </div>

@@ -94,9 +94,8 @@ const AgentPortal = () => {
 
     return (
         <>
-          <AnnouncementsHeader announcements={announcements} />
-           
-            <div className="container mx-auto px-4 py-4 bg-gray-100">
+            <AnnouncementsHeader announcements={announcements} />
+            <div className="agent-portal-container"> {/* Added class for styling */}
                 {session ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
@@ -105,7 +104,7 @@ const AgentPortal = () => {
                                 events={showEvents}
                                 startAccessor="start"
                                 endAccessor="end"
-                                style={{ height: 300, minHeight: '300px' }}
+                                style={{ height: 400, minHeight: '400px' }}
                             />
                         </div>
                         <div>
@@ -144,8 +143,12 @@ const AgentPortal = () => {
                         </div>
                     </div>
                 ) : (
-                    <div className="text-center">
-                        <button onClick={() => signIn()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    <div className="sign-in-container">
+                        <img src="/tsawhite.png" alt="TSA Logo" className="tsa-logo" /> {/* Logo Image */}
+                        <h2 className="welcome-message">Agent Portal</h2>
+                        <button 
+                            onClick={() => signIn()} 
+                            className="sign-in-button">
                             Sign in
                         </button>
                     </div>

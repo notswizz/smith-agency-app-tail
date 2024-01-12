@@ -1,33 +1,50 @@
-import React, { useEffect } from 'react';
-import Header from '../components/nav/Header';
+import React, { useEffect, useState } from 'react';
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from 'next/router';
 import Image from 'next/image';
 
-
 const HomePage = () => {
-  useEffect(() => {
-    // Add any required logic here
-  }, []);
+    const { data: session } = useSession();
+    const router = useRouter();
 
-  return (
-    <>
-      <Header />
-      <div className="container mx-auto flex justify-center items-center flex-wrap gap-5 p-5">
-        <div className="text-block">
-          <h1 className="text-3xl font-bold my-4 text-glow">The Smith Agency</h1>
-          <p className="text-xl my-2">Premier Boutique Staffing</p> 
-        </div>
-        <div className="image-block text-center">
-          <Image
-            src="/tsalogo.png"
-            alt="The Smith Agency Logo"
-            width={300}
-            height={300}
-            className="inline-block image-glow"
-          />
-        </div>
-      </div>
-    </>
-  );
+    useEffect(() => {
+        if (session) {
+            router.push('/agent-portal'); // Redirect to agent-portal if logged in
+        }
+    }, [session, router]);
+
+    return (
+        <>
+          
+            <div className="container mx-auto flex justify-center items-center flex-wrap gap-5 p-5">
+                {!session ? (
+                    <div className="sign-in-container">
+                        <div className="text-block">
+                        <div className="image-block text-center">
+                            <Image
+                                src="/tsawhite.png"
+                                alt="The Smith Agency Logo"
+                                width={300}
+                                height={300}
+                                className="inline-block image-glow"
+                            />
+                        </div>
+                            <p className="text-xl my-2">Sales Rep Portal</p>
+                            <button 
+                                onClick={() => signIn()} 
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out mt-4">
+                                Sign In
+                            </button>
+                        </div>
+                       
+                    </div>
+                ) : (
+                    // Content for logged-in users, can be adjusted or redirected
+                    <p>Redirecting to Agent Portal...</p>
+                )}
+            </div>
+        </>
+    );
 }; 
 
 export default HomePage;
