@@ -135,3 +135,36 @@ body {
       transform: translateX(-100%);
   }
 }
+
+/* CustomCalendarStyles.css */
+
+/* Adjust the overall calendar size and font */
+.rbc-calendar {
+  font-family: 'Arial', sans-serif;
+}
+
+/* Style for calendar events */
+.rbc-event {
+  background-color: rgb(25, 94, 245) !important; /* Example color */
+  color: white !important; /* Example text color */
+  border-radius: 4px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Adjust the calendar header buttons and text */
+.rbc-btn-group button {
+  color: #000;
+  background-color: transparent;
+  outline: none;
+  border: none;
+}
+
+.rbc-toolbar-label {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+/* Add more custom styles as needed */

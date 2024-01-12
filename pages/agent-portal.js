@@ -75,6 +75,18 @@ const AgentPortal = () => {
             return [];  // Return an empty array in case of exception
         }
     };
+
+    const events = shows.map(show => ({
+        title: show.type + ' at ' + show.location,
+        start: new Date(show.startDate),
+        end: new Date(show.endDate),
+        allDay: true,
+        style: {
+            backgroundColor: locationToColor[show.location] || "#ddd",
+        },
+    }));
+
+    
     
     const toggleForm = () => {
         setIsAgentFormActive(!isAgentFormActive);
