@@ -32,7 +32,7 @@ const HomePage = () => {
                             <p className="text-xl my-2">Sales Rep Portal</p>
                             <button 
                                 onClick={() => signIn()} 
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out mt-4">
+                                className="bg-pink-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out mt-4">
                                 Sign In
                             </button>
                         </div>
