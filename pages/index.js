@@ -16,15 +16,13 @@ const HomePage = () => {
         }
     }, [session, router]);
 
-  
     return (
-        <div className="bg-pink-50 min-h-screen flex flex-col">
+        <div className="bg-pink-50 min-h-screen flex flex-col items-center justify-center">
           {!session && (
-            <div className="container mx-auto px-4">
-             
-      
+            <div className="w-full max-w-sm mx-auto px-4">
+              
               {/* Logo and Title */}
-              <div className="text-center mb-6">
+              <div className="text-center mb-8">
                 <Image
                   src="/tsawhite.png"
                   alt="The Smith Agency Logo"
@@ -32,35 +30,51 @@ const HomePage = () => {
                   height={200}
                   className="inline-block"
                 />
-               {/* Header Images */}
-       <div className="flex justify-center space-x-4 py-4 overflow-x-auto">
-                {Array.from({ length: 5 }).map((_, index) => (
+                <h1 className="text-2xl font-bold text-gray-800 my-2">THE SMITH AGENCY</h1>
+                <p className="text-gray-600">PREMIER STAFFING</p>
+              </div>
+      
+              {/* Portal Sections */}
+              <div className="space-y-6 mb-8">
+                {/* Sales Rep Portal */}
+                <div>
+                  <h2 className="text-lg font-semibold text-center mb-2">Sales Rep Portal</h2>
+                  <button onClick={() => signIn('sales-rep')} className="w-full bg-pink-600 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-pink-200 focus:ring-opacity-50">
+                    Sign In
+                  </button>
+                </div>
+      
+                {/* Admin Portal */}
+                <div>
+                  <h2 className="text-lg font-semibold text-center mb-2">Admin Portal</h2>
+                  <button onClick={() => signIn('admin')} className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-opacity-50">
+                    Sign In
+                  </button>
+                </div>
+      
+                {/* Client Portal */}
+                <div>
+                  <h2 className="text-lg font-semibold text-center mb-2">Client Portal</h2>
+                  <button onClick={() => signIn('client')} className="w-full bg-green-600 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-200 focus:ring-opacity-50">
+                    Sign In
+                  </button>
+                </div>
+              </div>
+      
+              {/* Header Images */}
+              <div className="flex justify-center space-x-2 sm:space-x-4 py-4 overflow-x-auto">
+                {Array.from({ length: 4 }).map((_, index) => (
                   <div key={index} className="flex-none">
                     <Image
                       src={`/tsa${index + 1}.png`}
                       alt={`Header Image ${index + 1}`}
                       width={80}
-                      height={80}
-                      className="border-2 border-pink-300 rounded-full"
+                      height={90}
+                      className="border-2 border-pink-300 rounded-lg"
                     />
                   </div>
                 ))}
               </div>
-              </div>
-      
-             {/* Sign In Buttons */}
-<div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
-  <button onClick={() => signIn('sales-rep')} className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-md focus:outline-none focus:ring-2 focus:ring-pink-200 focus:ring-opacity-50">
-    Sales Rep Sign In
-  </button>
-  <button onClick={() => signIn('admin')} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-md focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-opacity-50">
-    Admin Sign In
-  </button>
-  <button onClick={() => signIn('client')} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-300 ease-in-out shadow-md focus:outline-none focus:ring-2 focus:ring-green-200 focus:ring-opacity-50">
-    Client Sign In
-  </button>
-</div>
-
       
               {/* Application Form */}
               <ApplicationForm />
@@ -75,7 +89,8 @@ const HomePage = () => {
           )}
         </div>
       );
-        
+      
+    
       
 };
 
