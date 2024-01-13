@@ -22,8 +22,14 @@ const HomePage = () => {
                 <div className="flex flex-col sm:flex-row justify-center items-center w-full max-w-6xl mx-auto px-4">
                     <section className="w-full sm:w-1/2 max-w-sm sm:mr-4">
                     <div className="text-center mb-8">
-    <div className="inline-block border-4 border-pink-600 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out p-2"> {/* Added padding */}
-        <Image
+                    <button 
+                        onClick={() => setModalOpen(true)} 
+                        className="px-4 py-2 text-blue-700 bg-blue-200 rounded hover:bg-blue-300 transition-colors duration-200 ease-in-out mb-4"
+                    >
+                        Who is The Smith Agency?
+                    </button>
+                    <div className="inline-block border-4 border-pink-600 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out p-2">
+                        <Image
             src="/tsawhite.png"
             alt="The Smith Agency Logo"
             width={300}
@@ -57,7 +63,7 @@ const HomePage = () => {
     >
         Admin Portal
     </button>
-  
+   
 </div>
 
 <InfoModal
@@ -84,9 +90,7 @@ const HomePage = () => {
                     <section className="w-full sm:w-1/2 max-w-sm mt-8 sm:mt-0">
                         
                         <ApplicationForm />
-                        <button onClick={() => setModalOpen(true)} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
-                Show Info
-            </button>
+                     
                     </section>
                 </div>
             )}

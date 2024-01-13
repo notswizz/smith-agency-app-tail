@@ -3,7 +3,15 @@ import Image from 'next/image';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 
-const InfoModal = ({ isOpen, onClose, title, description, imageUrl }) => {
+const InfoModal = ({ isOpen, onClose }) => {
+    const title = "The Smith Agency is...";
+    const bulletPoints = [
+        { text: "A leading provider of entertainment services", image: "/tsa1.png" },
+        { text: "Known for exceptional customer service", image: "/tsa2.png" },
+        { text: "Committed to creating unforgettable experiences", image: "/tsa3.png" },
+        // Add more bullet points as needed
+    ];
+
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={onClose}>
@@ -20,7 +28,6 @@ const InfoModal = ({ isOpen, onClose, title, description, imageUrl }) => {
                         <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
                     </Transition.Child>
 
-                    {/* This element is to trick the browser into centering the modal contents. */}
                     <span className="inline-block h-screen align-middle" aria-hidden="true">&#8203;</span>
 
                     <Transition.Child
@@ -36,19 +43,19 @@ const InfoModal = ({ isOpen, onClose, title, description, imageUrl }) => {
                             <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
                                 {title}
                             </Dialog.Title>
-                            <div className="mt-2">
-                                <p className="text-sm text-gray-500">
-                                    {description}
-                                </p>
-                            </div>
-                            <div className="mt-4">
-                                <Image
-                                    src={imageUrl}
-                                    alt="Image in modal"
-                                    width={200}
-                                    height={200}
-                                    className="rounded-lg"
-                                />
+                            <div className="mt-2 space-y-4">
+                                {bulletPoints.map((point, index) => (
+                                    <div key={index} className="flex items-center space-x-2">
+                                        <Image
+                                            src={point.image}
+                                            alt={`Image ${index + 1} in modal`}
+                                            width={100}
+                                            height={100}
+                                            className="rounded-full border-2 border-blue-500"
+                                        />
+                                        <span className="text-sm text-white bg-blue-500 px-2 py-1 rounded-full">{point.text}</span>
+                                    </div>
+                                ))}
                             </div>
                             <div className="mt-4">
                                 <button
