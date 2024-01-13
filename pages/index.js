@@ -1,12 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 import ApplicationForm from '../components/agent/ApplicationForm';
+import InfoModal from '../components/home/InfoModal';
 
 const HomePage = () => {
     const { data: session } = useSession();
     const router = useRouter();
+    const [isModalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
         if (session) {
@@ -55,9 +57,16 @@ const HomePage = () => {
     >
         Admin Portal
     </button>
+  
 </div>
 
-
+<InfoModal
+                isOpen={isModalOpen}
+                onClose={() => setModalOpen(false)}
+                title="Your Title Here"
+                description="Your description here."
+                imageUrl="/tsa.png" // Replace with your image path
+            />
                         <div className="flex justify-center space-x-2 sm:space-x-4 py-4 overflow-x-auto">
                             {Array.from({ length: 4 }).map((_, index) => (
                                 <Image
@@ -73,7 +82,11 @@ const HomePage = () => {
                         </div>
                     </section>
                     <section className="w-full sm:w-1/2 max-w-sm mt-8 sm:mt-0">
+                        
                         <ApplicationForm />
+                        <button onClick={() => setModalOpen(true)} className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-700">
+                Show Info
+            </button>
                     </section>
                 </div>
             )}

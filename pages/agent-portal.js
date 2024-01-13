@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import AvailabilityForm from '../components/form/AvailabilityForm';
 import AgentFormAgent from '../components/form/FormAgent';
-import AnnouncementsHeader from '../components/AnnouncementsHeader';
+import AnnouncementsHeader from '../components/home/AnnouncementsHeader';
 
 import { signIn, signOut, useSession } from "next-auth/react";
 
