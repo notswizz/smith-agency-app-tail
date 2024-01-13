@@ -51,7 +51,7 @@ const ApplicationForm = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-8 shadow-md rounded-lg space-y-6">
+        <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-8 shadow-md rounded-lg space-y-6 border-2 border-pink-500">
            
             <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Join Our Team</h2>
 
@@ -114,7 +114,7 @@ const ApplicationForm = () => {
                 ></textarea>
             </div>
 
-            <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors duration-200">
+            <button type="submit" className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded border-2 border-pink-500 focus:outline-none focus:shadow-outline w-full transition-colors duration-200">
                 Submit Application
             </button>
             {formStatus === 'success' && (

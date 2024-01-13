@@ -106,80 +106,81 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
         }
     };
     
-    
-return (
-    <div className="flex flex-col items-center justify-center min-h-screen py-2">
-        <div className="flex flex-col items-center justify-center w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-white shadow-md rounded-lg p-6">
-            <h2 className="text-2xl font-bold mb-4 text-center">Sales Rep Availability Form</h2>
-            <p className="text-gray-600 mb-6 text-center">
-                Use this form to update your availability for upcoming shows.
-            </p>
-            <form onSubmit={handleSubmit} className="w-full">
-                <div className="mb-4">
-                    <label htmlFor="show" className="block text-gray-700 text-sm font-bold mb-2">Select Show*:</label>
-                    <select
-                        id="show"
-                        value={selectedShow}
-                        onChange={(e) => handleShowSelection(e.target.value)}
-                        required
-                        className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
-                    >
-                        <option value="" disabled>Select a show</option>
-                        {shows.map(show => (
-                            <option key={show._id} value={show._id}>
-                                {show.type} in {show.location} ({toUTCDateString(show.startDate)} - {toUTCDateString(show.endDate)})
-                            </option>
+  
+    return (
+        <div className="flex flex-col items-center justify-center min-h-screen py-2">
+            <div className="flex flex-col items-center justify-center w-full max-w-2xl bg-white shadow-md rounded-lg p-4 sm:p-6">
+                <h2 className="text-2xl font-bold mb-4 text-center">Sales Rep Availability Form</h2>
+                <p className="text-gray-600 mb-6 text-center">
+                    Use this form to update your availability for upcoming shows.
+                </p>
+                <form onSubmit={handleSubmit} className="w-full">
+                    <div className="mb-4">
+                        <label htmlFor="show" className="block text-gray-700 text-sm font-bold mb-2">Select Show*:</label>
+                        <select
+                            id="show"
+                            value={selectedShow}
+                            onChange={(e) => handleShowSelection(e.target.value)}
+                            required
+                            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                        >
+                            <option value="" disabled>Select a show</option>
+                            {shows.map(show => (
+                                <option key={show._id} value={show._id}>
+                                    {show.type} in {show.location} ({toUTCDateString(show.startDate)} - {toUTCDateString(show.endDate)})
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <fieldset className="mb-4">
+                        <legend className="block text-gray-700 text-sm font-bold mb-2">Available Dates*:</legend>
+                        {dateCheckboxes.map(({ date, checked }) => (
+                            <label key={date} className="block">
+                                <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    onChange={() => handleDateCheckboxChange(date)}
+                                    className="mr-2 leading-tight"
+                                />
+                                {toUTCDateString(date)}
+                            </label>
                         ))}
-                    </select>
-                </div>
-                <fieldset className="mb-4">
-                    <legend className="block text-gray-700 text-sm font-bold mb-2">Available Dates*:</legend>
-                    {dateCheckboxes.map(({ date, checked }) => (
-                        <label key={date} className="block">
-                            <input
-                                type="checkbox"
-                                checked={checked}
-                                onChange={() => handleDateCheckboxChange(date)}
-                                className="mr-2 leading-tight"
-                            />
-                            {toUTCDateString(date)}
+                    </fieldset>
+                    <div className="mb-4">
+                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
+                            Additional Notes:
                         </label>
-                    ))}
-                </fieldset>
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
-                        Additional Notes:
-                    </label>
-                    <textarea
-                        id="notes"
-                        value={notes}
-                        onChange={(e) => setNotes(e.target.value)}
-                        rows="3"
-                        placeholder="Include any specific details or preferences"
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    />
-                </div>
-                <div className="flex items-center justify-center">
-                    <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                        Submit Availability
-                    </button>
-                </div>
-                {submissionSuccess && (
-                    <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                        <strong className="font-bold">Success!</strong>
-                        <span className="block sm:inline"> The availability has been successfully submitted.</span>
+                        <textarea
+                            id="notes"
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            rows="3"
+                            placeholder="Include any specific details or preferences"
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        />
                     </div>
-                )}
-                {submissionFailure && (
-                    <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                        <strong className="font-bold">Error!</strong>
-                        <span className="block sm:inline"> There was a problem submitting the availability. Please try again.</span>
+                    <div className="flex items-center justify-center">
+                        <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                            Submit Availability
+                        </button>
                     </div>
-                )}
-            </form>
+                    {submissionSuccess && (
+                        <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                            <strong className="font-bold">Success!</strong>
+                            <span className="block sm:inline"> The availability has been successfully submitted.</span>
+                        </div>
+                    )}
+                    {submissionFailure && (
+                        <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                            <strong className="font-bold">Error!</strong>
+                            <span className="block sm:inline"> There was a problem submitting the availability. Please try again.</span>
+                        </div>
+                    )}
+                </form>
+            </div>
         </div>
-    </div>
-);
+    );  
+
     
    
 };

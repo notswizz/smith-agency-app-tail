@@ -1,23 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
-import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import AvailabilityForm from '../components/form/AvailabilityForm';
-import AgentFormAgent from '../components/form/FormAgent';
 import AnnouncementsHeader from '../components/home/AnnouncementsHeader';
-
-import { signIn, signOut, useSession } from "next-auth/react";
-
-const localizer = momentLocalizer(moment);
+import { signOut, useSession } from "next-auth/react";
 
 const AgentPortal = () => {
-    const [agent, setAgent] = useState(null);
     const [shows, setShows] = useState([]);
-    const [availabilityEvents, setAvailabilityEvents] = useState([]);
     const { data: session } = useSession();
-    const [showEvents, setShowEvents] = useState([]);
-    const [showCalendarView, setShowCalendarView] = useState(false);
-    const [fetchedAgentData, setFetchedAgentData] = useState(false);
 
     const announcements = [
         "Announcement 1: Important update!",
@@ -28,176 +17,58 @@ const AgentPortal = () => {
 
     useEffect(() => {
         if (session) {
-            Promise.all([fetchAgentData(session.user.email), fetchShowsForCalendar(), fetchShowsForForm()])
-                .then(([agentAvailabilityEvents, showEvents]) => {
-                    setShowEvents([...agentAvailabilityEvents, ...showEvents]);
-                });
+            fetchShowsForForm().then(fetchedShows => {
+                setShows(fetchedShows);
+            });
         }
     }, [session]);
 
-    const fetchAgentData = async (email) => {
-        try {
-            const response = await fetch(`/api/agents/getAgentByEmail?email=${encodeURIComponent(email)}`);
-            if (response.ok) {
-                const agentData = await response.json();
-                setAgent(agentData);
-    
-                const agentAvailabilityEvents = agentData.availability.map(avail => ({
-                    title: '✓',
-                    start: new Date(avail.date),
-                    end: new Date(avail.date),
-                    allDay: true,
-                    backgroundColor: 'green',
-                }));
-    
-                setFetchedAgentData(true);
-                return agentAvailabilityEvents;
-            } else {
-                console.error('Failed to fetch agent data');
-            }
-        } catch (error) {
-            console.error('Error fetching agent data:', error);
-        }
-    };
-
     const fetchShowsForForm = async () => {
-        try {
-            const response = await fetch('/api/shows/getShows');
-            if (response.ok) {
-                const fetchedShows = await response.json();
-                setShows(fetchedShows); // set the shows state with fetchedShows directly
-            } else {
-                console.error('Failed to fetch shows');
-            }
-        } catch (error) {
-            console.error('Error fetching shows:', error);
+        const response = await fetch('/api/shows/getShows');
+        if (response.ok) {
+            return await response.json();
+        } else {
+            console.error('Failed to fetch shows');
+            return [];
         }
     };
 
-    const fetchShowsForCalendar = async () => {
-        try {
-            const response = await fetch('/api/shows/getShows');
-            if (response.ok) {
-                const fetchedShows = await response.json();
-                const showEvents = fetchedShows.map(show => ({
-                    title: show.type + ' in ' + show.location,
-                    start: new Date(show.startDate),
-                    end: new Date(show.endDate),
-                    allDay: true,
-                    resource: show.id,
-                }));
-                return showEvents;
-            } else {
-                console.error('Failed to fetch shows');
-            }
-        } catch (error) {
-            console.error('Error fetching shows:', error);
-        }
-    };
-
-    const handleAvailabilityAdded = async () => {
-        const agentAvailabilityEvents = await fetchAgentData(session.user.email);
-        const showEvents = await fetchShowsForCalendar();
-    
-        // Combine the agent's availability with the shows.
-        // The spread operator (...) is used to create a new array with all individual events.
-        const combinedEvents = [...agentAvailabilityEvents, ...showEvents];
-    
-        // Set the combined events to the state, which replaces the previous state and prevents stacking.
-        setShowEvents(combinedEvents);
-    };
-    
-
-    const agentNeedsToUpdateProfile = () => {
-        return agent && !agent.phone;
+    const handleLogout = () => {
+        signOut();
     };
 
     return (
         <>
             <AnnouncementsHeader announcements={announcements} />
-            <div className="container mx-auto p-4">
-                <div className="flex flex-col items-center">
-                    <img src="/tsawhite.png" alt="TSA Logo" className="w-32 mb-4" />
-
-                    {session ? (
-                        <>
-                            {agentNeedsToUpdateProfile() ? (
-                                <AgentFormAgent />
-                            ) : (
-                                <>
-                                    <div className="bg-white shadow-lg rounded-lg p-6 mb-4 w-full md:w-3/4 lg:w-1/2 flex items-center justify-center">
-                                        {agent && (
-                                            <h2 className="text-4xl font-bold text-gray-800 mb-2">{agent.name}</h2>
-                                        )}
-                                    </div>
-
-                                    <button
-                                        onClick={() => setShowCalendarView(!showCalendarView)}
-                                        className={`my-4 px-4 py-2 rounded transition-colors duration-300 ${showCalendarView ? 'bg-blue-500 hover:bg-blue-700 text-white' : 'bg-gray-300 hover:bg-gray-500 text-gray-800'}`}
-                                    >
-                                        {showCalendarView ? 'Show Form' : 'Show Calendar'}
-                                    </button>
-
-                                    {showCalendarView ? (
-                                        <Calendar
-                                            localizer={localizer}
-                                            events={showEvents}
-                                            startAccessor="start"
-                                            endAccessor="end"
-                                            style={{ height: 600, width: '100%' }}
-                                            eventPropGetter={(event) => ({
-                                                style: { 
-                                                    backgroundColor: event.backgroundColor || '#3174ad',
-                                                    color: 'white',
-                                                    borderRadius: '0px',
-                                                    border: 'none'
-                                                }
-                                            })}
-                                            className="rounded shadow-lg"
-                                        />
-                                    ) : (
-                                        <AvailabilityForm
-                                        shows={shows}
-                                        onAvailabilityAdded={handleAvailabilityAdded}
-                                    />
-                                    
-                                    )}
-
-                                    <div className="flex items-center mt-4">
-                                        <p className="text-gray-600 mr-4">{session.user.email}</p>
-                                        <button
-                                            onClick={() => signOut()}
-                                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
-                                        >
-                                            Sign Out
-                                        </button>
-                                    </div>
-                                </>
-                            )}
-                        </>
-                    ) : (
-                        <div className="text-center mt-4">
-                            <h2 className="text-xl font-semibold mb-3">Agent Portal</h2>
+            <div className="min-h-screen bg-pink-100 flex flex-col items-center justify-center px-4">
+                <div className="flex justify-between items-center w-full max-w-2xl">
+                    <img src="/tsalogo.png" alt="TSA Logo" className="w-32 mx-auto block rounded-full shadow-lg" />
+                    {session && (
+                        <div className="text-sm text-gray-600">
+                            <span>{session.user.email}</span>
                             <button
-                                onClick={() => signIn()}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
+                                onClick={handleLogout}
+                                className="ml-4 text-blue-500 hover:text-blue-700 transition-colors duration-300"
                             >
-                                Sign in
-                            </button>
-                            <br></br>
-                            <button
-                                onClick={() => window.location.href = '/'}
-                                className="bg-pink-500 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
-                            >
-                                Home
+                                Logout
                             </button>
                         </div>
                     )}
                 </div>
+                <h1 className="text-2xl font-semibold text-gray-700 my-4">
+                    THE SMITH AGENCY
+                </h1>
+                <p className="text-center text-sm text-gray-600 mb-8">
+                    PREMIER STAFFING
+                </p>
+                {session && (
+                    <AvailabilityForm
+                        shows={shows}
+                    />
+                )}
             </div>
         </>
     );
 };
 
 export default AgentPortal;
-
