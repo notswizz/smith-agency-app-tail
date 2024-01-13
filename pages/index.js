@@ -15,66 +15,74 @@ const HomePage = () => {
     }, [session, router]);
 
     return (
-        <main className="bg-pink-50 min-h-screen flex flex-col items-center justify-center">
+        <main className="bg-pink-50 min-h-screen flex flex-col items-center justify-center pt-10">
             {!session && (
-                <section className="w-full max-w-sm mx-auto px-4">
+                <div className="flex flex-col sm:flex-row justify-center items-center w-full max-w-6xl mx-auto px-4">
+                    <section className="w-full sm:w-1/2 max-w-sm sm:mr-4">
                     <div className="text-center mb-8">
-                        <Image
-                            src="/tsawhite.png"
-                            alt="The Smith Agency Logo"
-                            width={200}
-                            height={200}
-                            className="inline-block"
-                            loading="lazy"
-                        />
-                        <h1 className="text-2xl font-bold text-gray-800 my-2">THE SMITH AGENCY</h1>
-                        <p className="text-gray-600">PREMIER STAFFING</p>
-                    </div>
-                    <div className="space-y-6 mb-8">
-                        <button
-                            onClick={() => signIn("sales-rep")}
-                            className="w-full bg-pink-600 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-opacity-50"
-                            aria-label="Sign In to Sales Rep Portal"
-                        >
-                            Sales Rep Portal
-                        </button>
-                      
-                        <button
-                            onClick={() => signIn("client")}
-                            className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-opacity-50"
-                            aria-label="Sign In to Client Portal"
-                        >
-                            Client Portal
-                        </button>
-                        <button
-                            onClick={() => signIn("admin")}
-                            className="w-full bg-green-600 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-green-200 focus:ring-opacity-50"
-                            aria-label="Sign In to Admin Portal"
-                        >
-                            Admin Portal
-                        </button>
-                    </div>
-                    <div className="flex justify-center space-x-2 sm:space-x-4 py-4 overflow-x-auto">
-                        {Array.from({ length: 4 }).map((_, index) => (
-                            <Image
-                                key={index}
-                                src={`/tsa${index + 1}.png`}
-                                alt={`Header Image ${index + 1}`}
-                                width={80}
-                                height={90}
-                                className="border-2 border-pink-300 rounded-lg"
-                                loading="lazy"
-                            />
-                        ))}
-                    </div>
-                    <ApplicationForm />
-                </section>
+    <div className="inline-block border-4 border-pink-600 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out p-2"> {/* Added padding */}
+        <Image
+            src="/tsawhite.png"
+            alt="The Smith Agency Logo"
+            width={300}
+            height={200}
+            className="block" // Changed from inline-block to block for better padding effect
+            loading="lazy"
+        />
+    </div>
+</div>
+
+
+                        <div className="space-y-6 mb-8">
+    <button
+        onClick={() => signIn("sales-rep")}
+        className="button-custom sales-rep-btn w-full"
+        aria-label="Sign In to Sales Rep Portal"
+    >
+        Sales Rep Portal
+    </button>
+    <button
+        onClick={() => signIn("client")}
+        className="button-custom client-btn w-full"
+        aria-label="Sign In to Client Portal"
+    >
+        Client Portal
+    </button>
+    <button
+        onClick={() => signIn("admin")}
+        className="button-custom admin-btn w-full"
+        aria-label="Sign In to Admin Portal"
+    >
+        Admin Portal
+    </button>
+</div>
+
+
+                        <div className="flex justify-center space-x-2 sm:space-x-4 py-4 overflow-x-auto">
+                            {Array.from({ length: 4 }).map((_, index) => (
+                                <Image
+                                    key={index}
+                                    src={`/tsa${index + 1}.png`}
+                                    alt={`Header Image ${index + 1}`}
+                                    width={80}
+                                    height={90}
+                                    className="border-2 border-pink-300 rounded-lg"
+                                    loading="lazy"
+                                />
+                            ))}
+                        </div>
+                    </section>
+                    <section className="w-full sm:w-1/2 max-w-sm mt-8 sm:mt-0">
+                        <ApplicationForm />
+                    </section>
+                </div>
             )}
             {session && (
                 <p className="text-center text-lg font-semibold">Redirecting to Agent Portal...</p>
             )}
         </main>
     );
+    
 };
 
 export default HomePage;

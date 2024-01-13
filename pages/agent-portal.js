@@ -41,7 +41,7 @@ const AgentPortal = () => {
             if (response.ok) {
                 const agentData = await response.json();
                 setAgent(agentData);
-
+    
                 const agentAvailabilityEvents = agentData.availability.map(avail => ({
                     title: '✓',
                     start: new Date(avail.date),
@@ -49,7 +49,7 @@ const AgentPortal = () => {
                     allDay: true,
                     backgroundColor: 'green',
                 }));
-
+    
                 setFetchedAgentData(true);
                 return agentAvailabilityEvents;
             } else {
@@ -95,9 +95,18 @@ const AgentPortal = () => {
         }
     };
 
-    const handleAvailabilityAdded = () => {
-        fetchAgentData(session.user.email);
+    const handleAvailabilityAdded = async () => {
+        const agentAvailabilityEvents = await fetchAgentData(session.user.email);
+        const showEvents = await fetchShowsForCalendar();
+    
+        // Combine the agent's availability with the shows.
+        // The spread operator (...) is used to create a new array with all individual events.
+        const combinedEvents = [...agentAvailabilityEvents, ...showEvents];
+    
+        // Set the combined events to the state, which replaces the previous state and prevents stacking.
+        setShowEvents(combinedEvents);
     };
+    
 
     const agentNeedsToUpdateProfile = () => {
         return agent && !agent.phone;
@@ -154,12 +163,15 @@ const AgentPortal = () => {
                                     
                                     )}
 
-                                    <button
-                                        onClick={() => signOut()}
-                                        className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                    >
-                                        Sign Out
-                                    </button>
+                                    <div className="flex items-center mt-4">
+                                        <p className="text-gray-600 mr-4">{session.user.email}</p>
+                                        <button
+                                            onClick={() => signOut()}
+                                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
+                                        >
+                                            Sign Out
+                                        </button>
+                                    </div>
                                 </>
                             )}
                         </>
@@ -168,9 +180,16 @@ const AgentPortal = () => {
                             <h2 className="text-xl font-semibold mb-3">Agent Portal</h2>
                             <button
                                 onClick={() => signIn()}
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-4"
                             >
                                 Sign in
+                            </button>
+                            <br></br>
+                            <button
+                                onClick={() => window.location.href = '/'}
+                                className="bg-pink-500 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
+                            >
+                                Home
                             </button>
                         </div>
                     )}

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 const ApplicationForm = () => {
     const [formData, setFormData] = useState({
         name: '',
         resume: null,
-        salesExperience: '',
-        college: ''
+        referral: '',
+        coverLetter: ''
     });
 
     const handleChange = (e) => {
@@ -45,8 +46,19 @@ const ApplicationForm = () => {
     };
     return (
         <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-8 shadow-md rounded-lg">
+               <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Join Our Team</h2>
+            {/* TSA Image */}
+        <div className="flex justify-center mb-8">
+            <Image
+                src="/tsalogo.png" // Update the path as needed
+                alt="The Smith Agency"
+                width={100}  // Adjust the size as needed
+                height={100} // Adjust the size as needed
+                className="rounded-lg"
+            />
+        </div>
         {/* Heading */}
-        <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Join Our Team</h2>
+     
         <p className="text-center text-gray-600 mb-8">The 1st step to working for The Smith Agency!</p>
     
         {/* Name Field */}
@@ -74,31 +86,31 @@ const ApplicationForm = () => {
             />
         </div>
     
-        {/* Sales Experience Field */}
-        <div className="mb-6">
-            <label htmlFor="salesExperience" className="block text-gray-700 text-sm font-bold mb-2">Sales Experience:</label>
-            <input
-                type="text"
-                id="salesExperience"
-                name="salesExperience"
-                value={formData.salesExperience}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-        </div>
-    
-        {/* College Field */}
-        <div className="mb-8">
-            <label htmlFor="college" className="block text-gray-700 text-sm font-bold mb-2">College:</label>
-            <input
-                type="text"
-                id="college"
-                name="college"
-                value={formData.college}
-                onChange={handleChange}
-                className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
-        </div>
+      {/* Referral Field */}
+      <div className="mb-6">
+                <label htmlFor="referral" className="block text-gray-700 text-sm font-bold mb-2">Referral:</label>
+                <input
+                    type="text"
+                    id="referral"
+                    name="referral"
+                    value={formData.referral}
+                    onChange={handleChange}
+                    className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+            </div>
+
+            {/* Cover Letter Field */}
+            <div className="mb-8">
+                <label htmlFor="coverLetter" className="block text-gray-700 text-sm font-bold mb-2">Cover Letter:</label>
+                <textarea
+                    id="coverLetter"
+                    name="coverLetter"
+                    value={formData.coverLetter}
+                    onChange={handleChange}
+                    className="shadow appearance-none border rounded w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    rows="4"
+                ></textarea>
+            </div>
     
         {/* Submit Button */}
         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full">
