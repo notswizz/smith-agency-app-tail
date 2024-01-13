@@ -42,11 +42,9 @@ async function processForm(fields, files, res) {
         // Processing form fields
         Object.keys(fields).forEach(field => {
             if (field === 'location') {
-                if (fields[field] instanceof Array) {
-                    agentData[field] = fields[field].flatMap(item => item.split(','));
-                } else {
-                    agentData[field] = fields[field].split(',');
-                }
+                agentData[field] = fields[field] instanceof Array
+                    ? fields[field].flatMap(item => item.split(','))
+                    : fields[field].split(',');
             } else {
                 agentData[field] = fields[field] instanceof Array && fields[field].length === 1
                     ? fields[field][0]
@@ -57,16 +55,9 @@ async function processForm(fields, files, res) {
         // Initialize availability as an empty array
         agentData.availability = [];
 
-        // Check for existing agent by email
-        const existingAgent = await db.collection('agents').findOne({ email: agentData.email });
-        if (existingAgent) {
-            console.log('Agent with this email already exists');
-            return res.status(409).json({ message: 'An agent with this email already exists' });
-        }
-
         // Handle image upload if present
-        if (files.image && files.image.length > 0) {
-            const image = files.image[0];
+        if (files.image && files.image.size > 0) {
+            const image = files.image;
             const imageKey = `agents/${uuidv4()}_${image.originalFilename}`;
             const command = new PutObjectCommand({
                 Bucket: process.env.AWS_BUCKET_NAME,
@@ -79,36 +70,65 @@ async function processForm(fields, files, res) {
             const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${imageKey}`;
             agentData.imageUrl = imageUrl;
         } else {
-            console.log('Image file not found');
+            console.log('Image file not found or empty');
         }
 
-        // Handle resume upload if present
-        if (files.resume && files.resume.length > 0) {
-            const resume = files.resume[0];
-            const resumeKey = `resumes/${uuidv4()}_${resume.originalFilename}`;
-            const resumeCommand = new PutObjectCommand({
-                Bucket: process.env.AWS_RESUME_BUCKET_NAME, // Use the resume bucket name
-                Key: resumeKey,
-                Body: fs.createReadStream(resume.filepath),
-                ContentType: resume.mimetype
-            });
-
-            await s3Client.send(resumeCommand);
-            const resumeUrl = `https://${process.env.AWS_RESUME_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${resumeKey}`;
-            agentData.resumeUrl = resumeUrl;
+        const existingAgent = await db.collection('agents').findOne({ email: agentData.email });
+        if (existingAgent) {
+            // Update existing agent
+            await db.collection('agents').updateOne(
+                { email: agentData.email },
+                { $set: agentData }
+            );
+            console.log('Agent updated successfully');
+            return res.status(200).json({ message: 'Agent updated successfully', ...agentData });
         } else {
-            console.log('Resume file not found');
-        } 
+            // Handle image upload if present
+            if (files.image && files.image.length > 0) {
+                const image = files.image[0];
+                const imageKey = `agents/${uuidv4()}_${image.originalFilename}`;
+                const command = new PutObjectCommand({
+                    Bucket: process.env.AWS_BUCKET_NAME,
+                    Key: imageKey,
+                    Body: fs.createReadStream(image.filepath),
+                    ContentType: image.mimetype
+                });
 
-        // Insert new agent into database
-        const result = await db.collection('agents').insertOne(agentData);
-        if (result.acknowledged) {
-            return res.status(200).json({ ...agentData, _id: result.insertedId });
-        } else {
-            return res.status(400).json({ message: 'Agent insertion failed' });
-        }
-    } catch (error) {
-        console.error('Error adding agent to MongoDB', error);
-        return res.status(500).json({ message: 'Failed to add agent' });
-    }
-}
+                await s3Client.send(command);
+                const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${imageKey}`;
+                agentData.imageUrl = imageUrl;
+            } else {
+                console.log('Image file not found');
+            }
+
+            // Handle resume upload if present
+            if (files.resume && files.resume.length > 0) {
+                const resume = files.resume[0];
+                const resumeKey = `resumes/${uuidv4()}_${resume.originalFilename}`;
+                const resumeCommand = new PutObjectCommand({
+                    Bucket: process.env.AWS_RESUME_BUCKET_NAME,
+                    Key: resumeKey,
+                    Body: fs.createReadStream(resume.filepath),
+                    ContentType: resume.mimetype
+                });
+
+                await s3Client.send(resumeCommand);
+                const resumeUrl = `https://${process.env.AWS_RESUME_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${resumeKey}`;
+                agentData.resumeUrl = resumeUrl;
+            } else {
+                console.log('Resume file not found');
+            } 
+
+            // Insert new agent into database
+            const result = await db.collection('agents').insertOne(agentData);
+            if (result.acknowledged) {
+                return res.status(200).json({ message: 'Agent added successfully', ...agentData, _id: result.insertedId });
+                } else {
+                return res.status(400).json({ message: 'Agent insertion failed' });
+                }
+                }
+                } catch (error) {
+                console.error('Error adding or updating agent in MongoDB', error);
+                return res.status(500).json({ message: 'Failed to add or update agent' });
+                }
+                }

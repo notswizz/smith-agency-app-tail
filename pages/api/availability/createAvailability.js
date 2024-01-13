@@ -6,24 +6,30 @@ export default async function handler(req, res) {
         try {
             await run();
             const db = client.db('TSA');
-            const { agentPhone, dateToBook } = req.body;
+            const { agentEmail, dateToBook, notes } = req.body;
 
-            console.log("Received agentPhone:", agentPhone);
+            console.log("Received agentEmail:", agentEmail);
             console.log("Received dateToBook:", dateToBook);
 
-            // Validate input
-            if (!agentPhone || !dateToBook) {
-                return res.status(400).json({ message: 'Agent phone number and date to book are required' });
-            }
+          
 
             // Generate a unique ID for the availability entry
             const availabilityId = uuidv4();
 
             // Create a new availability entry
             const result = await db.collection('agents').updateOne(
-                { "phone": agentPhone },
-                { $addToSet: { "availability": { id: availabilityId, date: dateToBook, status: "open" } } },
-                { upsert: true } // This creates a new document if no matching document is found
+                { "email": agentEmail }, // Use email to find the agent
+                { 
+                    $addToSet: { 
+                        "availability": { 
+                            id: availabilityId, 
+                            date: dateToBook, 
+                            status: "open",
+                            notes: notes  // Save notes if provided
+                        } 
+                    } 
+                },
+                { upsert: true }
             );
 
             if (result.modifiedCount === 0 && result.upsertedCount === 0) {

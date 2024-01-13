@@ -11,12 +11,13 @@ import { signIn, signOut, useSession } from "next-auth/react";
 const localizer = momentLocalizer(moment);
 
 const AgentPortal = () => {
-    const [agents, setAgents] = useState([]);
+    const [agent, setAgent] = useState(null);
     const [shows, setShows] = useState([]);
-    const [activeComponent, setActiveComponent] = useState('calendar');
-    const { data: session, status } = useSession();
+    const [availabilityEvents, setAvailabilityEvents] = useState([]);
+    const { data: session } = useSession();
     const [showEvents, setShowEvents] = useState([]);
-   
+    const [showCalendarView, setShowCalendarView] = useState(false);
+    const [fetchedAgentData, setFetchedAgentData] = useState(false);
 
     const announcements = [
         "Announcement 1: Important update!",
@@ -27,124 +28,157 @@ const AgentPortal = () => {
 
     useEffect(() => {
         if (session) {
-            fetchAgents();
-            fetchShows();
+            Promise.all([fetchAgentData(session.user.email), fetchShowsForCalendar(), fetchShowsForForm()])
+                .then(([agentAvailabilityEvents, showEvents]) => {
+                    setShowEvents([...agentAvailabilityEvents, ...showEvents]);
+                });
         }
     }, [session]);
 
-    useEffect(() => {
-        if (session) {
-            fetchShows().then(shows => {
-                const events = shows.map(show => ({
-                    title: show.type + ' at ' + show.location,
-                    start: new Date(show.startDate),
-                    end: new Date(show.endDate),
-                    allDay: true
-                }));
-                setShowEvents(events);
-            });
-            fetchAgents();
-        }
-    }, [session]);
-
-    const fetchAgents = async () => {
+    const fetchAgentData = async (email) => {
         try {
-            const response = await fetch('/api/agents/getAgents');
+            const response = await fetch(`/api/agents/getAgentByEmail?email=${encodeURIComponent(email)}`);
             if (response.ok) {
-                const data = await response.json();
-                setAgents(data);
+                const agentData = await response.json();
+                setAgent(agentData);
+
+                const agentAvailabilityEvents = agentData.availability.map(avail => ({
+                    title: '✓',
+                    start: new Date(avail.date),
+                    end: new Date(avail.date),
+                    allDay: true,
+                    backgroundColor: 'green',
+                }));
+
+                setFetchedAgentData(true);
+                return agentAvailabilityEvents;
             } else {
-                console.error('Failed to fetch agents');
+                console.error('Failed to fetch agent data');
             }
         } catch (error) {
-            console.error('Error fetching agents:', error);
+            console.error('Error fetching agent data:', error);
         }
     };
 
-    const fetchShows = async () => {
+    const fetchShowsForForm = async () => {
         try {
             const response = await fetch('/api/shows/getShows');
             if (response.ok) {
-                const data = await response.json();
-                return data;  // Ensure data is returned
+                const fetchedShows = await response.json();
+                setShows(fetchedShows); // set the shows state with fetchedShows directly
             } else {
                 console.error('Failed to fetch shows');
-                return [];  // Return an empty array in case of failure
             }
         } catch (error) {
             console.error('Error fetching shows:', error);
-            return [];  // Return an empty array in case of exception
         }
     };
 
-    const events = shows.map(show => ({
-        title: show.type + ' at ' + show.location,
-        start: new Date(show.startDate),
-        end: new Date(show.endDate),
-        allDay: true,
-        style: {
-            backgroundColor: locationToColor[show.location] || "#ddd",
-        },
-    }));
-
-    
-    
-    const toggleForm = () => {
-        setIsAgentFormActive(!isAgentFormActive);
+    const fetchShowsForCalendar = async () => {
+        try {
+            const response = await fetch('/api/shows/getShows');
+            if (response.ok) {
+                const fetchedShows = await response.json();
+                const showEvents = fetchedShows.map(show => ({
+                    title: show.type + ' in ' + show.location,
+                    start: new Date(show.startDate),
+                    end: new Date(show.endDate),
+                    allDay: true,
+                    resource: show.id,
+                }));
+                return showEvents;
+            } else {
+                console.error('Failed to fetch shows');
+            }
+        } catch (error) {
+            console.error('Error fetching shows:', error);
+        }
     };
 
-return (
-    <>
-        <AnnouncementsHeader announcements={announcements} />
-        <div className="flex flex-col items-center p-4">
-            <img src="/tsawhite.png" alt="TSA Logo" className="w-32 mb-4" />
+    const handleAvailabilityAdded = () => {
+        fetchAgentData(session.user.email);
+    };
 
-            {session ? (
-                <>
-                    <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-3 mb-5">
-                        <button onClick={() => setActiveComponent('calendar')} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded border-pink-500 border w-full sm:w-auto">
-                            Calendar
-                        </button>
-                        <button onClick={() => setActiveComponent('availabilityForm')} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded border-pink-500 border w-full sm:w-auto">
-                            Availability Form
-                        </button>
-                        <button onClick={() => setActiveComponent('newAgentForm')} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded border-pink-500 border w-full sm:w-auto">
-                            New Agent Form
-                        </button>
-                    </div>
+    const agentNeedsToUpdateProfile = () => {
+        return agent && !agent.phone;
+    };
 
-                    {activeComponent === 'calendar' && (
-                        <Calendar
-                            localizer={localizer}
-                            events={showEvents}
-                            startAccessor="start"
-                            endAccessor="end"
-                            style={{ height: 500 }}
-                        />
-                    )}
-                    {activeComponent === 'availabilityForm' && <AvailabilityForm agents={agents} shows={shows} />}
-                    {activeComponent === 'newAgentForm' && <AgentFormAgent />}
-
-                    <div className="text-center mt-5">
-                        <p className="text-gray-600 text-sm">Signed in as <strong>{session.user.email}</strong></p>
-                        <button onClick={() => signOut()} className="text-red-500 hover:text-red-700 text-xs font-bold">
-                            Sign out
-                        </button>
-                    </div>
-                </>
-            ) : (
+    return (
+        <>
+            <AnnouncementsHeader announcements={announcements} />
+            <div className="container mx-auto p-4">
                 <div className="flex flex-col items-center">
-                    <h2 className="text-xl font-semibold mb-3">Agent Portal</h2>
-                    <button onClick={() => signIn()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">
-                        Sign in
-                    </button>
-                </div>
-            )}
-        </div>
-    </>
-);
+                    <img src="/tsawhite.png" alt="TSA Logo" className="w-32 mb-4" />
 
-    
+                    {session ? (
+                        <>
+                            {agentNeedsToUpdateProfile() ? (
+                                <AgentFormAgent />
+                            ) : (
+                                <>
+                                    <div className="bg-white shadow-lg rounded-lg p-6 mb-4 w-full md:w-3/4 lg:w-1/2 flex items-center justify-center">
+                                        {agent && (
+                                            <h2 className="text-4xl font-bold text-gray-800 mb-2">{agent.name}</h2>
+                                        )}
+                                    </div>
+
+                                    <button
+                                        onClick={() => setShowCalendarView(!showCalendarView)}
+                                        className={`my-4 px-4 py-2 rounded transition-colors duration-300 ${showCalendarView ? 'bg-blue-500 hover:bg-blue-700 text-white' : 'bg-gray-300 hover:bg-gray-500 text-gray-800'}`}
+                                    >
+                                        {showCalendarView ? 'Show Form' : 'Show Calendar'}
+                                    </button>
+
+                                    {showCalendarView ? (
+                                        <Calendar
+                                            localizer={localizer}
+                                            events={showEvents}
+                                            startAccessor="start"
+                                            endAccessor="end"
+                                            style={{ height: 600, width: '100%' }}
+                                            eventPropGetter={(event) => ({
+                                                style: { 
+                                                    backgroundColor: event.backgroundColor || '#3174ad',
+                                                    color: 'white',
+                                                    borderRadius: '0px',
+                                                    border: 'none'
+                                                }
+                                            })}
+                                            className="rounded shadow-lg"
+                                        />
+                                    ) : (
+                                        <AvailabilityForm
+                                        shows={shows}
+                                        onAvailabilityAdded={handleAvailabilityAdded}
+                                    />
+                                    
+                                    )}
+
+                                    <button
+                                        onClick={() => signOut()}
+                                        className="mt-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                                    >
+                                        Sign Out
+                                    </button>
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <div className="text-center mt-4">
+                            <h2 className="text-xl font-semibold mb-3">Agent Portal</h2>
+                            <button
+                                onClick={() => signIn()}
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                                Sign in
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default AgentPortal;
+

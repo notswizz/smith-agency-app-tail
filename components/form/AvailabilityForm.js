@@ -1,33 +1,17 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSession } from "next-auth/react"; // Import useSession hook to get user session
 import { toUTCDateString } from '../../lib/utils';
 
 const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
-    const [agents, setAgents] = useState([]);
-    const [agentPhone, setAgentPhone] = useState(''); 
+    const { data: session } = useSession(); // Retrieve session data
     const [selectedShow, setSelectedShow] = useState('');
     const [selectedDays, setSelectedDays] = useState({});
     const [showDateRange, setShowDateRange] = useState({ startDate: '', endDate: '' });
     const [notes, setNotes] = useState(''); 
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
     const [submissionFailure, setSubmissionFailure] = useState(false);
-   
 
-    useEffect(() => {
-        const fetchAgents = async () => {
-            try {
-                const response = await fetch('/api/agents/getAgents');
-                if (response.ok) {
-                    const data = await response.json();
-                    setAgents(data);
-                } else {
-                    console.error('Failed to fetch agents');
-                }
-            } catch (error) {
-                console.error('Error fetching agents:', error);
-            }
-        };
-        fetchAgents();
-    }, []);
+   
 
     const generateDateRange = (start, end) => {
         if (!start || !end) return [];
@@ -68,6 +52,9 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     };
 
     const sortedShows = useMemo(() => {
+        if (!Array.isArray(shows)) {
+            return []; // or return a default value that makes sense in your context
+        }
         return [...shows].sort((a, b) => new Date(a.startDate) - new Date(b.startDate));
     }, [shows]);
 
@@ -83,14 +70,8 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
         setSubmissionFailure(false);
         setSubmissionSuccess(false);
     
-        // Check if agentPhone exists in agents array
-        const agentExists = agents.some(agent => agent.phone === agentPhone);
-    
-        if (!agentExists) {
-            console.error('Agent phone number does not match any agent records');
-            setSubmissionFailure(true);
-            return;
-        }
+        // Use the email from session for identifying the agent instead of phone number
+        const agentEmail = session.user.email;
     
         // Extract the selected dates
         const selectedDates = Object.keys(selectedDays).filter(date => selectedDays[date]);
@@ -103,7 +84,7 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ agentPhone, dateToBook: date })
+                body: JSON.stringify({ agentEmail, dateToBook: date, notes }) // Send the email and notes
             });
     
             if (!response.ok) {
@@ -115,7 +96,7 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     
         if (allUpdatesSuccessful) {
             setSubmissionSuccess(true);
-            setAgentPhone('');
+       
             setSelectedShow('');
             setSelectedDays({});
             setNotes('');
@@ -126,53 +107,31 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     };
     
     
-    return (
-        <div className="max-w-md mx-auto max-h-96 overflow-auto">
-            <h2 className="text-xl font-semibold mb-4">Agent Availability Submission</h2>
-            <p className="text-gray-600 mb-6">
-                Use this form to update an agent's availability for upcoming shows. Ensure the phone number is accurate to properly record the dates.
+return (
+    <div className="flex flex-col items-center justify-center min-h-screen py-2">
+        <div className="flex flex-col items-center justify-center w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-white shadow-md rounded-lg p-6">
+            <h2 className="text-2xl font-bold mb-4 text-center">Sales Rep Availability Form</h2>
+            <p className="text-gray-600 mb-6 text-center">
+                Use this form to update your availability for upcoming shows.
             </p>
-            <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-                {/* Agent Phone Number Input */}
+            <form onSubmit={handleSubmit} className="w-full">
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="agentPhone">
-                        Phone Number*:
-                    </label>
-                    <input
-    type="tel"
-    id="agentPhone"
-    value={agentPhone}
-    onChange={(e) => setAgentPhone(e.target.value)}
-    placeholder="10 digits, no dashes or slashes"
-    pattern="\d*"
-    title="Please enter a 10 digit phone number without any dashes or slashes."
-    maxLength="10"
-    required
-    className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-/>
-
-                </div>
-    
-                {/* Show Dropdown */}
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="show">
-                        Select Show*:
-                    </label>
+                    <label htmlFor="show" className="block text-gray-700 text-sm font-bold mb-2">Select Show*:</label>
                     <select
                         id="show"
                         value={selectedShow}
                         onChange={(e) => handleShowSelection(e.target.value)}
                         required
-                        className="shadow border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
                     >
-                        <option value="" disabled>Select a show from the list</option>
-                        {sortedShows.map(show => (
-                            <option key={show._id} value={show._id}>{show.id}</option>
+                        <option value="" disabled>Select a show</option>
+                        {shows.map(show => (
+                            <option key={show._id} value={show._id}>
+                                {show.type} in {show.location} ({toUTCDateString(show.startDate)} - {toUTCDateString(show.endDate)})
+                            </option>
                         ))}
                     </select>
                 </div>
-    
-                {/* Date Checkboxes */}
                 <fieldset className="mb-4">
                     <legend className="block text-gray-700 text-sm font-bold mb-2">Available Dates*:</legend>
                     {dateCheckboxes.map(({ date, checked }) => (
@@ -187,8 +146,6 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
                         </label>
                     ))}
                 </fieldset>
-    
-                {/* Notes Section */}
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
                         Additional Notes:
@@ -199,18 +156,14 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
                         onChange={(e) => setNotes(e.target.value)}
                         rows="3"
                         placeholder="Include any specific details or preferences"
-                        className="shadow border rounded py-2 px-3 text-gray-700 w-full"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                     />
                 </div>
-    
-                {/* Submit Button */}
-                <div className="flex justify-center">
-                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                <div className="flex items-center justify-center">
+                    <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                         Submit Availability
                     </button>
                 </div>
-    
-                {/* Success and Failure Notifications */}
                 {submissionSuccess && (
                     <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                         <strong className="font-bold">Success!</strong>
@@ -225,7 +178,8 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
                 )}
             </form>
         </div>
-    );
+    </div>
+);
     
    
 };

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useSession } from "next-auth/react";
 
 const AgentFormAgent = ({ onAgentAdded }) => {
+    const { data: session } = useSession();
     const [agent, setAgent] = useState({ 
         name: '', 
         email: '', 
@@ -18,6 +20,13 @@ const AgentFormAgent = ({ onAgentAdded }) => {
     const [existingAgents, setExistingAgents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
+
+    useEffect(() => {
+        if (session) {
+            setAgent(agent => ({ ...agent, email: session.user.email }));
+        }
+    }, [session]);
+
 
     useEffect(() => {
         fetchAgents();
@@ -111,7 +120,7 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                     <p>{statusMessage}</p>
                 </div>
             ) : (
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} encType="multipart/form-data">
                     <div className="mb-4">
                         <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
                             Name*:
@@ -128,21 +137,7 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                         />
                     </div>
     
-                    <div className="mb-4">
-                        <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
-                            Email*:
-                        </label>
-                        <input 
-                            type="email" 
-                            id="email" 
-                            name="email" 
-                            value={agent.email} 
-                            onChange={handleChange} 
-                            required 
-                            placeholder="Email Address"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
-                        />
-                    </div>
+                  
     
                     <div className="mb-4">
                         <label htmlFor="phone" className="block text-gray-700 text-sm font-bold mb-2">
