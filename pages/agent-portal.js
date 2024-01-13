@@ -93,58 +93,58 @@ const AgentPortal = () => {
         setIsAgentFormActive(!isAgentFormActive);
     };
 
-    return (
-        <>
-            <AnnouncementsHeader announcements={announcements} />
-            <div className="agent-portal-container">
-                {session ? (
-                    <>
-                        <div className="text-center mb-4">
-                            Signed in as <strong>{session.user.email}</strong>
-                            <button onClick={() => signOut()} className="ml-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                                Sign out
-                            </button>
-                        </div>
-                        <div className="flex justify-center gap-4 mb-4">
-                            <button onClick={() => setActiveComponent('calendar')} className="font-bold py-2 px-4 rounded bg-blue-500 hover:bg-blue-700 text-white">
-                                Calendar
-                            </button>
-                            <button onClick={() => setActiveComponent('availabilityForm')} className="font-bold py-2 px-4 rounded bg-green-500 hover:bg-green-700 text-white">
-                                Availability Form
-                            </button>
-                            <button onClick={() => setActiveComponent('newAgentForm')} className="font-bold py-2 px-4 rounded bg-yellow-500 hover:bg-yellow-700 text-white">
-                                New Agent Form
-                            </button>
-                        </div>
-                        {activeComponent === 'calendar' && (
-                            <Calendar
-                                localizer={localizer}
-                                events={showEvents}
-                                startAccessor="start"
-                                endAccessor="end"
-                                style={{ height: 400, minHeight: '400px' }}
-                            />
-                        )}
-                        {activeComponent === 'availabilityForm' && (
-                            <AvailabilityForm agents={agents} shows={shows} />
-                        )}
-                        {activeComponent === 'newAgentForm' && (
-                            <AgentFormAgent />
-                        )}
-                       
-                    </>
-                ) : (
-                    <div className="sign-in-container">
-                        <img src="/tsawhite.png" alt="TSA Logo" className="tsa-logo" />
-                        <h2 className="welcome-message">Agent Portal</h2>
-                        <button onClick={() => signIn()} className="sign-in-button">
-                            Sign in
+return (
+    <>
+        <AnnouncementsHeader announcements={announcements} />
+        <div className="flex flex-col items-center p-4">
+            <img src="/tsawhite.png" alt="TSA Logo" className="w-32 mb-4" />
+
+            {session ? (
+                <>
+                    <div className="flex flex-col sm:flex-row sm:flex-wrap justify-center gap-3 mb-5">
+                        <button onClick={() => setActiveComponent('calendar')} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded border-pink-500 border w-full sm:w-auto">
+                            Calendar
+                        </button>
+                        <button onClick={() => setActiveComponent('availabilityForm')} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded border-pink-500 border w-full sm:w-auto">
+                            Availability Form
+                        </button>
+                        <button onClick={() => setActiveComponent('newAgentForm')} className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded border-pink-500 border w-full sm:w-auto">
+                            New Agent Form
                         </button>
                     </div>
-                )}
-            </div>
-        </>
-    );
+
+                    {activeComponent === 'calendar' && (
+                        <Calendar
+                            localizer={localizer}
+                            events={showEvents}
+                            startAccessor="start"
+                            endAccessor="end"
+                            style={{ height: 500 }}
+                        />
+                    )}
+                    {activeComponent === 'availabilityForm' && <AvailabilityForm agents={agents} shows={shows} />}
+                    {activeComponent === 'newAgentForm' && <AgentFormAgent />}
+
+                    <div className="text-center mt-5">
+                        <p className="text-gray-600 text-sm">Signed in as <strong>{session.user.email}</strong></p>
+                        <button onClick={() => signOut()} className="text-red-500 hover:text-red-700 text-xs font-bold">
+                            Sign out
+                        </button>
+                    </div>
+                </>
+            ) : (
+                <div className="flex flex-col items-center">
+                    <h2 className="text-xl font-semibold mb-3">Agent Portal</h2>
+                    <button onClick={() => signIn()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded w-full sm:w-auto">
+                        Sign in
+                    </button>
+                </div>
+            )}
+        </div>
+    </>
+);
+
+    
 };
 
 export default AgentPortal;

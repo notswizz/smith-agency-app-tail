@@ -33,10 +33,18 @@ const HomePage = () => {
                     <div className="space-y-6 mb-8">
                         <button
                             onClick={() => signIn("sales-rep")}
-                            className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-opacity-50"
+                            className="w-full bg-pink-600 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-200 focus:ring-opacity-50"
                             aria-label="Sign In to Sales Rep Portal"
                         >
                             Sales Rep Portal
+                        </button>
+                      
+                        <button
+                            onClick={() => signIn("client")}
+                            className="w-full bg-blue-600 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-opacity-50"
+                            aria-label="Sign In to Client Portal"
+                        >
+                            Client Portal
                         </button>
                         <button
                             onClick={() => signIn("admin")}
@@ -44,13 +52,6 @@ const HomePage = () => {
                             aria-label="Sign In to Admin Portal"
                         >
                             Admin Portal
-                        </button>
-                        <button
-                            onClick={() => signIn("client")}
-                            className="w-full bg-red-600 text-white font-bold py-3 rounded-lg shadow-md transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-opacity-50"
-                            aria-label="Sign In to Client Portal"
-                        >
-                            Client Portal
                         </button>
                     </div>
                     <div className="flex justify-center space-x-2 sm:space-x-4 py-4 overflow-x-auto">
