@@ -57,21 +57,19 @@ const HomePage = () => {
         Client Portal
     </button>
     <button
-        onClick={() => signIn("admin")}
-        className="button-custom admin-btn w-full"
-        aria-label="Sign In to Admin Portal"
-    >
-        Admin Portal
-    </button>
+    onClick={() => signIn("google", { callbackUrl: `${window.location.origin}/admin` })}
+    className="button-custom admin-btn w-full"
+    aria-label="Sign In to Admin Portal"
+>
+    Admin Portal
+</button>
    
 </div>
 
 <InfoModal
                 isOpen={isModalOpen}
                 onClose={() => setModalOpen(false)}
-                title="Your Title Here"
-                description="Your description here."
-                imageUrl="/tsa.png" // Replace with your image path
+            
             />
                         <div className="flex justify-center space-x-2 sm:space-x-4 py-4 overflow-x-auto">
                             {Array.from({ length: 4 }).map((_, index) => (
