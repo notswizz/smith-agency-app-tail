@@ -20,6 +20,9 @@ const AgentFormAgent = ({ onAgentAdded }) => {
     const [existingAgents, setExistingAgents] = useState([]);
     const [loading, setLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [isClient, setIsClient] = useState(false);
+    const [isAgent, setIsAgent] = useState(true);
 
     useEffect(() => {
         if (session) {
@@ -69,13 +72,19 @@ const AgentFormAgent = ({ onAgentAdded }) => {
         e.preventDefault();
     
         const formData = new FormData();
+        // Add all agent fields to formData
         for (const key in agent) {
-            if (key === 'resume' && agent[key]) {
-                formData.append(key, agent[key], agent[key].name); // Add resume file to formData
-            } else {
-                formData.append(key, agent[key]);
-            }
+            formData.append(key, agent[key]);
         }
+    
+        // Add the admin, client, and agent boolean values to formData
+        formData.append('admin', isAdmin);
+        formData.append('client', isClient);
+        formData.append('agent', isAgent);
+    
+        // Set the loading state to true to indicate processing
+        setLoading(true);
+        setStatusMessage('Adding agent...');
     
         try {
             const response = await fetch('/api/agents/addAgent', {
@@ -83,28 +92,47 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                 body: formData,
             });
     
+            setLoading(false); // Processing done, set loading to false
+    
             if (response.ok) {
                 const newAgent = await response.json();
                 alert('Agent added successfully!');
     
-                // Invoke callback function if provided
-                onAgentAdded && onAgentAdded(newAgent);
+                // Invoke the callback function if provided
+                if (onAgentAdded) {
+                    onAgentAdded(newAgent);
+                }
     
-                // Reset form fields
-                setAgent({ name: '', email: '', phone: '', location: [], instagram: '', college:'', shoeSize:'', salesExperience:'', clothingSize:'', resume: null, image: null });
+                // Reset the agent state to clear the form
+                setAgent({
+                    name: '', 
+                    email: '', 
+                    phone: '', 
+                    location: [], 
+                    instagram: '', 
+                    notes: '', 
+                    college: '', 
+                    shoeSize: '', 
+                    salesExperience: '', 
+                    clothingSize: '', 
+                    resume: null, 
+                    image: null
+                });
     
-                // Fetch updated list of agents
+                // Fetch the updated list of agents
                 fetchAgents();
             } else {
                 const errorData = await response.json();
                 console.error('Failed to add agent', errorData);
-                alert(`Failed to add agent: ${errorData.message}`);
+                setStatusMessage(`Failed to add agent: ${errorData.message}`);
             }
         } catch (error) {
+            setLoading(false);
             console.error('Error occurred:', error);
-            alert('An error occurred while adding the agent.');
+            setStatusMessage('An error occurred while adding the agent.');
         }
     };
+    
 
     
     

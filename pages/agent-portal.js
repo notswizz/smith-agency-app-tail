@@ -3,6 +3,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import AvailabilityForm from '../components/form/AvailabilityForm';
 import AnnouncementsHeader from '../components/home/AnnouncementsHeader';
 import { signOut, useSession } from "next-auth/react";
+import AgentFormAgent from '../components/form/FormAgent';
 
 const AgentPortal = () => {
     const [shows, setShows] = useState([]);
@@ -62,9 +63,8 @@ const AgentPortal = () => {
                     PREMIER STAFFING
                 </p>
                 {session && (
-                    <AvailabilityForm
-                        shows={shows}
-                    />
+                    <><AvailabilityForm
+                        shows={shows} /><AgentFormAgent /></>
                 )}
             </div>
         </>
