@@ -110,10 +110,19 @@ const AgentPortal = () => {
                             </div>
                         </div>
                     )}
+                    {session && agentData && agentData.admin === "true" && (
+                        <button
+                            onClick={navigateToAdmin}
+                            className="w-full py-1 rounded hover:bg-gray-200 transition-colors duration-300 shadow-md mt-4"
+                            style={{ color: '#344868', backgroundColor: '#6db65b' }}
+                        >
+                            Admin Portal
+                        </button>
+                    )}
                     {session && (
                         <button
                             onClick={handleLogout}
-                            className="w-full py-1 rounded hover:bg-gray-200 transition-colors duration-300 shadow-md"
+                            className="w-full py-1 rounded hover:bg-gray-200 transition-colors duration-300 shadow-md mt-4"
                             style={{ color: '#344868', backgroundColor: '#A1BFE4' }}
                         >
                             Logout
@@ -145,14 +154,7 @@ const AgentPortal = () => {
 )}
 </div>
 )}
-{session && agentData && agentData.admin === "true" && (
-<button
-             onClick={navigateToAdmin}
-             className="button-custom admin-btn mt-4"
-         >
-Admin Portal
-</button>
-)}
+
 
 </div>
 </>
