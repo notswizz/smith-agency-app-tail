@@ -70,8 +70,21 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
         setSubmissionFailure(false);
         setSubmissionSuccess(false);
     
-        // Use the email from session for identifying the agent instead of phone number
+        // Use the email from session for identifying the agent
         const agentEmail = session.user.email;
+    
+        // Clear existing availability for the selected show
+        const clearResponse = await fetch('/api/availability/clearAvailability', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ agentEmail, showId: selectedShow })
+        });
+    
+        if (!clearResponse.ok) {
+            console.error('Failed to clear existing availability');
+            setSubmissionFailure(true);
+            return; // Stop the function if clearing fails
+        }
     
         // Extract the selected dates
         const selectedDates = Object.keys(selectedDays).filter(date => selectedDays[date]);
@@ -96,7 +109,6 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     
         if (allUpdatesSuccessful) {
             setSubmissionSuccess(true);
-       
             setSelectedShow('');
             setSelectedDays({});
             setNotes('');
@@ -105,6 +117,7 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
             setSubmissionFailure(true); 
         }
     };
+    
     
   
   return (

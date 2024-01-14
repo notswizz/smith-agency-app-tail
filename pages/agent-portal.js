@@ -78,23 +78,51 @@ const AgentPortal = () => {
         <>
         <AnnouncementsHeader announcements={announcements} />
         <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4">
-            <h1 className="text-3xl font-bold text-gray-800 mt-6 text-center">
+            <h1 className="text-4xl font-bold text-pink-600 mt-6 text-center">
                 THE SMITH AGENCY
             </h1>
-            <p className="text-center text-lg text-gray-600 mb-8">
+            <p className="text-center text-lg text-gray-600 mb-8 italic">
                 PREMIER STAFFING
             </p>
-            <div className="w-full max-w-md md:max-w-4xl p-4 bg-white rounded-lg shadow-md">
-                <img src="/tsalogo.png" alt="TSA Logo" className="w-32 h-32 mx-auto rounded-full" />
+            <div className="w-full max-w-2xl mx-auto p-4 bg-gradient-to-r from-pink-500 via-pink-400 to-pink-300 rounded-lg shadow-lg flex items-center justify-between">
+    <div className="flex items-center space-x-4">
+        <img src="/tsalogo.png" alt="TSA Logo" className="w-24 h-24 md:w-32 md:h-32  border-4 border-white shadow-lg" />
+        {session && (
+        <div className="flex flex-col items-center justify-center bg-white p-4 rounded-lg shadow-md">
+        <div className="inline-block bg-teal-500 px-6 py-2 rounded-full shadow-lg text-white text-xl md:text-2xl font-extrabold mb-3">
+            {session.user.name}
             </div>
+            <div className="inline-block text-gray-800 text-sm md:text-lg font-medium">
+                {session.user.email}
+            </div>
+        </div>
+       
+        )}
+    </div>
+    
+    {session && (
+        <button
+            onClick={handleLogout}
+            className="py-1 px-3 text-gray-500 text-sm md:text-md rounded hover:bg-gray-200 transition-colors duration-300 shadow-md"
+        >
+            Logout
+        </button>
+    )}
+</div>
+
+
     
             {session && (
                 <div className="w-full max-w-md md:max-w-3xl bg-white p-6 rounded-lg shadow-lg mt-4">
                     {agentData && agentData.phone ? (
                         <div>
-                            <button onClick={toggleView} className="w-full mb-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                                {showCalendar ? 'Show Availability Form' : 'Show Calendar'}
-                            </button>
+                          <button 
+    onClick={toggleView} 
+    className="w-full mb-4 bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-lg">
+    {showCalendar ? 'Show Availability Form' : 'Show Calendar'}
+</button>
+``
+
 {showCalendar ? (
 <div className="w-full overflow-hidden">
 <MyCalendarComponent email={session?.user?.email} />
@@ -116,19 +144,7 @@ const AgentPortal = () => {
 Admin Portal
 </button>
 )}
-{session && (
-<div className="w-full max-w-md md:max-w-3xl mt-4 bg-white p-4 rounded-lg shadow-md flex flex-col md:flex-row justify-between items-center">
-<span className="text-lg text-gray-800 font-semibold mb-4 md:mb-0">
-{session.user.email}
-</span>
-<button
-                 onClick={handleLogout}
-                 className="py-2 px-4 bg-gray-300 text-gray-700 text-sm rounded hover:bg-gray-400 transition-colors duration-300"
-             >
-Logout
-</button>
-</div>
-)}
+
 </div>
 </>
     );

@@ -101,7 +101,7 @@ useEffect(() => {
                 }}
                 
                 
-                toolbar={false}
+                toolbar={true}
             />
         </div>
     );
