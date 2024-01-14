@@ -83,7 +83,7 @@ const HomePage = () => {
                     <section className="w-full sm:w-1/2 max-w-sm mt-8 sm:mt-0">
                     <button 
                         onClick={() => setModalOpen(true)} 
-                        className="px-4 py-2 text-blue-700 bg-blue-200 rounded hover:bg-blue-300 transition-colors duration-200 ease-in-out mb-4"
+                        className="w-full px-4 py-2 text-blue-700 bg-blue-200 rounded hover:bg-blue-300 transition-colors duration-200 ease-in-out mb-4"
                     >
                         Who is The Smith Agency?
                     </button>

@@ -10,7 +10,6 @@ const ApplicationForm = () => {
     };
 
     const [formData, setFormData] = useState(initialFormData);
-
     const [formStatus, setFormStatus] = useState(null);
 
     const handleChange = (e) => {
@@ -23,18 +22,27 @@ const ApplicationForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
+        // Start with a new FormData object
         const data = new FormData();
-        Object.keys(formData).forEach(key => {
-            data.append(key, formData[key]);
+        
+        // Append the data to the FormData object
+        // For files, append the file object; for other fields, append the string value
+        Object.entries(formData).forEach(([key, value]) => {
+            if (value instanceof File) {
+                data.append(key, value, value.name);
+            } else {
+                // Convert non-file values to string to prevent appending them as arrays
+                data.append(key, value.toString());
+            }
         });
-
+    
         try {
             const response = await fetch('/api/agents/addApplication', {
                 method: 'POST',
-                body: data, // FormData will be correctly interpreted by the server
+                body: data,
             });
-            
+    
             if (response.ok) {
                 const result = await response.json();
                 console.log('Application submitted successfully', result);
@@ -49,10 +57,10 @@ const ApplicationForm = () => {
             setFormStatus('error');
         }
     };
+    
 
     return (
-        <form onSubmit={handleSubmit} className="max-w-lg mx-auto bg-white p-8 shadow-md rounded-lg space-y-6 border-2 border-pink-500">
-           
+        <form onSubmit={handleSubmit} encType="multipart/form-data" className="max-w-lg mx-auto bg-white p-8 shadow-md rounded-lg space-y-6 border-2 border-pink-500">
             <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Join Our Team</h2>
 
             <div className="flex justify-center mb-8">
@@ -65,7 +73,7 @@ const ApplicationForm = () => {
                 />
             </div>
 
-            <p className="text-center text-gray-600 mb-8">The 1st step to working for The Smith Agency!</p>
+            <p className="text-center text-gray-600 mb-8 text-lg font-semibold">The 1st step to working for The Smith Agency!</p>
 
             <div className="mb-6">
                 <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">Name:</label>
@@ -117,12 +125,14 @@ const ApplicationForm = () => {
             <button type="submit" className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded border-2 border-pink-500 focus:outline-none focus:shadow-outline w-full transition-colors duration-200">
                 Submit Application
             </button>
+            
             {formStatus === 'success' && (
                 <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
                     <strong className="font-bold">Success!</strong>
                     <span className="block sm:inline"> Your application has been submitted successfully.</span>
                 </div>
             )}
+            
             {formStatus === 'error' && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
                     <strong className="font-bold">Error!</strong>
@@ -131,7 +141,6 @@ const ApplicationForm = () => {
             )}
         </form>
     );  
-    
 };
 
 export default ApplicationForm;

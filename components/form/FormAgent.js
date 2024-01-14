@@ -140,7 +140,7 @@ const AgentFormAgent = ({ onAgentAdded }) => {
         <div className="max-w-md mx-auto bg-white p-6 rounded shadow max-h-96 overflow-auto">
             <h2 className="text-xl font-semibold mb-4">New Agent Profile</h2>
             <p className="text-gray-600 mb-6">
-                Welcome to the agent onboarding form. Please complete the following details to create a new agent profile. Fields marked with an asterisk (*) are required.
+                Welcome to the New Sales Rep onboarding form. Please complete the following details to create a profile. 
             </p>
     
             {loading ? (
