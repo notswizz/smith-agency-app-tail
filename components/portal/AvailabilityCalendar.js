@@ -23,7 +23,7 @@ const MyCalendarComponent = ({ email }) => { // Make sure to receive the email p
                 if (response.ok) {
                     const agent = await response.json();
                     const availabilityEvents = agent.availability.map(availability => ({
-                        title: availability.status === 'booked' ? 'Booked' : 'Available',
+                        title: availability.status === 'booked' ? '✔' : 'O',
                         start: new Date(availability.date),
                         end: new Date(availability.date),
                         allDay: true,
