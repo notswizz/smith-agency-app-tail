@@ -76,40 +76,39 @@ const AgentPortal = () => {
 
     return (
         <>
-        <AnnouncementsHeader announcements={announcements} />
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4">
-            <h1 className="text-4xl font-bold text-pink-600 mt-6 text-center">
-                THE SMITH AGENCY
-            </h1>
-            <p className="text-center text-lg text-gray-600 mb-8 italic">
-                PREMIER STAFFING
-            </p>
-            <div className="w-full max-w-2xl mx-auto p-4 bg-gradient-to-r from-pink-500 via-pink-400 to-pink-300 rounded-lg shadow-lg flex items-center justify-between">
-    <div className="flex items-center space-x-4">
-        <img src="/tsalogo.png" alt="TSA Logo" className="w-24 h-24 md:w-32 md:h-32  border-4 border-white shadow-lg" />
-        {session && (
-        <div className="flex flex-col items-center justify-center bg-white p-4 rounded-lg shadow-md">
-        <div className="inline-block bg-teal-500 px-6 py-2 rounded-full shadow-lg text-white text-xl md:text-2xl font-extrabold mb-3">
+            <AnnouncementsHeader announcements={announcements} />
+            <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4">
+                <h1 className="text-4xl font-bold text-pink-600 mt-6 text-center">
+                    THE SMITH AGENCY
+                </h1>
+                <p className="text-center text-lg text-gray-600 mb-8 italic">
+                    PREMIER STAFFING
+                </p>
+                <div className="w-full max-w-xs mx-auto p-4 bg-gradient-to-r from-pink-500 via-pink-400 to-pink-300 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                    <img src="/tsalogo.png" alt="TSA Logo" className="w-24 h-24 md:w-32 md:h-32 border-4 border-white shadow-lg mb-4" />
+                    {session && (
+    <div className="bg-gradient-to-r from-teal-500 to-teal-700 p-4 rounded-xl shadow-2xl w-full text-center mb-6 transform transition duration-500 hover:scale-105">
+        <h2 className="text-white text-2xl md:text-3xl font-bold mb-1 tracking-wide">
             {session.user.name}
-            </div>
-            <div className="inline-block text-gray-800 text-sm md:text-lg font-medium">
-                {session.user.email}
-            </div>
+        </h2>
+        <p className="text-teal-100 text-xs md:text-sm font-medium">
+            {session.user.email}
+        </p>
+        <div className="mt-3 inline-block text-xs md:text-sm text-white bg-black bg-opacity-20 rounded-full px-3 py-1">
+            TSA Sales Rep
         </div>
-       
-        )}
     </div>
-    
-    {session && (
-        <button
-            onClick={handleLogout}
-            className="py-1 px-3 text-gray-500 text-sm md:text-md rounded hover:bg-gray-200 transition-colors duration-300 shadow-md"
-        >
-            Logout
-        </button>
-    )}
-</div>
+)}
 
+                    {session && (
+                        <button
+                            onClick={handleLogout}
+                            className="w-full py-1 text-gray-500 bg-white rounded hover:bg-gray-200 transition-colors duration-300 shadow-md"
+                        >
+                            Logout
+                        </button>
+                    )}
+                </div>
 
     
             {session && (
