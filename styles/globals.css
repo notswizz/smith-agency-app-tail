@@ -289,14 +289,20 @@ input:focus, button:focus {
 
 /* Specific styles for each button */
 .sales-rep-btn {
-  background-image: linear-gradient(145deg, #ff7597 0%, #ffb3a7 100%);
-  border-color: #ff6482; /* Stronger border color for Sales Rep button */
+  background-image: linear-gradient(to right, #ff6482, #ffafc9); /* Gradient from pink to light pink */
+  border: 2px solid #ff6482; /* Solid pink border */
+  color: #2d2d2d; /* Dark text color for contrast */
+  text-shadow: 1px 1px 2px #ffffff80; /* Soft white text shadow for readability */
 }
 
 .client-btn {
-  background-image: linear-gradient(145deg, #6a82fb 0%, #fc5c7d 100%);
-  border-color: #6a82fb; /* Stronger border color for Client button */
+  background-image: linear-gradient(to right, #ffafc9, #ff6482); /* Gradient from light pink to pink */
+  border: 2px solid #ff6482; /* Solid pink border */
+  color: #2d2d2d; /* Dark text color for contrast */
+  text-shadow: 1px 1px 2px #ffffff80; /* Soft white text shadow for readability */
 }
+
+
 
 .admin-btn {
   background-image: linear-gradient(145deg, #00b09b 0%, #96c93d 100%);

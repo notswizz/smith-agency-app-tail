@@ -56,6 +56,15 @@ const AgentPortal = () => {
         }
     };
 
+    const navigateToAdmin = () => {
+        if (agentData && agentData.admin === "true") {
+            router.push('/admin');
+        } else {
+            alert('You are not authorized to access the admin page.');
+        }
+    };
+
+
     const handleLogout = () => {
         signOut();
     };
@@ -73,7 +82,17 @@ const AgentPortal = () => {
                 <div className="w-full max-w-4xl p-4 bg-white rounded-lg shadow-md">
                     <img src="/tsalogo.png" alt="TSA Logo" className="w-32 h-32 mx-auto rounded-full" />
                 </div>
-    
+                {session && agentData && agentData.admin === "true" && (
+                <div className="mt-4">
+                 <button
+    onClick={navigateToAdmin}
+    className="button-custom admin-btn"
+>
+    Admin Portal
+</button>
+
+                </div>
+            )}
                 {session && (
                     <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg mt-4">
                         {agentData && agentData.phone
@@ -96,6 +115,9 @@ const AgentPortal = () => {
                         </button>
                     </div>
                 )}
+
+
+
             </div>
         </>
     );
