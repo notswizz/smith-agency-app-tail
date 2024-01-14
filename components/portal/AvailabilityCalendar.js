@@ -82,7 +82,7 @@ useEffect(() => {
                     let backgroundColor = '#ddd'; // Default color
                     if (event.status) {
                         // It's an availability event
-                        backgroundColor = event.status === 'booked' ? '#36454F' : '#38A169'; // Dark grey for booked, green for available
+                        backgroundColor = event.status === 'booked' ? '#38A169' : '#36454F'; // Dark grey for booked, green for available
                     } else {
                         // It's a show event
                         backgroundColor = locationToColor[event.location] || "#ddd";
