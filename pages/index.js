@@ -17,7 +17,7 @@ const HomePage = () => {
     }, [session, router]);
 
     return (
-        <main className="bg-pink-50 min-h-screen flex flex-col items-center justify-center pt-10">
+        <main className="min-h-screen flex flex-col items-center justify-center pt-10">
             {!session && (
                 <div className="flex flex-col sm:flex-row justify-center items-center w-full max-w-6xl mx-auto px-4">
                     <section className="w-full sm:w-1/2 max-w-sm sm:mr-4">
@@ -27,8 +27,8 @@ const HomePage = () => {
                         <Image
             src="/tsawhite.png"
             alt="The Smith Agency Logo"
-            width={300}
-            height={200}
+            width={250}
+            height={170}
             className="block" // Changed from inline-block to block for better padding effect
             loading="lazy"
         />
@@ -79,14 +79,15 @@ const HomePage = () => {
                                 />
                             ))}
                         </div>
-                    </section>
-                    <section className="w-full sm:w-1/2 max-w-sm mt-8 sm:mt-0">
-                    <button 
+                        <button 
                         onClick={() => setModalOpen(true)} 
                         className="w-full px-4 py-2 text-blue-700 bg-blue-200 rounded hover:bg-blue-300 transition-colors duration-200 ease-in-out mb-4"
                     >
                         Who is The Smith Agency?
                     </button>
+                    </section>
+                    <section className="w-full sm:w-1/2 max-w-sm mt-8 sm:mt-0">
+                   
                         <ApplicationForm />
                      
                     </section>

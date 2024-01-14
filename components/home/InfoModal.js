@@ -38,7 +38,7 @@ const InfoModal = ({ isOpen, onClose }) => {
                         leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
-                        <div className="inline-block w-full max-w-lg p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-lg">
+                        <div className="inline-block w-full max-w-lg p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
                         <Dialog.Title as="h3" className="text-2xl font-bold leading-6 text-gray-900 mb-4">
                         {title}
                         </Dialog.Title>

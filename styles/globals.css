@@ -11,7 +11,8 @@
 }
 
 body {
-  background: linear-gradient(to right, #f536d248, #ffffff);
+  background: linear-gradient(to right, #ffe5ec, #e8e5ff);
+
   background-size: 200% 200%;
   animation: gradient 8s ease infinite;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
@@ -271,11 +272,14 @@ input:focus, button:focus {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
   transition: all 0.3s ease;
   border: 2px solid transparent; /* Stronger border */
+  text-decoration: none; /* Remove underline from links */
+  font-size: 1.1em; /* Increase font size */
 }
 
 .button-custom:hover {
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
   transform: translateY(-2px);
+  border-color: #fff; /* Change border color on hover */
 }
 
 .button-custom:focus {
@@ -298,4 +302,3 @@ input:focus, button:focus {
   background-image: linear-gradient(145deg, #00b09b 0%, #96c93d 100%);
   border-color: #00b09b; /* Stronger border color for Admin button */
 }
-
