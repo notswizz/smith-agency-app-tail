@@ -107,11 +107,11 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     };
     
   
-    return (
-        <div className="flex flex-col min-h-screen py-2">
-            <div className="flex flex-col w-full max-w-2xl bg-white shadow-md rounded-lg p-4 sm:p-6 mx-auto">
-                <h2 className="text-2xl font-bold mb-4 text-center">Sales Rep Availability Form</h2>
-                <p className="text-gray-600 mb-6 text-center">
+  return (
+    <div className="flex flex-col min-h-screen py-1">
+        <div className="flex flex-col w-full max-w-2xl bg-white shadow-md rounded-lg p-2 sm:p-1 mx-auto">
+            <h2 className="text-xl font-bold mb-2 text-center">Sales Rep Availability Form</h2>
+            <p className="text-gray-600 mb-3 text-center">
                     Use this form to update your availability for upcoming shows.
                 </p>
                 <form onSubmit={handleSubmit} className="w-full">
@@ -135,12 +135,12 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
                     <fieldset className="mb-4">
                         <legend className="block text-gray-700 text-sm font-bold mb-2">Available Dates*:</legend>
                         {dateCheckboxes.map(({ date, checked }) => (
-                            <label key={date} className="block">
+                            <label key={date} className="block mb-2">
                                 <input
                                     type="checkbox"
                                     checked={checked}
                                     onChange={() => handleDateCheckboxChange(date)}
-                                    className="mr-2 leading-tight"
+                                    className="mr-2 leading-tight h-6 w-6"
                                 />
                                 {toUTCDateString(date)}
                             </label>

@@ -39,13 +39,13 @@ const MyCalendarComponent = () => {
     }, []);
 
     return (
-        <div>
+        <div className="w-full max-w-3xl mx-auto">
             <Calendar
                 localizer={localizer}
                 events={shows}
                 startAccessor="start"
                 endAccessor="end"
-                style={{ height: 1200 }}
+                style={{ height: '50vh' }} // Adjust this value to change the height of the calendar
                 eventPropGetter={(event) => ({
                     style: event.style,
                 })}
