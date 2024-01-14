@@ -77,40 +77,50 @@ const AgentPortal = () => {
     return (
         <>
             <AnnouncementsHeader announcements={announcements} />
-            <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4">
-                <h1 className="text-4xl font-bold text-pink-600 mt-6 text-center">
+            <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
+                <h1 className="text-4xl font-bold mt-6 text-center" style={{ color: '#344868' }}>
                     THE SMITH AGENCY
                 </h1>
-                <p className="text-center text-lg text-gray-600 mb-8 italic">
+                <p className="text-center text-lg mb-8 italic" style={{ color: '#A1BFE4' }}>
                     PREMIER STAFFING
                 </p>
-                <div className="w-full max-w-xs mx-auto p-4 bg-gradient-to-r from-pink-500 via-pink-400 to-pink-300 rounded-lg shadow-lg flex flex-col items-center justify-center">
-                    <img src="/tsalogo.png" alt="TSA Logo" className="w-24 h-24 md:w-32 md:h-32 border-4 border-white shadow-lg mb-4" />
+                <div className="w-full max-w-xs mx-auto p-4 rounded-lg shadow-lg flex flex-col items-center justify-center" style={{ backgroundColor: '#344868' }}>
+                    <img src="/tsalogo.png" alt="TSA Logo" className="w-32 h-32 md:w-32 md:h-32 border-white shadow-lg mb-4 rounded-full" />
                     {session && (
-    <div className="bg-gradient-to-r from-teal-500 to-teal-700 p-4 rounded-xl shadow-2xl w-full text-center mb-6 transform transition duration-500 hover:scale-105">
-        <h2 className="text-white text-2xl md:text-3xl font-bold mb-1 tracking-wide">
-            {session.user.name}
-        </h2>
-        <p className="text-teal-100 text-xs md:text-sm font-medium">
-            {session.user.email}
-        </p>
-        <div className="mt-3 inline-block text-xs md:text-sm text-white bg-black bg-opacity-20 rounded-full px-3 py-1">
-            TSA Sales Rep
-        </div>
-    </div>
-)}
-
+                        <div 
+                            className="p-4 rounded-xl shadow-2xl w-full text-center mb-6 transform transition duration-500 hover:scale-105 bg-white"
+                        >
+                            <h2 
+                                className="text-2xl md:text-3xl font-bold mb-1 tracking-wide"
+                                style={{ color: '#344868' }}
+                            >
+                                {session.user.name}
+                            </h2>
+                            <p 
+                                className="text-xs md:text-sm font-medium"
+                                style={{ color: '#A1BFE4' }}
+                            >
+                                {session.user.email}
+                            </p>
+                            <div 
+                                className="mt-3 inline-block text-xs md:text-sm rounded-full px-3 py-1"
+                                style={{ backgroundColor: '#F9C0C2', color: '#344868' }}
+                            >
+                                TSA Sales Rep
+                            </div>
+                        </div>
+                    )}
                     {session && (
                         <button
                             onClick={handleLogout}
-                            className="w-full py-1 text-gray-500 bg-white rounded hover:bg-gray-200 transition-colors duration-300 shadow-md"
+                            className="w-full py-1 rounded hover:bg-gray-200 transition-colors duration-300 shadow-md"
+                            style={{ color: '#344868', backgroundColor: '#A1BFE4' }}
                         >
                             Logout
                         </button>
                     )}
                 </div>
-
-    
+   
             {session && (
                 <div className="w-full max-w-md md:max-w-3xl bg-white p-6 rounded-lg shadow-lg mt-4">
                     {agentData && agentData.phone ? (
