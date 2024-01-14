@@ -17,7 +17,7 @@ const HomePage = () => {
     }, [session, router]);
 
     return (
-        <main className="bg-pink-50 min-h-screen flex flex-col items-center justify-center pt-10">
+<main className="min-h-screen flex flex-col items-center justify-center pt-10 bg-gradient-to-b from-pink-100 via-pink-200 to-pink-300 dark:bg-gradient-to-b dark:from-gray-700 dark:via-gray-800 dark:to-gray-900">
             {!session && (
                 <div className="flex flex-col sm:flex-row justify-center items-center w-full max-w-6xl mx-auto px-4">
                     <section className="w-full sm:w-1/2 max-w-sm sm:mr-4">
@@ -25,7 +25,7 @@ const HomePage = () => {
                    
                     <div className="inline-block border-4 border-pink-600 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 ease-in-out p-2">
                         <Image
-            src="/tsawhite.png"
+            src="/tsa.png"
             alt="The Smith Agency Logo"
             width={300}
             height={200}
@@ -73,20 +73,21 @@ const HomePage = () => {
                                     src={`/tsa${index + 1}.png`}
                                     alt={`Header Image ${index + 1}`}
                                     width={80}
-                                    height={90}
+                                    height={150}
                                     className="border-2 border-pink-300 rounded-lg"
                                     loading="lazy"
                                 />
                             ))}
                         </div>
-                    </section>
-                    <section className="w-full sm:w-1/2 max-w-sm mt-8 sm:mt-0">
-                    <button 
+                        <button 
                         onClick={() => setModalOpen(true)} 
                         className="w-full px-4 py-2 text-blue-700 bg-blue-200 rounded hover:bg-blue-300 transition-colors duration-200 ease-in-out mb-4"
                     >
                         Who is The Smith Agency?
                     </button>
+                    </section>
+                    <section className="w-full sm:w-1/2 max-w-sm mt-8 sm:mt-0">
+                  
                         <ApplicationForm />
                      
                     </section>
