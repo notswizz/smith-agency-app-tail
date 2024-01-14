@@ -17,7 +17,7 @@ const HomePage = () => {
     }, [session, router]);
 
     return (
-<main className="min-h-screen flex flex-col items-center justify-center pt-10 bg-gradient-to-b from-pink-100 via-pink-200 to-pink-300 dark:bg-gradient-to-b dark:from-gray-700 dark:via-gray-800 dark:to-gray-900">
+<main className="min-h-screen flex flex-col items-center justify-center pt-10 bg-gradient-to-b from-gray-700 via-gray-800 to-gray-900">
             {!session && (
                 <div className="flex flex-col sm:flex-row justify-center items-center w-full max-w-6xl mx-auto px-4">
                     <section className="w-full sm:w-1/2 max-w-sm sm:mr-4">
