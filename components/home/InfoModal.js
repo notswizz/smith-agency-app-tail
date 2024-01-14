@@ -37,51 +37,52 @@ const InfoModal = ({ isOpen, onClose }) => {
                         leave="ease-in duration-200"
                         leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                         leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        >
-                        <div className="inline-block w-full max-w-lg p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
-                        <Dialog.Title as="h3" className="text-2xl font-bold leading-6 text-gray-900 mb-4">
-                        {title}
-                        </Dialog.Title>
-                        <div className="mt-2">
-                        {bulletPoints.map((point, index) => (
-                        <div key={index} className="flex items-center my-4">
-                        <div className="flex-shrink-0 mr-4">
-                        <Image
-    src={point.image}
-    alt={`Image for ${point.text}`} // Use backticks and ${} for dynamic values
-    width={80}
-    height={80}
-    className="rounded-full"
-/>
-
-                        </div>
-                        <p className="text-md text-gray-700">{point.text}</p>
-                        </div>
-                        ))}
-                        </div>
-                        <div className="mt-6 flex justify-end space-x-3">
-                        <button
-                                                         type="button"
-                                                         className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-500 border border-transparent rounded-md hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500"
-                                                         onClick={onClose}
-                                                     >
-                        Close
-                        </button>
-                        <a
-                                                         href="https://www.thesmithagency.net"
-                                                         target="_blank"
-                                                         rel="noopener noreferrer"
-                                                         className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-pink-600 border border-transparent rounded-md hover:bg-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink-600"
-                                                     >
-                        Learn more
-                        </a>
-                        </div>
-                        </div>
-                        </Transition.Child>
-                        </div>
-                        </Dialog>
-                        </Transition>
-                        );
-                        };
-                        
-                        export default InfoModal;
+                    >
+                        <div className="inline-block w-full max-w-4xl p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+                            <Dialog.Title as="h3" className="text-3xl font-bold leading-6 text-gray-900 mb-8">
+                                {title}
+                            </Dialog.Title>
+                            {bulletPoints.map((point, index) => (
+                                <div key={index} className="flex flex-col md:flex-row items-center my-8">
+                                <div className="w-1/2 md:w-1/4">
+                                    <Image
+                                        src={point.image}
+                                        alt={`Image for ${point.text}`}
+                                        layout="responsive"
+                                        width={500}
+                                        height={200}
+                                        className="rounded-lg"
+                                    />
+                                </div>
+                                <p className="mt-4 md:mt-0 md:ml-4 text-lg text-white bg-blue-500 px-3 py-1 rounded-full inline-block md:w-auto">
+                                    {point.text}
+                                </p>
+                                </div>
+                            ))}
+                            <div className="mt-8 flex justify-end space-x-3">
+                                <button
+                                    type="button"
+                                    className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-gray-500 border border-transparent rounded-md hover:bg-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-500"
+                                    onClick={onClose}
+                                >
+                                    Close
+                                </button>
+                                <a
+                                    href="https://www.thesmithagency.net"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-pink-600 border border-transparent rounded-md hover:bg-pink-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-pink
+                                    600"
+                                    >
+                                    Learn more
+                                    </a>
+                                    </div>
+                                    </div>
+                                    </Transition.Child>
+                                    </div>
+                                    </Dialog>
+                                    </Transition>
+                                    );
+                                    };
+                                    
+                                    export default InfoModal;

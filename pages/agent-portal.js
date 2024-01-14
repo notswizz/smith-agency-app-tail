@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import AvailabilityForm from '../components/form/AvailabilityForm';
 import AnnouncementsHeader from '../components/home/AnnouncementsHeader';
@@ -7,7 +8,10 @@ import AgentFormAgent from '../components/form/FormAgent';
 
 const AgentPortal = () => {
     const [shows, setShows] = useState([]);
+    const [agentData, setAgentData] = useState(null);
     const { data: session } = useSession();
+    const router = useRouter();
+
 
     const announcements = [
         "Announcement 1: Important update!",
@@ -17,12 +21,30 @@ const AgentPortal = () => {
     ];
 
     useEffect(() => {
-        if (session) {
+        if (!session) {
+            router.push('/'); // Redirect to index.js if not logged in
+        } else {
+            fetchAgentData(session.user.email);
             fetchShowsForForm().then(fetchedShows => {
                 setShows(fetchedShows);
             });
         }
-    }, [session]);
+    }, [session, router]);
+    
+
+    const fetchAgentData = async (email) => {
+        try {
+            const response = await fetch(`/api/agents/getAgentByEmail?email=${email}`);
+            if (response.ok) {
+                const data = await response.json();
+                setAgentData(data);
+            } else {
+                console.error('Failed to fetch agent data');
+            }
+        } catch (error) {
+            console.error('Error fetching agent data', error);
+        }
+    };
 
     const fetchShowsForForm = async () => {
         const response = await fetch('/api/shows/getShows');
@@ -41,34 +63,45 @@ const AgentPortal = () => {
     return (
         <>
             <AnnouncementsHeader announcements={announcements} />
-            <div className="min-h-screen bg-pink-100 flex flex-col items-center justify-center px-4">
-                <div className="flex justify-between items-center w-full max-w-2xl">
-                    <img src="/tsalogo.png" alt="TSA Logo" className="w-32 mx-auto block rounded-full shadow-lg" />
-                    {session && (
-                        <div className="text-sm text-gray-600">
-                            <span>{session.user.email}</span>
-                            <button
-                                onClick={handleLogout}
-                                className="ml-4 text-blue-500 hover:text-blue-700 transition-colors duration-300"
-                            >
-                                Logout
-                            </button>
-                        </div>
-                    )}
-                </div>
-                <h1 className="text-2xl font-semibold text-gray-700 my-4">
+            <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4">
+                <h1 className="text-3xl font-bold text-gray-800 mt-6">
                     THE SMITH AGENCY
                 </h1>
-                <p className="text-center text-sm text-gray-600 mb-8">
+                <p className="text-center text-lg text-gray-600 mb-8">
                     PREMIER STAFFING
                 </p>
+                <div className="w-full max-w-4xl p-4 bg-white rounded-lg shadow-md">
+                    <img src="/tsalogo.png" alt="TSA Logo" className="w-32 h-32 mx-auto rounded-full" />
+                </div>
+    
                 {session && (
-                    <><AvailabilityForm
-                        shows={shows} /><AgentFormAgent /></>
+                    <div className="w-full max-w-3xl bg-white p-6 rounded-lg shadow-lg mt-4">
+                        {agentData && agentData.phone
+                            ? <AvailabilityForm shows={shows} />
+                            : <AgentFormAgent />
+                        }
+                    </div>
+                )}
+    
+                {session && (
+                    <div className="w-full max-w-3xl mt-4 bg-white p-4 rounded-lg shadow-md flex justify-between items-center">
+                        <span className="text-lg text-gray-800 font-semibold">
+                            {session.user.email}
+                        </span>
+                        <button
+                            onClick={handleLogout}
+                            className="py-1 px-3 bg-gray-300 text-gray-700 text-sm rounded hover:bg-gray-400 transition-colors duration-300"
+                        >
+                            Logout
+                        </button>
+                    </div>
                 )}
             </div>
         </>
     );
+      
+    
+    
 };
 
 export default AgentPortal;

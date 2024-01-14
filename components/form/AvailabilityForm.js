@@ -108,8 +108,8 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     
   
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen py-2">
-            <div className="flex flex-col items-center justify-center w-full max-w-2xl bg-white shadow-md rounded-lg p-4 sm:p-6">
+        <div className="flex flex-col min-h-screen py-2">
+            <div className="flex flex-col w-full max-w-2xl bg-white shadow-md rounded-lg p-4 sm:p-6 mx-auto">
                 <h2 className="text-2xl font-bold mb-4 text-center">Sales Rep Availability Form</h2>
                 <p className="text-gray-600 mb-6 text-center">
                     Use this form to update your availability for upcoming shows.
