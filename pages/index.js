@@ -17,20 +17,27 @@ const HomePage = () => {
     }, [session, router]);
 
     return (
-        <main className="min-h-screen flex flex-col items-center justify-center pt-10 bg-pink-100">
-        {!session && (
-            <div className="flex flex-col sm:flex-row justify-center items-center w-full max-w-6xl mx-auto px-4">
-                <section className="w-full sm:w-1/2 max-w-sm sm:mr-4">
-                    <div className="text-center mb-8">
-                        <div className="inline-block border-4 border-pink-600 rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out p-2">
+        <main className="min-h-screen flex flex-col items-center justify-center pt-10 bg-main"> {/* Updated bg color */}
+            {!session && (
+                <div className="flex flex-col sm:flex-row justify-center items-center w-full max-w-6xl mx-auto px-4">
+                    <section className="w-full sm:w-1/2 max-w-sm sm:mr-4">
+                        <div className="text-center mb-8">
+                            <div className="inline-block border-4 border-highlight rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out p-2">
                             <Image
-                                src="/tsawhite.png"
-                                alt="The Smith Agency Logo"
-                                width={300}
-                                height={250}
-                                className="block"
-                                loading="lazy"
-                            />
+    src="/tsawhite.png"
+    alt="The Smith Agency Logo"
+    width={300}
+    height={250}
+    className="block mx-auto shadow-lg"
+    loading="lazy"
+    style={{
+        backgroundColor: '#ffffff', // Fully opaque white background
+        borderRadius: '10px', // Rounded corners
+        boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Subtle shadow
+        border: '5px solid #F9C0C2' // Pink border from your palette
+    }}
+/>
+
                         </div>
                     </div>
     
@@ -68,7 +75,7 @@ const HomePage = () => {
                     </div>
                     <button
                         onClick={() => setModalOpen(true)}
-                        className="w-full px-4 py-2 text-pink-600 bg-white border-2 border-pink-300 rounded-full hover:bg-pink-50 transition-colors duration-200 ease-in-out mb-4 shadow-md"
+                        className="w-full px-4 py-2 text-accent bg-white border-2 border-accent rounded-full hover:bg-secondary transition-colors duration-200 ease-in-out mb-4 shadow-md"
                     >
                         Who is The Smith Agency?
                     </button>
