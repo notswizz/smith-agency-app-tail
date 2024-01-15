@@ -32,10 +32,11 @@ const ApplicationForm = () => {
             if (value instanceof File) {
                 data.append(key, value, value.name);
             } else {
-                // Convert non-file values to string to prevent appending them as arrays
-                data.append(key, value.toString());
+                // Check if value is not null before converting to string
+                data.append(key, value != null ? value.toString() : '');
             }
         });
+        
     
         try {
             const response = await fetch('/api/agents/addApplication', {
