@@ -24,7 +24,7 @@ const HomePage = () => {
                         <div className="text-center mb-8">
                             <div className="inline-block border-4 border-highlight rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out p-2">
                             <Image
-    src="/tsawhite.png"
+    src="/tsa.gif"
     alt="The Smith Agency Logo"
     width={300}
     height={250}
@@ -44,13 +44,13 @@ const HomePage = () => {
                     <div className="space-y-6 mb-8">
                         <button
                             onClick={() => signIn("sales-rep")}
-                            className="button-custom sales-rep-btn w-full shadow-lg transition-transform transform hover:-translate-y-1"
+                            className="button-custom sales-rep-btn w-full shadow-lg transition-transform transform hover:-translate-y-1 py-2 px-4 text-lg hover:bg-accent hover:text-primary"
                         >
                             Sales Rep Portal
                         </button>
                         <button
                             onClick={() => signIn("client")}
-                            className="button-custom client-btn w-full shadow-lg transition-transform transform hover:-translate-y-1"
+                            className="button-custom client-btn w-full shadow-lg transition-transform transform hover:-translate-y-1 py-2 px-4 text-lg hover:bg-main hover:text-accent"
                         >
                             Client Portal
                         </button>
