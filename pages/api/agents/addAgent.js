@@ -58,36 +58,44 @@ async function processForm(fields, files, res) {
 
         // Handle image upload if present
         if (fields.googleImageUrl) {
-            const imageKey = `agents/${uuidv4()}_googleImage.jpg`;
-            const response = await axios.get(fields.googleImageUrl, { responseType: 'stream' });
-            const command = new PutObjectCommand({
-                Bucket: process.env.AWS_BUCKET_NAME,
-                Key: imageKey,
-                Body: response.data,
-                ContentType: response.headers['content-type']
-            });
+            try {
+                const imageKey = `agents/${uuidv4()}_googleImage.jpg`;
+                const response = await axios.get(fields.googleImageUrl, { responseType: 'stream' });
+                const command = new PutObjectCommand({
+                    Bucket: process.env.AWS_BUCKET_NAME,
+                    Key: imageKey,
+                    Body: response.data,
+                    ContentType: response.headers['content-type']
+                });
 
-            await s3Client.send(command);
-            const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${imageKey}`;
-            agentData.imageUrl = imageUrl;
+                await s3Client.send(command);
+                const imageUrl = `https://${process.env.AWS_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${imageKey}`;
+                agentData.imageUrl = imageUrl;
+            } catch (error) {
+                console.error('Error handling Google image:', error);
+            }
         } else {
             console.log('Google image URL not found or empty');
         }
 
         // Handle resume upload if present
         if (files.resume && files.resume.size > 0) {
-            const resume = files.resume;
-            const resumeKey = `resumes/${uuidv4()}_${resume.name}`;
-            const resumeCommand = new PutObjectCommand({
-                Bucket: process.env.AWS_RESUME_BUCKET_NAME,
-                Key: resumeKey,
-                Body: fs.createReadStream(resume.path),
-                ContentType: resume.type
-            });
+            try {
+                const resume = files.resume;
+                const resumeKey = `resumes/${uuidv4()}_${resume.name}`;
+                const resumeCommand = new PutObjectCommand({
+                    Bucket: process.env.AWS_RESUME_BUCKET_NAME,
+                    Key: resumeKey,
+                    Body: fs.createReadStream(resume.path),
+                    ContentType: resume.type
+                });
 
-            await s3Client.send(resumeCommand);
-            const resumeUrl = `https://${process.env.AWS_RESUME_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${resumeKey}`;
-            agentData.resumeUrl = resumeUrl;
+                await s3Client.send(resumeCommand);
+                const resumeUrl = `https://${process.env.AWS_RESUME_BUCKET_NAME}.s3.${process.env.AWS_BUCKET_REGION}.amazonaws.com/${resumeKey}`;
+                agentData.resumeUrl = resumeUrl;
+            } catch (error) {
+                console.error('Error handling resume file:', error);
+            }
         } else {
             console.log('Resume file not found');
         }

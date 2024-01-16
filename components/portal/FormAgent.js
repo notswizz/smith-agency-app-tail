@@ -25,8 +25,12 @@ const AgentFormAgent = ({ onAgentAdded }) => {
     const [isAgent, setIsAgent] = useState(true);
 
     useEffect(() => {
+        console.log('Session changed', session);
         if (session) {
-            setAgent(agent => ({ ...agent, email: session.user.email }));
+            setAgent(agent => {
+                console.log('Setting agent email from session', session.user.email);
+                return { ...agent, email: session.user.email };
+            });
         }
     }, [session]);
 
@@ -36,10 +40,12 @@ const AgentFormAgent = ({ onAgentAdded }) => {
     }, []);
 
     const fetchAgents = async () => {
+        console.log('Fetching agents');
         try {
             const response = await fetch('/api/agents/getAgents');
             if (response.ok) {
                 const data = await response.json();
+                console.log('Fetched agents', data);
                 setExistingAgents(data);
             } else {
                 console.error('Failed to fetch agents');
@@ -50,6 +56,7 @@ const AgentFormAgent = ({ onAgentAdded }) => {
     };
 
     const handleChange = (e) => {
+        console.log('Change event', e.target.name, e.target.value);
         if (e.target.name === 'location') {
             const options = e.target.options;
             let value = [];
@@ -69,6 +76,7 @@ const AgentFormAgent = ({ onAgentAdded }) => {
     };
 
     const handleSubmit = async (e) => {
+        console.log('Form submit event', e);
         e.preventDefault();
     
         const formData = new FormData();
@@ -81,6 +89,11 @@ const AgentFormAgent = ({ onAgentAdded }) => {
         formData.append('admin', isAdmin);
         formData.append('client', isClient);
         formData.append('agent', isAgent);
+    
+        // Add the Google profile image URL to formData
+        if (session && session.user && session.user.image) {
+            formData.append('googleImageUrl', session.user.image);
+        }
     
         // Set the loading state to true to indicate processing
         setLoading(true);
@@ -96,6 +109,7 @@ const AgentFormAgent = ({ onAgentAdded }) => {
     
             if (response.ok) {
                 const newAgent = await response.json();
+                console.log('Agent added successfully', newAgent);
                 alert('Agent added successfully!');
     
                 // Invoke the callback function if provided
@@ -116,7 +130,6 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                     salesExperience: '', 
                     clothingSize: '', 
                     resume: null, 
-                    image: null
                 });
     
                 // Fetch the updated list of agents
@@ -132,7 +145,6 @@ const AgentFormAgent = ({ onAgentAdded }) => {
             setStatusMessage('An error occurred while adding the agent.');
         }
     };
-    
 
     
     
@@ -292,19 +304,7 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                         />
                     </div>
     
-                    <div className="mb-4">
-                        <label htmlFor="image" className="block text-gray-700 text-sm font-bold mb-2">
-                            Profile Image:
-                        </label>
-                        <input 
-                            type="file" 
-                            id="image" 
-                            name="image" 
-                            onChange={handleChange} 
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
-                        />
-                        <small className="text-gray-500">Choose a clear, professional headshot if available.</small>
-                    </div>
+            
     
                     {!loading && (
                         <button 
