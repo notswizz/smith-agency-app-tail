@@ -26,22 +26,25 @@ const AgentData = ({ agents, onDeleteAgent, onAgentSelect }) => {
         const daysWorkedMap = {};
     
         bookings.forEach(booking => {
-            // Loop over each day's selection of agents.
-            booking.agentSelection.forEach(daySelection => {
-                daySelection.forEach(agentPhone => {
-                    if (agentPhone) {
-                        // If the agent doesn't have an entry yet, initialize it.
-                        if (!daysWorkedMap[agentPhone]) {
-                            daysWorkedMap[agentPhone] = 0;
+            // Check if booking.agentSelection is defined before calling forEach
+            if (booking.agentSelection) {
+                // Loop over each day's selection of agents.
+                booking.agentSelection.forEach(daySelection => {
+                    daySelection.forEach(agentPhone => {
+                        if (agentPhone) {
+                            // If the agent doesn't have an entry yet, initialize it.
+                            if (!daysWorkedMap[agentPhone]) {
+                                daysWorkedMap[agentPhone] = 0;
+                            }
+                            // Increment the number of days worked for the agent by 1.
+                            // But only if the agent wasn't already counted for this day.
+                            if (!daySelection.includes(daysWorkedMap[agentPhone])) {
+                                daysWorkedMap[agentPhone] += 1;
+                            }
                         }
-                        // Increment the number of days worked for the agent by 1.
-                        // But only if the agent wasn't already counted for this day.
-                        if (!daySelection.includes(daysWorkedMap[agentPhone])) {
-                            daysWorkedMap[agentPhone] += 1;
-                        }
-                    }
+                    });
                 });
-            });
+            }
         });
     
         setAgentDaysWorked(daysWorkedMap);
