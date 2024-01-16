@@ -149,10 +149,10 @@ const AgentFormAgent = ({ onAgentAdded }) => {
     
     
     return (
-        <div className="max-w-md mx-auto bg-white p-6 rounded shadow max-h-96 overflow-auto">
-            <h2 className="text-xl font-semibold mb-4">New Agent Profile</h2>
-            <p className="text-gray-600 mb-6">
-                Welcome to the New Sales Rep onboarding form. Please complete the following details to create a profile. 
+        <div className="max-w-md mx-auto bg-white p-6 rounded shadow max-h-96 overflow-auto border-4 border-pink-500">
+            <h2 className="text-2xl font-bold mb-4 text-pink-600">New TSA Sales Rep Form</h2>
+            <p className="text-gray-700 text-md mb-6">
+                Welcome to the New Sales Rep onboarding form. Please complete the following details to create your profile.
             </p>
     
             {loading ? (
@@ -213,7 +213,6 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                             <option value="LA">Los Angeles (LA)</option>
                             <option value="DAL">Dallas (DAL)</option>
                         </select>
-                        <small className="text-gray-500">Hold down the Ctrl (Windows) / Command (Mac) button to select multiple options.</small>
                     </div>
     
                     <div className="mb-4">
@@ -261,19 +260,19 @@ const AgentFormAgent = ({ onAgentAdded }) => {
                         />
                     </div>
                     <div className="mb-4">
-                <label htmlFor="salesExperience" className="block text-gray-700 text-sm font-bold mb-2">
-                    Sales Experience:
-                </label>
-                <input 
-                    type="text" 
-                    id="salesExperience" 
-                    name="salesExperience" 
-                    value={agent.salesExperience} 
-                    onChange={handleChange} 
-                    placeholder="Sales Experience"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
-                />
-            </div>
+                        <label htmlFor="salesExperience" className="block text-gray-700 text-sm font-bold mb-2">
+                            Sales Experience:
+                        </label>
+                        <textarea
+                            id="salesExperience"
+                            name="salesExperience"
+                            value={agent.salesExperience}
+                            onChange={handleChange}
+                            placeholder="Sales Experience"
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                            rows="3" // Adjust this value to change the height of the textarea
+                        />
+                    </div>
             <div className="mb-4">
     <label htmlFor="resume" className="block text-gray-700 text-sm font-bold mb-2">
         Resume:

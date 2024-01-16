@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSession } from "next-auth/react"; // Import useSession hook to get user session
-import { toUTCDateString } from '../../lib/utils';
+import { toUTCDateString } from '../../lib/utils'; // Ensure this path is correct
 
 const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     console.log('AvailabilityForm component rendered');
@@ -13,21 +13,29 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
     const [submissionFailure, setSubmissionFailure] = useState(false);
 
+  
+
     const generateDateRange = (start, end) => {
         console.log('generateDateRange invoked with start:', start, 'end:', end);
         if (!start || !end) return [];
-        let currentDate = new Date(start);
-        const endUTCDate = new Date(end);
+        let currentDate = new Date(start + 'T00:00:00'); // Force local time interpretation
+        const endUTCDate = new Date(end + 'T00:00:00'); // Force local time interpretation
         const dates = [];
-
+    
         while (currentDate <= endUTCDate) {
-            dates.push(currentDate.toISOString().split('T')[0]);
-            currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+            const formattedDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            dates.push(formattedDate);
+            currentDate.setDate(currentDate.getDate() + 1);
         }
-
+    
         console.log('Generated date range:', dates);
         return dates;
     };
+    
+    
+    
+    
+    
 
     const dateCheckboxes = useMemo(() => {
         console.log('dateCheckboxes useMemo invoked');
@@ -164,17 +172,19 @@ return (
                 </div>
                 <fieldset className="mb-4">
                     <legend className="block text-gray-700 text-sm font-bold mb-2">Available Dates*:</legend>
+                    {/* Here you should loop through dateCheckboxes */}
                     {dateCheckboxes.map(({ date, checked }) => (
-                        <label key={date} className="block mb-2">
-                            <input
-                                type="checkbox"
-                                checked={checked}
-                                onChange={() => handleDateCheckboxChange(date)}
-                                className="mr-2 leading-tight h-6 w-6"
-                            />
-                            {toUTCDateString(date)}
-                        </label>
-                    ))}
+    <label key={date} className="block mb-2">
+        <input
+            type="checkbox"
+            checked={checked}
+            onChange={() => handleDateCheckboxChange(date)}
+            className="mr-2 leading-tight h-6 w-6"
+        />
+        {date} {/* Displays the date in a more readable format */}
+    </label>
+))}
+
                 </fieldset>
                 <div className="mb-4">
                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
