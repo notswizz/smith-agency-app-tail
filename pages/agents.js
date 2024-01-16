@@ -4,6 +4,7 @@ import AgentForm from '../components/agent/AgentForm';
 import AgentData from '../components/agent/AgentData';
 import AgentFilter from '../components/agent/AgentFilter';
 import AgentModal from '../components/agent/AgentModal'; // Import AgentModal
+import withPasswordProtection from '../lib/withPasswordProtection';
 
 const AgentsPage = () => {
     const [agents, setAgents] = useState([]);
@@ -142,4 +143,5 @@ const AgentsPage = () => {
     
 };
 
-export default AgentsPage;
+const ProtectedAgentsPage = withPasswordProtection(AgentsPage, 'swizz');
+export default ProtectedAgentsPage;

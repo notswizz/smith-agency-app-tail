@@ -133,21 +133,22 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     
   
 return (
-    <div className="flex flex-col min-h-screen py-1 bg-light-blue-500">
-        <div className="flex flex-col w-full max-w-2xl bg-white shadow-2xl rounded-lg p-8 sm:p-6 mx-auto border-4 border-pink-500">
-            <h2 className="text-3xl font-bold mb-4 text-center text-black-500">Availability Form</h2>
+    <div className="flex flex-col min-h-screen py-1 bg-gray-100">
+        <div className="flex flex-col w-full max-w-2xl bg-white shadow-2xl rounded-lg p-8 sm:p-6 mx-auto border-4 border-indigo-500">
+            <h2 className="text-3xl font-bold mb-4 text-center text-indigo-500">Availability Form</h2>
             <p className="text-gray-600 mb-3 text-center text-md">
-                    Submit before each show!
-                </p>
-                <form onSubmit={handleSubmit} className="w-full">
-                    <div className="mb-4">
-                        <label htmlFor="show" className="block text-gray-700 text-sm font-bold mb-2">Select Show*:</label>
+                Submit before each show!
+            </p>
+            <form onSubmit={handleSubmit} className="w-full">
+                <div className="mb-4">
+                    <label htmlFor="show" className="block text-gray-700 text-sm font-bold mb-2">Select Show*:</label>
+                    <div className="relative">
                         <select
                             id="show"
                             value={selectedShow}
                             onChange={(e) => handleShowSelection(e.target.value)}
                             required
-                            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none"
+                            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none appearance-none"
                         >
                             <option value="" disabled>Select a show</option>
                             {shows.map(show => (
@@ -156,55 +157,59 @@ return (
                                 </option>
                             ))}
                         </select>
+                        <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M5.305 7.695a.999.999 0 0 1 1.414 0L10 11.076l3.28-3.381a.999.999 0 1 1 1.44 1.402l-4 4a.999.999 0 0 1-1.44 0l-4-4a.997.997 0 0 1 0-1.402z"/></svg>
+                        </div>
                     </div>
-                    <fieldset className="mb-4">
-                        <legend className="block text-gray-700 text-sm font-bold mb-2">Available Dates*:</legend>
-                        {dateCheckboxes.map(({ date, checked }) => (
-                            <label key={date} className="block mb-2">
-                                <input
-                                    type="checkbox"
-                                    checked={checked}
-                                    onChange={() => handleDateCheckboxChange(date)}
-                                    className="mr-2 leading-tight h-6 w-6"
-                                />
-                                {toUTCDateString(date)}
-                            </label>
-                        ))}
-                    </fieldset>
-                    <div className="mb-4">
-                        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
-                            Additional Notes:
+                </div>
+                <fieldset className="mb-4">
+                    <legend className="block text-gray-700 text-sm font-bold mb-2">Available Dates*:</legend>
+                    {dateCheckboxes.map(({ date, checked }) => (
+                        <label key={date} className="block mb-2">
+                            <input
+                                type="checkbox"
+                                checked={checked}
+                                onChange={() => handleDateCheckboxChange(date)}
+                                className="mr-2 leading-tight h-6 w-6"
+                            />
+                            {toUTCDateString(date)}
                         </label>
-                        <textarea
-                            id="notes"
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            rows="3"
-                            placeholder="Include any specific details or preferences"
-                            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        />
+                    ))}
+                </fieldset>
+                <div className="mb-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="notes">
+                        Additional Notes:
+                    </label>
+                    <textarea
+                        id="notes"
+                        value={notes}
+                        onChange={(e) => setNotes(e.target.value)}
+                        rows="3"
+                        placeholder="Include any specific details or preferences"
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    />
+                </div>
+                <div className="flex items-center justify-center">
+                    <button type="submit" className="w-full bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                        Submit Availability
+                    </button>
+                </div>
+                {submissionSuccess && (
+                    <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                        <strong className="font-bold">Success!</strong>
+                        <span className="block sm:inline"> The availability has been successfully submitted.</span>
                     </div>
-                    <div className="flex items-center justify-center">
-                        <button type="submit" className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-                            Submit Availability
-                        </button>
+                )}
+                {submissionFailure && (
+                    <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                        <strong className="font-bold">Error!</strong>
+                        <span className="block sm:inline"> There was a problem submitting the availability. Please try again.</span>
                     </div>
-                    {submissionSuccess && (
-                        <div className="mt-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                            <strong className="font-bold">Success!</strong>
-                            <span className="block sm:inline"> The availability has been successfully submitted.</span>
-                        </div>
-                    )}
-                    {submissionFailure && (
-                        <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                            <strong className="font-bold">Error!</strong>
-                            <span className="block sm:inline"> There was a problem submitting the availability. Please try again.</span>
-                        </div>
-                    )}
-                </form>
-            </div>
+                )}
+            </form>
         </div>
-    );  
+    </div>
+);
 
     
    

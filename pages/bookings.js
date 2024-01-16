@@ -4,6 +4,7 @@ import BookingForm from '../components/booking/BookingForm';
 import BookingData from '../components/booking/BookingData';
 import BookingModal from '../components/booking/BookingModal';
 import BookingFilters from '../components/booking/BookingFilters';
+import withPasswordProtection from '../lib/withPasswordProtection';
 
 const BookingsPage = () => {
     const [bookings, setBookings] = useState([]);
@@ -165,4 +166,5 @@ const BookingsPage = () => {
     
 };
 
-export default BookingsPage;
+const ProtectedBookingsPage = withPasswordProtection(BookingsPage, 'swizz');
+export default ProtectedBookingsPage;

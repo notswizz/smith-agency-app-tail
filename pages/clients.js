@@ -3,6 +3,7 @@ import Header from '../components/nav/Header';
 import ClientForm from '../components/client/ClientForm';
 import ClientData from '../components/client/ClientData';
 import ClientFilter from '../components/client/ClientFilter';
+import withPasswordProtection from '../lib/withPasswordProtection';
 
 const ClientsPage = () => {
     const [clients, setClients] = useState([]);
@@ -128,4 +129,5 @@ const ClientsPage = () => {
     
 };
 
-export default ClientsPage;
+const ProtectedClientsPage = withPasswordProtection(ClientsPage, 'swizz');
+export default ProtectedClientsPage;

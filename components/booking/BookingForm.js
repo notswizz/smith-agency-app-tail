@@ -103,14 +103,15 @@ const BookingForm = ({ onBookingAdded }) => {
 
     const generateDateRange = (start, end) => {
         let dates = [];
-        let currentDate = new Date(start.toISOString().split('T')[0]);
-        let endDate = new Date(end.toISOString().split('T')[0]);
+        if (start instanceof Date && !isNaN(start) && end instanceof Date && !isNaN(end)) {
+            let currentDate = new Date(start.toISOString().split('T')[0]);
+            let endDate = new Date(end.toISOString().split('T')[0]);
 
-        while (currentDate <= endDate) {
-            dates.push(new Date(currentDate));
-            currentDate.setDate(currentDate.getDate() + 1);
+            while (currentDate <= endDate) {
+                dates.push(new Date(currentDate));
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
         }
-
         return dates;
     };
 
@@ -152,7 +153,7 @@ const BookingForm = ({ onBookingAdded }) => {
                 {booking.startDate && booking.endDate && generateDateRange(new Date(booking.startDate), new Date(booking.endDate)).map((date, index) => (
                     <div key={index} className="mb-4">
                         <label htmlFor={`agentCount-${index}`} className="block text-gray-700 text-sm font-bold mb-2">
-                            {date.toISOString().slice(0, 10)}
+                            # of TSA Sales Reps for {date.toISOString().slice(0, 10)}
                         </label>
                         <input
                             type="number"
@@ -164,7 +165,6 @@ const BookingForm = ({ onBookingAdded }) => {
                             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                         />
                     </div>
-                    
                 ))}
                 {/* Notes Section */}
                 <div className="mb-4">

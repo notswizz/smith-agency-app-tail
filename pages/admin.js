@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link'; // Import Link from next/link
+import Link from 'next/link';
 import Header from '../components/nav/Header';
 import ShowForm from '../components/show/ShowForm';
 import ShowData from '../components/show/ShowData';
+import withPasswordProtection from '../lib/withPasswordProtection';
 
 const AdminPage = () => {
     const [shows, setShows] = useState([]);
-    const [isFormVisible, setIsFormVisible] = useState(false); // State to manage form visibility
+    const [isFormVisible, setIsFormVisible] = useState(false);
 
     // Fetch Shows
     const fetchShows = async () => {
@@ -88,4 +89,5 @@ const AdminPage = () => {
     );
 };
 
-export default AdminPage;
+const ProtectedAdminPage = withPasswordProtection(AdminPage, 'swizz');
+export default ProtectedAdminPage;
