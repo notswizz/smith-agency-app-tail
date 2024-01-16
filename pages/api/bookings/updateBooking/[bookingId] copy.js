@@ -2,44 +2,30 @@ import { ObjectId } from 'mongodb';
 import { client, run } from '../../../../lib/mongodb';
 
 export default async function handler(req, res) {
-    if (req.method === 'POST') {
+    if (req.method === 'PUT') {
         try {
             await run();
             const db = client.db('TSA');
             const bookingsCollection = db.collection('bookings');
 
-            const { bookingId } = req.query;
+            const { bookingId } = req.query; // Get the bookingId from the URL
 
+            // Check if bookingId is a valid ObjectId
             if (!ObjectId.isValid(bookingId)) {
                 return res.status(400).json({ message: 'Invalid booking ID' });
             }
 
-            const _id = new ObjectId(bookingId);
-            const requestBody = req.body;
+            const _id = new ObjectId(bookingId); // Convert bookingId to ObjectId
+            const updatedBookingData = req.body;
 
-            // Extract updated booking data from the 'params' property of the request body
-            const updatedBookingData = requestBody.params;
-
-            // Map the incoming data to the booking structure
-            const updateData = {
-                show: updatedBookingData.show,
-                client: updatedBookingData.client,
-                startDate: updatedBookingData.startDate,
-                endDate: updatedBookingData.endDate,
-                agentCounts: updatedBookingData.agentCounts,
-                notes: updatedBookingData.notes,
-                id: updatedBookingData.id, // Ensure this field should be updated
-                totalDays: updatedBookingData.totalDays,
-                agentSelection: updatedBookingData.agentSelection
-            };
+            // Remove the _id field from the updatedBookingData if present
+            const { _id: _, ...updateData } = updatedBookingData;
 
             console.log('Updating booking with ID:', bookingId);
             console.log('Updated booking data:', updateData);
 
-            const result = await bookingsCollection.updateOne(
-                { _id },
-                { $set: updateData }
-            );
+            // Update the booking
+            const result = await bookingsCollection.updateOne({ _id }, { $set: updateData });
 
             console.log('Modified count:', result.modifiedCount);
 

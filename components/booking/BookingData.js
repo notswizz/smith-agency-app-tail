@@ -16,30 +16,31 @@ const BookingData = ({ bookings, onDeleteBooking, onShowBookingDetails }) => {
     }, []);
 
     const compileAgentCounts = (agentSelection) => {
-        const agentMap = agents.reduce((map, agent) => {
-            map[agent.phone] = agent.name; // Using agent.phone as key
-            return map;
-        }, {});
+      const agentMap = agents.reduce((map, agent) => {
+        map[agent.phone] = agent.name; // Using agent.phone as key
+        return map;
+      }, {});
 
-        return agentSelection.flat().reduce((acc, agentPhone) => {
-            if (agentPhone) {
-                const agentName = agentMap[agentPhone] || 'Unknown Agent';
-                acc[agentName] = (acc[agentName] || 0) + 1;
-            }
-            return acc;
-        }, {});
+      return Array.isArray(agentSelection) 
+        ? agentSelection.flat().reduce((acc, agentPhone) => {
+          if (agentPhone) {
+            const agentName = agentMap[agentPhone] || 'Unknown Agent';
+            acc[agentName] = (acc[agentName] || 0) + 1;
+          }
+          return acc;
+        }, {})
+        : {};
     };
-
    
 
     const getAgentSelectionStatus = (booking) => {
-        const totalSelectionsMade = booking.agentSelection.reduce(
-            (total, day) => total + day.filter(agent => agent).length, 0
-        );
-        const totalAgentSlots = getTotalDays(booking.agentCounts);
-        const emptyCount = totalAgentSlots - totalSelectionsMade;
-        const isFull = emptyCount === 0;
-        return { isFull, emptyCount };
+      const totalSelectionsMade = Array.isArray(booking.agentSelection) 
+        ? booking.agentSelection.reduce((total, day) => total + day.filter(agent => agent).length, 0)
+        : 0;
+      const totalAgentSlots = getTotalDays(booking.agentCounts);
+      const emptyCount = totalAgentSlots - totalSelectionsMade;
+      const isFull = emptyCount === 0;
+      return { isFull, emptyCount };
     };
 
     const getTotalDays = (agentCounts) => {

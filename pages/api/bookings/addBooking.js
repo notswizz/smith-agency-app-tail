@@ -7,7 +7,8 @@ export default async function handler(req, res) {
             const db = client.db('TSA');
             const bookingData = req.body;
 
-            // Insert the new booking document
+            // Validate bookingData here if needed
+
             const result = await db.collection('bookings').insertOne(bookingData);
 
             if (result.acknowledged) {

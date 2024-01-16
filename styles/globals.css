@@ -283,6 +283,16 @@ input:focus, button:focus {
   border-color: #00b09b; /* Stronger border color for Admin button */
 }
 
+/* Custom CSS for the image */
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.shadow-lg {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
 /* Custom CSS classes using your color palette */
 .bg-main { background-color: #A1BFE4; }
 .border-highlight { border-color: #F9C0C2; }
@@ -293,12 +303,26 @@ input:focus, button:focus {
 .border-accent { border-color: #F5AAAD; }
 .text-accent { color: #F26C64; }
 
-/* Custom CSS for the image */
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
+.modal-bg-light-blue {
+  background-color: #A1BFE4; /* Updated to your light blue color */
 }
 
-.shadow-lg {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+.modal-bg-navy {
+  background-color: #344868; /* Updated to your navy color */
+}
+
+.modal-bg-gradient {
+  background: linear-gradient(to bottom right, #A1BFE4, #F9C0C2, #F89951); /* Updated to your light blue, pink, and orange colors */
+}
+
+.modal-border-pink {
+  border-color: #F9C0C2; /* Updated to your pink color */
+}
+
+.modal-bg-gradient-button {
+  background: linear-gradient(to right, #8AA9D9, #344868); /* Updated to your blue and indigo colors */
+}
+
+.modal-bg-gradient-button-hover {
+  background: linear-gradient(to right, #8AA9D9, #344868); /* Updated to your darker blue and indigo colors */
 }
