@@ -8,7 +8,7 @@ const ClientData = ({ clients, onDeleteClient }) => {
                 <div className="bg-white p-4 rounded shadow-md flex justify-between items-center" key={client._id}>
                     <div>
                         <h3 className="text-lg font-bold">
-                          <a href={client.website.startsWith('http') ? client.website : `http://${client.website}`} 
+                        <a href={client.website && client.website.startsWith('http') ? client.website : `http://${client.website}`} 
                              target="_blank" 
                              rel="noopener noreferrer"
                              className="text-blue-600 hover:text-blue-800">
