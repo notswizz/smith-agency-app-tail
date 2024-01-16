@@ -24,7 +24,7 @@ const HomePage = () => {
                         <div className="text-center mb-8">
                             <div className="inline-block border-4 border-highlight rounded-lg shadow-lg hover:shadow-2xl transition-shadow duration-300 ease-in-out p-2">
                                 <Image
-                                    src="/tsa.gif"
+                                    src="/tsawhite.png"
                                     alt="The Smith Agency Logo"
                                     width={300}
                                     height={250}
