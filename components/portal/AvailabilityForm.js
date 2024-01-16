@@ -3,7 +3,9 @@ import { useSession } from "next-auth/react"; // Import useSession hook to get u
 import { toUTCDateString } from '../../lib/utils';
 
 const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
+    console.log('AvailabilityForm component rendered');
     const { data: session } = useSession(); // Retrieve session data
+    console.log('Session data:', session);
     const [selectedShow, setSelectedShow] = useState('');
     const [selectedDays, setSelectedDays] = useState({});
     const [showDateRange, setShowDateRange] = useState({ startDate: '', endDate: '' });
@@ -11,9 +13,8 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     const [submissionSuccess, setSubmissionSuccess] = useState(false);
     const [submissionFailure, setSubmissionFailure] = useState(false);
 
-   
-
     const generateDateRange = (start, end) => {
+        console.log('generateDateRange invoked with start:', start, 'end:', end);
         if (!start || !end) return [];
         let currentDate = new Date(start);
         const endUTCDate = new Date(end);
@@ -24,11 +25,12 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
             currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
         }
 
+        console.log('Generated date range:', dates);
         return dates;
     };
 
-
     const dateCheckboxes = useMemo(() => {
+        console.log('dateCheckboxes useMemo invoked');
         const { startDate, endDate } = showDateRange;
         const dateRange = generateDateRange(startDate, endDate);
         return dateRange.map(date => ({
@@ -38,20 +40,24 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     }, [showDateRange, selectedDays]);
 
     const handleShowSelection = (showId) => {
+        console.log('handleShowSelection invoked with showId:', showId);
         const show = shows.find(show => show._id === showId);
         if (show) {
+            console.log('Show found:', show);
             setShowDateRange({
                 startDate: show.startDate,
                 endDate: show.endDate
             });
             setSelectedShow(showId);
         } else {
+            console.log('No show found with the specified id');
             setShowDateRange({ startDate: '', endDate: '' });
             setSelectedShow('');
         }
     };
 
     const sortedShows = useMemo(() => {
+        console.log('sortedShows useMemo invoked');
         if (!Array.isArray(shows)) {
             return []; // or return a default value that makes sense in your context
         }
@@ -59,6 +65,7 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     }, [shows]);
 
     const handleDateCheckboxChange = (date) => {
+        console.log('handleDateCheckboxChange invoked with date:', date);
         setSelectedDays(prevSelectedDays => ({
             ...prevSelectedDays,
             [date]: !prevSelectedDays[date],
@@ -66,32 +73,35 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
     };
 
     const handleSubmit = async (event) => {
+        console.log('handleSubmit invoked');
         event.preventDefault();
         setSubmissionFailure(false);
         setSubmissionSuccess(false);
-    
+
         // Use the email from session for identifying the agent
         const agentEmail = session.user.email;
-    
-        // Clear existing availability for the selected show
-        const clearResponse = await fetch('/api/availability/clearAvailability', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ agentEmail, showId: selectedShow })
-        });
-    
-        if (!clearResponse.ok) {
-            console.error('Failed to clear existing availability');
+        console.log('Agent email:', agentEmail);
+
+        // Fetch the agent's details
+        console.log('Fetching agent details');
+        const agentResponse = await fetch(`/api/agents/getAgentByEmail?email=${encodeURIComponent(agentEmail)}`);
+        const agentData = await agentResponse.json();
+        console.log('Agent data:', agentData);
+
+        if (!agentData || !agentData._id) {
+            console.error('Failed to fetch agent details');
             setSubmissionFailure(true);
-            return; // Stop the function if clearing fails
+            return; // Stop the function if fetching agent details fails
         }
-    
+
         // Extract the selected dates
         const selectedDates = Object.keys(selectedDays).filter(date => selectedDays[date]);
-    
+        console.log('Selected dates:', selectedDates);
+
         let allUpdatesSuccessful = true;
-    
+
         for (const date of selectedDates) {
+            console.log('Creating availability for date:', date);
             const response = await fetch('/api/availability/createAvailability', {
                 method: 'POST',
                 headers: {
@@ -99,33 +109,35 @@ const AvailabilityForm = ({ shows, onAvailabilityAdded }) => {
                 },
                 body: JSON.stringify({ agentEmail, dateToBook: date, notes }) // Send the email and notes
             });
-    
+
             if (!response.ok) {
                 console.error('Failed to create availability for date:', date);
                 allUpdatesSuccessful = false;
                 break;
             }
         }
-    
+
         if (allUpdatesSuccessful) {
+            console.log('All updates successful');
             setSubmissionSuccess(true);
             setSelectedShow('');
             setSelectedDays({});
             setNotes('');
             onAvailabilityAdded && onAvailabilityAdded();
         } else {
+            console.log('Not all updates were successful');
             setSubmissionFailure(true); 
         }
     };
-    
+
     
   
-  return (
-    <div className="flex flex-col min-h-screen py-1">
-        <div className="flex flex-col w-full max-w-2xl bg-white shadow-md rounded-lg p-2 sm:p-1 mx-auto">
-            <h2 className="text-xl font-bold mb-2 text-center">Sales Rep Availability Form</h2>
-            <p className="text-gray-600 mb-3 text-center">
-                    Use this form to update your availability for upcoming shows.
+return (
+    <div className="flex flex-col min-h-screen py-1 bg-light-blue-500">
+        <div className="flex flex-col w-full max-w-2xl bg-white shadow-2xl rounded-lg p-8 sm:p-6 mx-auto border-4 border-pink-500">
+            <h2 className="text-3xl font-bold mb-4 text-center text-black-500">Availability Form</h2>
+            <p className="text-gray-600 mb-3 text-center text-md">
+                    Submit before each show!
                 </p>
                 <form onSubmit={handleSubmit} className="w-full">
                     <div className="mb-4">

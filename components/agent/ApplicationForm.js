@@ -4,9 +4,8 @@ import Image from 'next/image';
 const ApplicationForm = () => {
     const initialFormData = {
         name: '',
-        resume: null,
+        phoneNumber: '', // Added phone number field
         referral: '',
-        coverLetter: ''
     };
 
     const [formData, setFormData] = useState(initialFormData);
@@ -23,32 +22,20 @@ const ApplicationForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        // Start with a new FormData object
-        const data = new FormData();
-        
-        // Append the data to the FormData object
-        // For files, append the file object; for other fields, append the string value
-        Object.entries(formData).forEach(([key, value]) => {
-            if (value instanceof File) {
-                data.append(key, value, value.name);
-            } else {
-                // Check if value is not null before converting to string
-                data.append(key, value != null ? value.toString() : '');
-            }
-        });
-        
-    
         try {
             const response = await fetch('/api/agents/addApplication', {
                 method: 'POST',
-                body: data,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData),
             });
     
             if (response.ok) {
                 const result = await response.json();
                 console.log('Application submitted successfully', result);
                 setFormStatus('success');
-                setFormData(initialFormData); // Clear the form fields
+                setFormData(initialFormData);
             } else {
                 console.error('Submission failed', await response.text());
                 setFormStatus('error');
@@ -89,15 +76,18 @@ const ApplicationForm = () => {
             </div>
 
             <div className="mb-6">
-                <label htmlFor="resume" className="block text-gray-700 text-sm font-bold mb-2">Resume:</label>
+                <label htmlFor="phoneNumber" className="block text-gray-700 text-sm font-bold mb-2">Phone Number:</label>
                 <input
-                    type="file"
-                    id="resume"
-                    name="resume"
+                    type="text"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={formData.phoneNumber}
                     onChange={handleChange}
-                    className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-600"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-600"
                 />
             </div>
+
+          
 
             <div className="mb-6">
                 <label htmlFor="referral" className="block text-gray-700 text-sm font-bold mb-2">Referral:</label>
@@ -111,17 +101,7 @@ const ApplicationForm = () => {
                 />
             </div>
 
-            <div className="mb-8">
-                <label htmlFor="coverLetter" className="block text-gray-700 text-sm font-bold mb-2">Cover Letter:</label>
-                <textarea
-                    id="coverLetter"
-                    name="coverLetter"
-                    value={formData.coverLetter}
-                    onChange={handleChange}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-600"
-                    rows="4"
-                ></textarea>
-            </div>
+          
 
             <button type="submit" className="bg-black hover:bg-gray-800 text-white font-bold py-2 px-4 rounded border-2 border-pink-500 focus:outline-none focus:shadow-outline w-full transition-colors duration-200">
                 Submit Application

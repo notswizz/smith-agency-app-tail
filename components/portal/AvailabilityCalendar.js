@@ -88,7 +88,7 @@ useEffect(() => {
                         backgroundColor = locationToColor[event.location] || "#ddd";
                     }
                 
-                    console.log(`Event: ${event.title}, Color: ${backgroundColor}`);
+                  
                     
                     return {
                         style: {

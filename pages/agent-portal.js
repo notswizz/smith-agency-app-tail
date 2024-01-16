@@ -130,38 +130,33 @@ const AgentPortal = () => {
                     )}
                 </div>
    
-            {session && (
-                <div className="w-full max-w-md md:max-w-3xl bg-white p-6 rounded-lg shadow-lg mt-4">
-                    {agentData && agentData.phone ? (
-                        <div>
-                          <button 
-    onClick={toggleView} 
-    className="w-full mb-4 bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-lg">
-    {showCalendar ? 'Show Availability Form' : 'Show Calendar'}
-</button>
-``
+                {session && (
+                    <div className="w-full max-w-md md:max-w-3xl bg-white p-6 rounded-lg shadow-lg mt-4">
+                        {agentData && agentData.phone ? (
+                            <div>
+                                <button 
+                                    onClick={toggleView} 
+                                    className="w-full mb-4 bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-lg"
+                                >
+                                    {showCalendar ? 'Show Availability Form' : 'Show Calendar'}
+                                </button>
 
-{showCalendar ? (
-<div className="w-full overflow-hidden">
-<MyCalendarComponent email={session?.user?.email} />
-</div>
-) : (
-<AvailabilityForm shows={shows} />
-)}
-</div>
-) : (
-<AgentFormAgent />
-)}
-</div>
-)}
-
-
-</div>
-</>
+                                {showCalendar ? (
+                                    <div className="w-full overflow-hidden">
+                                        <MyCalendarComponent email={session?.user?.email} />
+                                    </div>
+                                ) : (
+                                    <AvailabilityForm shows={shows} />
+                                )}
+                            </div>
+                        ) : (
+                            <AgentFormAgent />
+                        )}
+                    </div>
+                )}
+            </div>
+        </>
     );
-      
-    
-    
 };
 
 export default AgentPortal;

@@ -14,23 +14,25 @@ export default async function handler(req, res) {
             // Generate a unique ID for the availability entry
             const availabilityId = uuidv4();
 
-            // Remove any existing availability for the same date
-            await db.collection('agents').updateOne(
-                { "email": agentEmail },
-                { $pull: { "availability": { date: dateToBook } } }
-            );
+            // Check if an availability entry for the same date already exists
+            const agent = await db.collection('agents').findOne({ "email": agentEmail, "availability.date": dateToBook });
 
-            // Add the new availability entry
-            const result = await db.collection('agents').updateOne(
-                { "email": agentEmail },
-                { $push: { "availability": { id: availabilityId, date: dateToBook, status: "open", notes: notes } } },
-                { upsert: true }
-            );
-
-            if (result.modifiedCount === 0 && result.upsertedCount === 0) {
-                res.status(404).json({ message: 'Failed to update availability entry' });
+            if (agent) {
+                // If an entry exists, skip adding a new one
+                res.status(200).json({ message: 'Availability entry already exists' });
             } else {
-                res.status(200).json({ message: 'Availability entry updated successfully' });
+                // If no entry exists, add a new one
+                const result = await db.collection('agents').updateOne(
+                    { "email": agentEmail },
+                    { $push: { "availability": { id: availabilityId, date: dateToBook, status: "open", notes: notes } } },
+                    { upsert: true }
+                );
+
+                if (result.modifiedCount === 0 && result.upsertedCount === 0) {
+                    res.status(404).json({ message: 'Failed to update availability entry' });
+                } else {
+                    res.status(200).json({ message: 'Availability entry updated successfully' });
+                }
             }
         } catch (error) {
             console.error('Error updating availability in MongoDB', error);
