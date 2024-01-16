@@ -101,16 +101,16 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
             const updatedAgents = [...prevSelectedAgents];
             const previousAgentPhone = updatedAgents[dayIndex][agentIndex];
             updatedAgents[dayIndex][agentIndex] = agentPhone;
-        
+
             // If the agent selection has changed, update trackedChanges
             if (previousAgentPhone !== agentPhone) {
                 const date = toUTCDateString(dateRange[dayIndex]);
-    
+
                 // Deselection of previous agent
                 if (previousAgentPhone) {
                     const prevAgent = allAgents.find(a => a.phone === previousAgentPhone);
                     const prevAvailabilityEntry = prevAgent?.availability.find(a => a.date === date);
-    
+
                     setTrackedChanges(prev => ({
                         ...prev,
                         [`${date}-${prevAvailabilityEntry?.id}`]: {
@@ -120,12 +120,12 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
                         }
                     }));
                 }
-    
+
                 // Selection of new agent
                 if (agentPhone) {
                     const newAgent = allAgents.find(a => a.phone === agentPhone);
                     const newAvailabilityEntry = newAgent?.availability.find(a => a.date === date);
-    
+
                     setTrackedChanges(prev => ({
                         ...prev,
                         [`${date}-${newAvailabilityEntry?.id}`]: {
@@ -136,7 +136,7 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
                     }));
                 }
             }
-    
+
             return updatedAgents;
         });
     };
@@ -146,42 +146,54 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
 
     const handleSaveSelection = async () => {
         const requests = [];
-    
+
         // Iterate over trackedChanges
         for (const changeKey in trackedChanges) {
             if (trackedChanges.hasOwnProperty(changeKey)) {
                 const change = trackedChanges[changeKey];
-                requests.push({
-                    agentPhone: change.agentPhone,
-                    availabilityId: change.availabilityId,
-                    status: change.status
-                });
+                const agent = allAgents.find(a => a.phone === change.agentPhone);
+                if (agent && agent._id && change.availabilityId) {
+                    requests.push({
+                        agentId: agent._id.$oid, // Use agentId from the agent object
+                        availabilityId: change.availabilityId, // Use availabilityId from the availability object
+                        status: change.status
+                    });
+                }
             }
         }
-    
-        // Send the requests
+
+        // Send the requests to update agent availability
         try {
-            await Promise.all(requests.map(req => {
-                return fetch('/api/availability/modifyAvailability', {
-                    method: 'POST',
+            await Promise.all(requests.map(async (req) => {
+                // Use the modifyAgentAvailability API endpoint here
+                const agentResponse = await fetch(`/api/agents/modifyAgentAvailability/${req.agentId}`, {
+                    method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(req)
-                }).then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
+                    body: JSON.stringify(req) // Send the new availability data to update
                 });
+
+                if (!agentResponse.ok) {
+                    throw new Error(`HTTP error! Status: ${agentResponse.status}`);
+                }
+
+                // Use the updateBooking API endpoint here
+                const bookingResponse = await fetch(`/api/bookings/updateBooking/${booking._id.$oid}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agentSelection: selectedAgents }) // Send the selectedAgents data to update
+                });
+
+                if (!bookingResponse.ok) {
+                    throw new Error(`HTTP error! Status: ${bookingResponse.status}`);
+                }
             }));
-    
-            // Update the booking and close the modal
-            const updatedBooking = { ...booking, agentSelection: selectedAgents };
-            onUpdateBooking(updatedBooking);
+
+            // Close the modal
             onClose();
         } catch (error) {
-            console.error('Error updating agent availability:', error);
+            console.error('Error updating agent availability and booking:', error);
         }
-    };
+    };;
     
      // Function to handle the deletion of a booking
      const handleDeleteBooking = async () => {
