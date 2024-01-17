@@ -1,20 +1,23 @@
 import { client, run } from '../../../lib/mongodb';
+import moment from 'moment';
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
         try {
             await run();
-            const db = client.db('TSA'); // Replace with your actual database name
+            const db = client.db('TSA');
 
             const { date } = req.query;
             if (!date) {
                 return res.status(400).json({ message: 'Date parameter is required' });
             }
 
-            // Find agents who are available on the given date
+            // Ensure the date format matches the format in the agent structure
+            const formattedDate = moment(date).format('MMMM DD, YYYY'); 
+
             const availableAgents = await db.collection('agents').find({
                 "availability": {
-                    $elemMatch: { "date": date, "status": "open" }
+                    $elemMatch: { "date": formattedDate, "status": "open" }
                 }
             }).toArray();
 

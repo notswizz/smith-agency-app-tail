@@ -85,11 +85,12 @@ const AgentPortal = () => {
                     PREMIER STAFFING
                 </p>
                 <div className="w-full max-w-xs mx-auto p-4 rounded-lg shadow-lg flex flex-col items-center justify-center" style={{ backgroundColor: '#344868' }}>
-                    <img 
-                        src={session?.user?.image || "/tsalogo.png"} 
-                        alt="User Profile" 
-                        className="w-32 h-32 md:w-32 md:h-32 border-white shadow-lg mb-4 rounded-full" 
-                    />
+                <img 
+    src={session?.user?.image || "/tsalogo.png"} 
+    alt="User Profile" 
+    className="w-32 h-32 md:w-32 md:h-32 border-4 border-white shadow-lg mb-4 rounded-full" 
+/>
+
                     {session && (
                         <div 
                             className="p-4 rounded-xl shadow-2xl w-full text-center mb-6 transform transition duration-500 hover:scale-105 bg-white"

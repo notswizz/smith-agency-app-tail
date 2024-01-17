@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { toUTCDateString } from '../../lib/utils';
+import moment from 'moment'; // Import moment
 
 const generateDateRange = (start, end) => {
     let dates = [];
@@ -14,7 +15,6 @@ const generateDateRange = (start, end) => {
     return dates;
 };
 
-
 const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     const [selectedAgents, setSelectedAgents] = useState(booking.agentSelection || []);
     const [originalBooking, setOriginalBooking] = useState(null);
@@ -23,52 +23,43 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     const [deselectedAgents, setDeselectedAgents] = useState({});
     const [trackedChanges, setTrackedChanges] = useState({});
 
-    // Fetch original booking data
+    // Calculate dateRange directly in the component
+    let dateRange = [];
+    if (booking && booking.startDate && booking.endDate) {
+        const startDate = new Date(toUTCDateString(booking.startDate));
+        const endDate = new Date(toUTCDateString(booking.endDate));
+        dateRange = generateDateRange(startDate, endDate);
+
+    }
+
+    // Fetch available agents for each date in the date range
     useEffect(() => {
-        const fetchOriginalBooking = async () => {
-            try {
-                const response = await fetch(`/api/bookings/getBookings`);
-                const bookings = await response.json();
-                const originalBooking = bookings.find(b => b._id === booking._id);
-                setOriginalBooking(originalBooking);
-            } catch (error) {
-                console.error('Error fetching original booking:', error);
-            }
-        };
-
-        fetchOriginalBooking();
-    }, [booking]);
-  
-    // Declare dateRange here
-    const dateRange = useMemo(() => {
-        if (booking && booking.startDate && booking.endDate) {
-            const startDate = new Date(toUTCDateString(booking.startDate));
-            const endDate = new Date(toUTCDateString(booking.endDate));
-            return generateDateRange(startDate, endDate);
-        }
-        return [];
-    }, [booking]);
-
-    useEffect(() => {
-        if (!booking) return;
-
         const fetchAgentsForAllDates = async () => {
             const agentsForDates = {};
             for (const date of dateRange) {
-                const formattedDate = toUTCDateString(date);
+                const formattedDate = moment(date).format('MMMM DD, YYYY'); // Format date for the API request
                 try {
                     const response = await fetch(`/api/agents/getAvailAgents?date=${formattedDate}`);
-                    const data = await response.json();
-                    agentsForDates[formattedDate] = response.ok ? data : [];
+                    if (response.ok) {
+                        const data = await response.json();
+                        agentsForDates[formattedDate] = data;
+                    } else {
+                        console.error(`Error fetching agents for ${formattedDate}:`, response.statusText);
+                        agentsForDates[formattedDate] = [];
+                    }
                 } catch (error) {
                     console.error(`Error fetching agents for ${formattedDate}:`, error);
+                    agentsForDates[formattedDate] = [];
                 }
             }
             setAgentsByDate(agentsForDates);
         };
 
-        fetchAgentsForAllDates();
-    }, [booking, dateRange]);
+        if (dateRange.length > 0) {
+            fetchAgentsForAllDates();
+        }
+    }, [dateRange]);
+
 
     useEffect(() => {
         const fetchAllAgents = async () => {
@@ -92,10 +83,6 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
         return map;
     }, [allAgents]);
 
-   
-   
-
-   
     const handleAgentSelection = (dayIndex, agentIndex, agentPhone) => {
         setSelectedAgents((prevSelectedAgents) => {
             const updatedAgents = [...prevSelectedAgents];
@@ -142,58 +129,33 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     };
     
     
-    
 
     const handleSaveSelection = async () => {
-        const requests = [];
-
-        // Iterate over trackedChanges
-        for (const changeKey in trackedChanges) {
-            if (trackedChanges.hasOwnProperty(changeKey)) {
-                const change = trackedChanges[changeKey];
-                const agent = allAgents.find(a => a.phone === change.agentPhone);
-                if (agent && agent._id && change.availabilityId) {
-                    requests.push({
-                        agentId: agent._id.$oid, // Use agentId from the agent object
-                        availabilityId: change.availabilityId, // Use availabilityId from the availability object
-                        status: change.status
+        try {
+            // Prepare the data for the API
+            const agentUpdates = []; // Array to hold updates for each agent's availability
+    
+            for (const changeKey in trackedChanges) {
+                if (trackedChanges.hasOwnProperty(changeKey)) {
+                    const change = trackedChanges[changeKey];
+                    agentUpdates.push({
+                        agentId: change.agentPhone, // Assuming agentPhone is used as agentId
+                        availabilityId: change.availabilityId,
+                        newStatus: change.status
                     });
                 }
             }
-        }
-
-        // Send the requests to update agent availability
-        try {
-            await Promise.all(requests.map(async (req) => {
-                // Use the modifyAgentAvailability API endpoint here
-                const agentResponse = await fetch(`/api/agents/modifyAgentAvailability/${req.agentId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(req) // Send the new availability data to update
-                });
-
-                if (!agentResponse.ok) {
-                    throw new Error(`HTTP error! Status: ${agentResponse.status}`);
-                }
-
-                // Use the updateBooking API endpoint here
-                const bookingResponse = await fetch(`/api/bookings/updateBooking/${booking._id.$oid}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ agentSelection: selectedAgents }) // Send the selectedAgents data to update
-                });
-
-                if (!bookingResponse.ok) {
-                    throw new Error(`HTTP error! Status: ${bookingResponse.status}`);
-                }
-            }));
-
+    
+           
+    
             // Close the modal
             onClose();
         } catch (error) {
             console.error('Error updating agent availability and booking:', error);
         }
-    };;
+    };
+    
+    
     
      // Function to handle the deletion of a booking
      const handleDeleteBooking = async () => {
@@ -222,33 +184,29 @@ const BookingModal = ({ booking, onClose, onUpdateBooking }) => {
     
     
     const renderAgentDropdown = (dayIndex, agentIndex, selectedAgentPhone) => {
-        const formattedDate = toUTCDateString(dateRange[dayIndex]);
+        const formattedDate = moment(dateRange[dayIndex]).format('MMMM DD, YYYY');
         const agentsForThisDate = agentsByDate[formattedDate] || [];
-        const dropdownClass = selectedAgentPhone ? "bg-pink-200" : ""; // Change the color as per your theme
+    
+    
     
         return (
             <select
-                className={`form-select ${dropdownClass}`}
+                className={`form-select ${selectedAgentPhone ? "bg-pink-200" : ""}`}
                 value={selectedAgentPhone || ''}
                 onChange={(e) => handleAgentSelection(dayIndex, agentIndex, e.target.value)}
             >
                 <option value="" key={`default-${dayIndex}-${agentIndex}`}>
                     Select Agent
                 </option>
-                {agentsForThisDate.map((agent) => {
-                    const availabilityEntry = agent.availability.find(a => a.date === formattedDate);
-                    if (availabilityEntry) {
-                        return (
-                            <option key={availabilityEntry.id} value={agent.phone}>
-                                {phoneToNameMap[agent.phone]}
-                            </option>
-                        );
-                    }
-                    return null;
-                })}
+                {agentsForThisDate.map((agent) => (
+                    <option key={agent._id.$oid} value={agent.phone}>
+                        {agent.name}
+                    </option>
+                ))}
             </select>
         );
     };
+    
     
     
     const renderRowForDate = (date, agentsForDay, dayIndex) => {
